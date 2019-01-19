@@ -4,6 +4,7 @@ import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 public class SwerveControl extends RunEachFrameTask {
   private XboxInput xboxInput;
@@ -14,14 +15,17 @@ public class SwerveControl extends RunEachFrameTask {
   double[] speedMultiplier = {0.25, 1};
   private int speedMultiplierPosition = 0;
 
+  private ADXRS450_Gyro gyro;
+
 
   public SwerveControl(XboxInput xboxInput, SwerveWheel w1, SwerveWheel w2, SwerveWheel w3,
-      SwerveWheel w4) {
+      SwerveWheel w4, ADXRS450_Gyro gyro) {
     this.xboxInput = xboxInput;
     this.w1 = w1;
     this.w2 = w2;
     this.w3 = w3;
     this.w4 = w4;
+    this.gyro = gyro;
   }
 
   @Override

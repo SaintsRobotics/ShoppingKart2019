@@ -72,7 +72,7 @@ public class Robot extends TaskRobot {
     
     this.teleopTasks = new Task[] {
         leftBack, leftFront, rightBack, rightFront,
-        new SwerveControl(c, rightFront, leftFront, leftBack, rightBack),
+        new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro),
 
          
 
