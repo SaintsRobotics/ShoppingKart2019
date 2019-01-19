@@ -10,7 +10,7 @@ import com.saintsrobotics.swerveDrive.input.TestSensors;
 import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
-import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
+import com.saintsrobotics.swerveDrive.tasks.teleop.*;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -73,8 +73,10 @@ public class Robot extends TaskRobot {
     this.teleopTasks = new Task[] {
         leftBack, leftFront, rightBack, rightFront,
         new SwerveControl(c, rightFront, leftFront, leftBack, rightBack),
-//        new TestTurnSwerveWheel(c, motors.leftBackTurner, this.sensors.leftBackEncoder),
-//        new TestDriveSwerveWheel(c, motors.leftBack)
+
+         
+
+         new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(),
          new UpdateMotors(this.motors)
     };
     

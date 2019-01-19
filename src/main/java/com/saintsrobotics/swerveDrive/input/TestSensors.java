@@ -5,6 +5,7 @@ import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.saintsrobotics.swerveDrive.input.AbsoluteEncoder;
+import com.saintsrobotics.swerveDrive.input.DistanceEncoder;
 
 public class TestSensors extends Sensors {
 
@@ -19,5 +20,15 @@ public class TestSensors extends Sensors {
     this.leftBackTurnConfig = new TurnConfiguration(this.leftBackEncoder);
     this.rightFrontTurnConfig = new TurnConfiguration(this.rightFrontEncoder);
     this.rightBackTurnConfig = new TurnConfiguration(this.rightBackEncoder);
+    
+    this.gyro = new ADXRS450_Gyro();
+
+    this.liftEncoder = new DistanceEncoder(0, 1, 0, false);
+    this.lifterDown = new DigitalInput(8);
+    this.lifterUp = new DigitalInput(7);
+
+    // SMASH
+    this.intake = new DigitalInput(19);
+    // these parameter values (port #s etc) may need to be changed
   }
 }

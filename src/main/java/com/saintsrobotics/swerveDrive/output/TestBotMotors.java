@@ -21,6 +21,10 @@ public class TestBotMotors extends RobotMotors {
     this.leftFrontTurner = new MotorSimple(new Talon(2), true);
     this.rightBackTurner = new MotorSimple(new Talon(6), true);
     this.rightFrontTurner = new MotorSimple(new Talon(8), true);
+
+    this.lifter = new MotorSimple(new Talon(18), true);
+    this.intake = new MotorSimple(new Talon(17), false);
+    //these may not be the correct parameters for the lifter
     
 //    this.turners = new MotorGroup(this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner, this.rightFrontTurner);
 //    this.drive = new MotorGroup(this.leftBack, this.leftFront, this.rightBack, this.rightFront);
@@ -36,6 +40,7 @@ public class TestBotMotors extends RobotMotors {
         this.leftFrontTurner,
         this.rightBackTurner,
         this.rightFrontTurner,
+        this.lifter,
 //        this.turners,
 //        this.drive,
    };

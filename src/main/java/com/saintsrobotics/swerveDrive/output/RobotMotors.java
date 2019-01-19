@@ -14,8 +14,11 @@ public abstract class RobotMotors extends Motors {
   public Motor leftFrontTurner;
   public Motor rightBackTurner;
   public Motor rightFrontTurner;
-  public Motor turners;
-  public Motor drive;
+
+  public Motor lifter;
+  public Motor intake;
+  // public Motor turners;
+  // public Motor drive;
   
   protected Motor[] allMotors;
   protected MotorRamping[] rampedMotors;
