@@ -48,6 +48,20 @@ public class SwerveControl extends RunEachFrameTask {
         w4.getRadius());
     SwerveWheel.setMaxRadius(maxRad);
 
+    //Absolute control
+    if(this.xboxInput.RB()) {
+     //Gyro coords are continous so this restricts it to 360 degrees
+     double robotAngle = ((this.gyro.getAngle() % 360) + 360) % 360;
+
+     //Temporary save of x and y pre-translation
+     double tempX = leftStickX;
+     double tempY = leftStickY;
+
+     //Overwriting x and y
+     leftStickX = (tempX * Math.cos(Math.toRadians(robotAngle))) - (tempY * Math.sin(Math.toRadians(robotAngle)));
+     leftStickY = (tempX * Math.sin(Math.toRadians(robotAngle))) + (tempY * Math.cos(Math.toRadians(robotAngle)));
+    }
+
      w1.setRotationHeadingAndVelocity(leftStickX, leftStickY, rightStickX);
      w2.setRotationHeadingAndVelocity(leftStickX, leftStickY, rightStickX);
      w3.setRotationHeadingAndVelocity(leftStickX, leftStickY, rightStickX);

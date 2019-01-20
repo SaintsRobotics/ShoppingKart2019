@@ -2,6 +2,7 @@ package com.saintsrobotics.swerveDrive.output;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.output.Motor;
+import com.saintsrobotics.swerveDrive.Robot;
 import com.saintsrobotics.swerveDrive.input.AbsoluteEncoder;
 import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 import com.saintsrobotics.swerveDrive.util.PIDReceiver;
@@ -76,7 +77,6 @@ public class SwerveWheel extends RunEachFrameTask {
 
   public void setRotationHeadingAndVelocity(double leftStickX, double leftStickY,
       double rightStickX) {
-    
     double[] rotationVector = new double[2];
     rotationVector[0] = (this.wheelLoc[1] - this.pivotLoc[1]) / this.radius;
     rotationVector[1] = (this.pivotLoc[0] - this.wheelLoc[0]) / this.radius;
