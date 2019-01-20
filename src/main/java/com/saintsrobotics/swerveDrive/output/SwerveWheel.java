@@ -16,7 +16,7 @@ public class SwerveWheel extends RunEachFrameTask {
   private Motor turnMotor;
   public double targetHead;
   public double targetVelocity;
-
+  //x and y coordinates of wheel and location of pivot point on robot
   private double[] wheelLoc = new double[2];
   private double[] pivotLoc = new double[2];
   // distance of wheel from pivot
@@ -45,7 +45,7 @@ public class SwerveWheel extends RunEachFrameTask {
         + Math.pow((this.wheelLoc[1] - this.pivotLoc[1]), 2));
 
     this.headingPidReceiver = new PIDReceiver();
-    this.headingPidController = new PIDController(pidConfig.forwardHeadingKP, 0.0, 0.0,
+    this.headingPidController = new PIDController(pidConfig.forwardHeadingKP, pidConfig.forwardHeadingKI, pidConfig.forwardHeadingKD,
         pidConfig.encoder, headingPidReceiver);
     this.headingPidController.setAbsoluteTolerance(pidConfig.forwardHeadingTolerance);
     this.headingPidController.setOutputRange(-01, 01);
@@ -71,8 +71,8 @@ public class SwerveWheel extends RunEachFrameTask {
     this.targetVelocity = targetVelocity;
     this.targetHead = targetHead;
 
-    SmartDashboard.putNumber(this.name + " targetHead", this.targetHead);
-    SmartDashboard.putNumber(this.name + " targetVelocity", this.targetVelocity);
+    // SmartDashboard.putNumber(this.name + " targetHead", this.targetHead);
+    // SmartDashboard.putNumber(this.name + " targetVelocity", this.targetVelocity);
   }
 
   public void setRotationHeadingAndVelocity(double leftStickX, double leftStickY,

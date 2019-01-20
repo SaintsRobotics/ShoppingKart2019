@@ -3,6 +3,7 @@ package com.saintsrobotics.swerveDrive;
 import java.util.function.Supplier;
 import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
+import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.input.OI;
 import com.saintsrobotics.swerveDrive.input.Sensors;
@@ -11,8 +12,11 @@ import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.*;
+import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /**
@@ -47,18 +51,20 @@ public class Robot extends TaskRobot {
     this.motors.init();
     this.sensors = new TestSensors();
     this.sensors.init();
+    this.sensors.gyro.calibrate();
+    this.sensors.gyro.reset();
     //this.temp = new SpeedController[8];
     //for(int i = 1; i < 9; i++) this.temp[i-1] = new Talon(i);
     this.flags = new Flags();
 
     this.flags.pdp = new PowerDistributionPanel();
-    
     }
 
   @Override
   public void autonomousInit() {
-      }
+  }
 
+  public SwerveControl swerveControl;
   @Override     
   public void teleopInit() {
     
@@ -69,15 +75,13 @@ public class Robot extends TaskRobot {
     SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner, Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
     SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner, Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
     SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner, Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
-    
+    swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
     this.teleopTasks = new Task[] {
-        leftBack, leftFront, rightBack, rightFront,
-        new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro),
+        leftBack, leftFront, rightBack, rightFront,  new ResetGyro(),
+        swerveControl,
 
-         
-
-         new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(),
-         new UpdateMotors(this.motors)
+        new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(), 
+        new UpdateMotors(this.motors)
     };
     
     super.teleopInit();
