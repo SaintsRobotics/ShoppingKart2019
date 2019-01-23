@@ -12,9 +12,20 @@ import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.*;
+<<<<<<< HEAD
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
+=======
+import com.saintsrobotics.swerveDrive.util.Pipeline;
+>>>>>>> First DockTask Draft
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
+
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
@@ -40,7 +51,15 @@ public class Robot extends TaskRobot {
   private double[] leftBackLoc = {-12, -12.75};
   private double[] rightBackLoc = {12, -12.5};
   private double[] pivotLoc = {0, 0};
+<<<<<<< HEAD
   public SwerveControl swerveControl;
+=======
+  public UsbCamera camera;
+  private VisionThread visionThread;
+  public Object imgLock = new Object();
+  private Rect targetOne;
+  private Rect targetTwo;
+>>>>>>> First DockTask Draft
 
   public static Robot instance;
 
@@ -60,6 +79,11 @@ public class Robot extends TaskRobot {
     this.flags = new Flags();
 
     this.flags.pdp = new PowerDistributionPanel();
+<<<<<<< HEAD
+=======
+    this.camera = CameraServer.getInstance().startAutomaticCapture();
+    
+>>>>>>> First DockTask Draft
     }
 
   @Override
@@ -69,14 +93,36 @@ public class Robot extends TaskRobot {
   @Override     
   public void teleopInit() {
     
-    //tube1.setDirection(Relay.Direction.kReverse);
     XboxInput c = Robot.instance.oi.xboxInput;
     RobotMotors motors = Robot.instance.motors;
     SwerveWheel rightFront = new SwerveWheel("rightFront", motors.rightFront, motors.rightFrontTurner, Robot.instance.sensors.rightFrontTurnConfig, this.rightFrontLoc, this.pivotLoc);
     SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner, Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
     SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner, Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
     SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner, Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
+<<<<<<< HEAD
     swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
+=======
+    
+    visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
+      synchronized (imgLock) {
+        if (pipeline.filterContoursOutput().size() == 2) {
+          targetOne = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+          targetTwo = Imgproc.boundingRect(pipeline.filterContoursOutput().get(1));
+        }
+        else if (pipeline.filterContoursOutput().size() == 1) {
+          targetOne = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+          targetTwo = null;
+        }
+        else {
+          targetOne = null;
+          targetTwo = null;
+        }
+      }
+    });
+
+    visionThread.start();
+
+>>>>>>> First DockTask Draft
     this.teleopTasks = new Task[] {
         leftBack, leftFront, rightBack, rightFront,  new ResetGyro(),
         swerveControl,
