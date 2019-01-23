@@ -19,8 +19,7 @@ public class SwerveControl extends RunEachFrameTask {
   private SwerveWheel w2;
   private SwerveWheel w3;
   private SwerveWheel w4;
-  double[] speedMultiplier = {0.25, 1};
-  private int speedMultiplierPosition = 0;
+  double speedMultiplier = 0.5;
   private double robotTargetHead;
   private double time;
 
@@ -48,9 +47,9 @@ public class SwerveControl extends RunEachFrameTask {
     // this.gyro.reset();
 
     this.headingPidReceiver = new PIDReceiver();
-    this.headingPidController = new PIDController(0.07, 0.0, 0.0,
+    this.headingPidController = new PIDController(0.2, 0.0, 0.35,
         this.gyro, headingPidReceiver);
-    this.headingPidController.setAbsoluteTolerance(0.0);
+    this.headingPidController.setAbsoluteTolerance(2.0);
     this.headingPidController.setOutputRange(-1, 1);
     this.headingPidController.setInputRange(0, 360);
     this.headingPidController.setContinuous();
@@ -70,23 +69,21 @@ public class SwerveControl extends RunEachFrameTask {
     double now = Timer.getFPGATimestamp();
     SmartDashboard.putNumber("elapsed time", now-time);
     time = now;
-    
-    if (xboxInput.A()) {
-      this.speedMultiplierPosition += 1;
-      this.speedMultiplierPosition %= speedMultiplier.length;
-    }
+
     
     double leftStickX = xboxInput.leftStickX();
     double leftStickY = -xboxInput.leftStickY();
     double rightStickX = xboxInput.rightStickX();
-  //  double leftStickX = xboxInput.DPAD_LEFT() ? -1 : xboxInput.DPAD_RIGHT() ? 1 : 0;
-  //  double leftStickY = xboxInput.DPAD_UP() ? 1 : xboxInput.DPAD_DOWN() ? -1 : 0;
 
-    leftStickX *= this.speedMultiplier[this.speedMultiplierPosition];
-    leftStickY *= this.speedMultiplier[this.speedMultiplierPosition];
+    leftStickX *= this.speedMultiplier;
+    leftStickY *= this.speedMultiplier;
 
-    double currentHead = 0;
+    if (rightStickX >= -0.075 && rightStickX <= 0.075) {
+      rightStickX = 0;
+    }
+
     //Absolute control
+    double currentHead = 0;
     if (this.xboxInput.RB()) {
       //Gyro coords are continuous so this restricts it to 360
       currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
@@ -100,7 +97,7 @@ public class SwerveControl extends RunEachFrameTask {
 
 
     //this.robotTargetHead = SwerveWheel.findAngle(rightStickX, rightStickY);
-    this.robotTargetHead += rightStickX * 0.25;
+    this.robotTargetHead += rightStickX * 0.5;
     this.robotTargetHead = ((this.robotTargetHead % 360) + 360) % 360;
     SmartDashboard.putNumber("robotTargetHead ", this.robotTargetHead);
     SmartDashboard.putNumber("rightStickX", rightStickX);
@@ -125,7 +122,7 @@ public class SwerveControl extends RunEachFrameTask {
      w3.setRotationHeadingAndVelocity(leftStickX, leftStickY, this.headingPidReceiver.getOutput());
      w4.setRotationHeadingAndVelocity(leftStickX, leftStickY, this.headingPidReceiver.getOutput());
      
-     SmartDashboard.putNumber("gyro ", this.gyro.getAngle() % 360);
+     SmartDashboard.putNumber("gyro ", ((this.gyro.getAngle() % 360) + 360) % 360);
      SmartDashboard.putNumber("error ", this.headingPidController.getError());
      SmartDashboard.putNumber("output ", this.headingPidReceiver.getOutput());
   }
