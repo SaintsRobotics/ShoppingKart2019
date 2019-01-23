@@ -13,6 +13,7 @@ import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.*;
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
+import com.saintsrobotics.swerveDrive.util.ToHeading;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -39,6 +40,7 @@ public class Robot extends TaskRobot {
   private double[] leftBackLoc = {-12, -12.75};
   private double[] rightBackLoc = {12, -12.5};
   private double[] pivotLoc = {0, 0};
+  public SwerveControl swerveControl;
 
   public static Robot instance;
 
@@ -64,7 +66,6 @@ public class Robot extends TaskRobot {
   public void autonomousInit() {
   }
 
-  public SwerveControl swerveControl;
   @Override     
   public void teleopInit() {
     
@@ -79,6 +80,11 @@ public class Robot extends TaskRobot {
     this.teleopTasks = new Task[] {
         leftBack, leftFront, rightBack, rightFront,  new ResetGyro(),
         swerveControl,
+
+        new ToHeading(() -> c.DPAD_UP(), 0.0),
+        new ToHeading(() -> c.DPAD_RIGHT(), 90.0),
+        new ToHeading(() -> c.DPAD_DOWN(), 180.0),
+        new ToHeading(() -> c.DPAD_LEFT(), 270.0),
 
         new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(), 
         new UpdateMotors(this.motors)

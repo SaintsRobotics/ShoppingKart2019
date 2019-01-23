@@ -60,8 +60,8 @@ public class SwerveControl extends RunEachFrameTask {
     time = Timer.getFPGATimestamp();
   }
 
-  public void resetRobotTargetHead() {
-    this.robotTargetHead = 0;
+  public void setRobotTargetHead(double n) {
+    this.robotTargetHead = n;
   }
 
   @Override

@@ -7,22 +7,28 @@
 
 package com.saintsrobotics.swerveDrive.util;
 
+import java.util.function.BooleanSupplier;
+
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
 import com.saintsrobotics.swerveDrive.Robot;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class ResetGyro extends RunContinuousTask {
+public class ToHeading extends RunContinuousTask {
+    private BooleanSupplier dpadButton;
+    private double targetHead;
+
+    public ToHeading(BooleanSupplier dpadButton, double targetHead) {
+        this.dpadButton = dpadButton;
+        this.targetHead = targetHead;
+    }
 
     @Override
     public void runForever() {
         while (true) {
-            DriverStation.reportWarning("wait", false);
-            wait.until(() -> Robot.instance.oi.xboxInput.Y());
-            Robot.instance.sensors.gyro.reset();
-            Robot.instance.swerveControl.setRobotTargetHead(0.0);
-            DriverStation.reportWarning("gyro reset", false);
+            wait.until(this.dpadButton);
+            Robot.instance.swerveControl.setRobotTargetHead(this.targetHead);
         }
     }
 }
