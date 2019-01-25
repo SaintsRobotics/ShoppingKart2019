@@ -29,6 +29,8 @@ public class SwerveControl extends RunEachFrameTask {
   private PIDController headingPidController;
   private PIDSource encoder;
 
+  private boolean isTurning;
+
 
   public SwerveControl(XboxInput xboxInput, SwerveWheel w1, SwerveWheel w2, SwerveWheel w3,
       SwerveWheel w4, ADXRS450_Gyro gyro) {
@@ -47,7 +49,7 @@ public class SwerveControl extends RunEachFrameTask {
     // this.gyro.reset();
 
     this.headingPidReceiver = new PIDReceiver();
-    this.headingPidController = new PIDController(0.2, 0.0, 0.35,
+    this.headingPidController = new PIDController(0.1, 0.0, 0.0,
         this.gyro, headingPidReceiver);
     this.headingPidController.setAbsoluteTolerance(2.0);
     this.headingPidController.setOutputRange(-1, 1);
@@ -61,7 +63,7 @@ public class SwerveControl extends RunEachFrameTask {
   }
 
   public void setRobotTargetHead(double n) {
-    this.robotTargetHead = n;
+    this.headingPidController.setSetpoint(n);
   }
 
   @Override
@@ -74,34 +76,34 @@ public class SwerveControl extends RunEachFrameTask {
     double leftStickX = xboxInput.leftStickX();
     double leftStickY = -xboxInput.leftStickY();
     double rightStickX = xboxInput.rightStickX();
-
+    
     leftStickX *= this.speedMultiplier;
     leftStickY *= this.speedMultiplier;
 
-    if (rightStickX >= -0.075 && rightStickX <= 0.075) {
+    SmartDashboard.putNumber("rightStickX", rightStickX);
+    if (Math.abs(rightStickX) <= 0.15) {
       rightStickX = 0;
     }
 
-    //Absolute control
-    double currentHead = 0;
-    if (this.xboxInput.RB()) {
-      //Gyro coords are continuous so this restricts it to 360
-      currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
-      //temporary values for x and y pre-translation
-      double tempX = leftStickX;
-      double tempY = leftStickY;
-      //overwriting
-      leftStickX = (tempX * Math.cos(Math.toRadians(currentHead))) - (tempY * Math.sin(Math.toRadians(currentHead)));
-      leftStickY = (tempX * Math.sin(Math.toRadians(currentHead))) + (tempY * Math.cos(Math.toRadians(currentHead)));
-    }
-
+    //Gyro coords are continuous so this restricts it to 360
+    double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
 
     //this.robotTargetHead = SwerveWheel.findAngle(rightStickX, rightStickY);
-    this.robotTargetHead += rightStickX * 0.5;
-    this.robotTargetHead = ((this.robotTargetHead % 360) + 360) % 360;
-    SmartDashboard.putNumber("robotTargetHead ", this.robotTargetHead);
-    SmartDashboard.putNumber("rightStickX", rightStickX);
-    this.headingPidController.setSetpoint(this.robotTargetHead);
+    double rotationVector = this.headingPidReceiver.getOutput();
+    if (rightStickX != 0.0) {
+      rotationVector = rightStickX;
+      isTurning = true;
+    }
+    else if (rightStickX == 0.0 && isTurning) {
+      this.headingPidController.setSetpoint(currentHead);
+      isTurning = false;
+    }
+    
+    // this.robotTargetHead += rightStickX * 0.5;
+    // this.robotTargetHead = ((this.robotTargetHead % 360) + 360) % 360;
+    // SmartDashboard.putNumber("robotTargetHead ", this.robotTargetHead);
+    // SmartDashboard.putNumber("rightStickX", rightStickX);
+    // this.headingPidController.setSetpoint(this.robotTargetHead);
 
     //Absolute control
     if(this.xboxInput.RB()) {
@@ -117,10 +119,10 @@ public class SwerveControl extends RunEachFrameTask {
      leftStickY = (tempX * Math.sin(Math.toRadians(robotAngle))) + (tempY * Math.cos(Math.toRadians(robotAngle)));
     }
 
-     w1.setRotationHeadingAndVelocity(leftStickX, leftStickY, this.headingPidReceiver.getOutput());
-     w2.setRotationHeadingAndVelocity(leftStickX, leftStickY, this.headingPidReceiver.getOutput());
-     w3.setRotationHeadingAndVelocity(leftStickX, leftStickY, this.headingPidReceiver.getOutput());
-     w4.setRotationHeadingAndVelocity(leftStickX, leftStickY, this.headingPidReceiver.getOutput());
+     w1.setRotationHeadingAndVelocity(leftStickX, leftStickY, rotationVector);
+     w2.setRotationHeadingAndVelocity(leftStickX, leftStickY, rotationVector);
+     w3.setRotationHeadingAndVelocity(leftStickX, leftStickY, rotationVector);
+     w4.setRotationHeadingAndVelocity(leftStickX, leftStickY, rotationVector);
      
      SmartDashboard.putNumber("gyro ", ((this.gyro.getAngle() % 360) + 360) % 360);
      SmartDashboard.putNumber("error ", this.headingPidController.getError());

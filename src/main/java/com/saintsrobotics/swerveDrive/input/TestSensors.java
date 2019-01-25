@@ -11,10 +11,15 @@ public class TestSensors extends Sensors {
 
   @Override
   public void init() {
-    this.leftFrontEncoder = new AbsoluteEncoder(2, -65, true);
-    this.rightFrontEncoder = new AbsoluteEncoder(1, -202, true);
-    this.leftBackEncoder = new AbsoluteEncoder(3, 10, true);
-    this.rightBackEncoder = new AbsoluteEncoder(0, -109, true);
+    // this.leftFrontEncoder = new AbsoluteEncoder(2, -65, true);
+    // this.rightFrontEncoder = new AbsoluteEncoder(1, -202, true);
+    // this.leftBackEncoder = new AbsoluteEncoder(3, 10, true);
+    // this.rightBackEncoder = new AbsoluteEncoder(0, -109, true);
+
+    this.leftFrontEncoder = new AbsoluteEncoder(0, -109, true);
+    this.rightFrontEncoder = new AbsoluteEncoder(3, 10, true);
+    this.leftBackEncoder = new AbsoluteEncoder(1, -202, true);
+    this.rightBackEncoder = new AbsoluteEncoder(2, -65, true);
     
     this.leftFrontTurnConfig = new TurnConfiguration(this.leftFrontEncoder);
     this.leftBackTurnConfig = new TurnConfiguration(this.leftBackEncoder);

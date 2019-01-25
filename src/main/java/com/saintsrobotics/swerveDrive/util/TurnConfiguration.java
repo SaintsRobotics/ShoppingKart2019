@@ -28,6 +28,4 @@ public class TurnConfiguration {
     this.forwardDistanceTolerance = 2;
     this.encoder = encoder;
   }
-  
-
 }

@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
+import com.github.dozer.coroutine.helpers.RunParallelTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.input.OI;
 import com.saintsrobotics.swerveDrive.input.Sensors;
@@ -12,12 +13,9 @@ import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.*;
-<<<<<<< HEAD
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
-=======
 import com.saintsrobotics.swerveDrive.util.Pipeline;
->>>>>>> First DockTask Draft
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 
 import org.opencv.core.Rect;
@@ -51,15 +49,12 @@ public class Robot extends TaskRobot {
   private double[] leftBackLoc = {-12, -12.75};
   private double[] rightBackLoc = {12, -12.5};
   private double[] pivotLoc = {0, 0};
-<<<<<<< HEAD
   public SwerveControl swerveControl;
-=======
   public UsbCamera camera;
   private VisionThread visionThread;
   public Object imgLock = new Object();
   private Rect targetOne;
   private Rect targetTwo;
->>>>>>> First DockTask Draft
 
   public static Robot instance;
 
@@ -79,30 +74,8 @@ public class Robot extends TaskRobot {
     this.flags = new Flags();
 
     this.flags.pdp = new PowerDistributionPanel();
-<<<<<<< HEAD
-=======
     this.camera = CameraServer.getInstance().startAutomaticCapture();
-    
->>>>>>> First DockTask Draft
-    }
 
-  @Override
-  public void autonomousInit() {
-  }
-
-  @Override     
-  public void teleopInit() {
-    
-    XboxInput c = Robot.instance.oi.xboxInput;
-    RobotMotors motors = Robot.instance.motors;
-    SwerveWheel rightFront = new SwerveWheel("rightFront", motors.rightFront, motors.rightFrontTurner, Robot.instance.sensors.rightFrontTurnConfig, this.rightFrontLoc, this.pivotLoc);
-    SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner, Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
-    SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner, Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
-    SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner, Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
-<<<<<<< HEAD
-    swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
-=======
-    
     visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
       synchronized (imgLock) {
         if (pipeline.filterContoursOutput().size() == 2) {
@@ -121,10 +94,27 @@ public class Robot extends TaskRobot {
     });
 
     visionThread.start();
+    
+    }
 
->>>>>>> First DockTask Draft
+  @Override
+  public void autonomousInit() {
+  }
+
+  @Override     
+  public void teleopInit() {
+    
+    XboxInput c = Robot.instance.oi.xboxInput;
+    RobotMotors motors = Robot.instance.motors;
+    SwerveWheel rightFront = new SwerveWheel("rightFront", motors.rightFront, motors.rightFrontTurner, Robot.instance.sensors.rightFrontTurnConfig, this.rightFrontLoc, this.pivotLoc);
+    SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner, Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
+    SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner, Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
+    SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner, Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
+    swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
+
     this.teleopTasks = new Task[] {
-        leftBack, leftFront, rightBack, rightFront,  new ResetGyro(),
+        leftBack, leftFront, rightBack, rightFront,  
+        new ResetGyro(),
         swerveControl,
 
         new ToHeading(() -> c.DPAD_UP(), 0.0),
@@ -132,7 +122,8 @@ public class Robot extends TaskRobot {
         new ToHeading(() -> c.DPAD_DOWN(), 180.0),
         new ToHeading(() -> c.DPAD_LEFT(), 270.0),
 
-        new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(), 
+        new DockTask(targetOne, targetTwo, imgLock),
+        // new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(), 
         new UpdateMotors(this.motors)
     };
     
@@ -141,7 +132,6 @@ public class Robot extends TaskRobot {
   
   @Override
   public void disabledInit() {
-    this.disabledTasks = new Task[] {};
     super.disabledInit();
   }
 }
