@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.Timer;
-
 import com.saintsrobotics.swerveDrive.util.PIDReceiver;
+
+import edu.wpi.first.wpilibj.Timer;
 
 public class SwerveControl extends RunEachFrameTask {
   private XboxInput xboxInput;
@@ -92,11 +92,11 @@ public class SwerveControl extends RunEachFrameTask {
     double rotationVector = this.headingPidReceiver.getOutput();
     if (rightStickX != 0.0) {
       rotationVector = rightStickX;
-      isTurning = true;
+      this.isTurning = true;
     }
-    else if (rightStickX == 0.0 && isTurning) {
+    else if (rightStickX == 0.0 && this.isTurning) {
       this.headingPidController.setSetpoint(currentHead);
-      isTurning = false;
+      this.isTurning = false;
     }
     
     // this.robotTargetHead += rightStickX * 0.5;

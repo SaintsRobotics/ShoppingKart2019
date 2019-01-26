@@ -17,6 +17,7 @@ import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
 import com.saintsrobotics.swerveDrive.util.Pipeline;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
+import com.saintsrobotics.swerveDrive.util.VisionBroker;
 
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
@@ -28,110 +29,119 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the IterativeRobot documentation. If you change the name of this class
- * or the package after creating this project, you must also update the manifest file in the
- * resource directory.
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
  */
 public class Robot extends TaskRobot {
-	
-    private SendableChooser<Supplier<Task>> taskChooser;
 
+	private SendableChooser<Supplier<Task>> taskChooser;
 
-  public RobotMotors motors;
-  public Sensors sensors;
-  public OI oi;
-  public Flags flags;
-  private double[] rightFrontLoc = {12, 12.75};
-  private double[] leftFrontLoc = {-12, 12.75};
-  private double[] leftBackLoc = {-12, -12.75};
-  private double[] rightBackLoc = {12, -12.5};
-  private double[] pivotLoc = {0, 0};
-  public SwerveControl swerveControl;
-  public UsbCamera camera;
-  private VisionThread visionThread;
-  public Object imgLock = new Object();
-  private Rect targetOne;
-  private Rect targetTwo;
+	public RobotMotors motors;
+	public Sensors sensors;
+	public OI oi;
+	public Flags flags;
+	private double[] rightFrontLoc = { 12, 12.75 };
+	private double[] leftFrontLoc = { -12, 12.75 };
+	private double[] leftBackLoc = { -12, -12.75 };
+	private double[] rightBackLoc = { 12, -12.5 };
+	private double[] pivotLoc = { 0, 0 };
+	public SwerveControl swerveControl;
+	public UsbCamera camera;
+	private VisionThread visionThread;
+	private VisionBroker broker;
 
-  public static Robot instance;
+	private double time = Timer.getFPGATimestamp();
 
-  @Override
-  public void robotInit() {
-    Robot.instance = this;
-    taskChooser = new SendableChooser<>();
-    this.oi = new OI();
-    this.motors = new TestBotMotors();
-    this.motors.init();
-    this.sensors = new TestSensors();
-    this.sensors.init();
-    this.sensors.gyro.calibrate();
-    this.sensors.gyro.reset();
-    //this.temp = new SpeedController[8];
-    //for(int i = 1; i < 9; i++) this.temp[i-1] = new Talon(i);
-    this.flags = new Flags();
+	public static Robot instance;
 
-    this.flags.pdp = new PowerDistributionPanel();
-    this.camera = CameraServer.getInstance().startAutomaticCapture();
+	@Override
+	public void robotInit() {
+		Robot.instance = this;
+		taskChooser = new SendableChooser<>();
+		this.oi = new OI();
+		this.motors = new TestBotMotors();
+		this.motors.init();
+		this.sensors = new TestSensors();
+		this.sensors.init();
+		this.sensors.gyro.calibrate();
+		this.sensors.gyro.reset();
+		// this.temp = new SpeedController[8];
+		// for(int i = 1; i < 9; i++) this.temp[i-1] = new Talon(i);
+		this.flags = new Flags();
 
-    visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
-      synchronized (imgLock) {
-        if (pipeline.filterContoursOutput().size() == 2) {
-          targetOne = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          targetTwo = Imgproc.boundingRect(pipeline.filterContoursOutput().get(1));
-        }
-        else if (pipeline.filterContoursOutput().size() == 1) {
-          targetOne = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          targetTwo = null;
-        }
-        else {
-          targetOne = null;
-          targetTwo = null;
-        }
-      }
-    });
+		this.flags.pdp = new PowerDistributionPanel();
+		this.camera = CameraServer.getInstance().startAutomaticCapture();
+		camera.setResolution(360, 240);
 
-    visionThread.start();
-    
-    }
+		this.broker = new VisionBroker();
 
-  @Override
-  public void autonomousInit() {
-  }
+	}
 
-  @Override     
-  public void teleopInit() {
-    
-    XboxInput c = Robot.instance.oi.xboxInput;
-    RobotMotors motors = Robot.instance.motors;
-    SwerveWheel rightFront = new SwerveWheel("rightFront", motors.rightFront, motors.rightFrontTurner, Robot.instance.sensors.rightFrontTurnConfig, this.rightFrontLoc, this.pivotLoc);
-    SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner, Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
-    SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner, Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
-    SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner, Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
-    swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
+	@Override
+	public void autonomousInit() {
+	}
 
-    this.teleopTasks = new Task[] {
-        leftBack, leftFront, rightBack, rightFront,  
-        new ResetGyro(),
-        swerveControl,
+	@Override
+	public void teleopInit() {
 
-        new ToHeading(() -> c.DPAD_UP(), 0.0),
-        new ToHeading(() -> c.DPAD_RIGHT(), 90.0),
-        new ToHeading(() -> c.DPAD_DOWN(), 180.0),
-        new ToHeading(() -> c.DPAD_LEFT(), 270.0),
+		XboxInput c = Robot.instance.oi.xboxInput;
+		RobotMotors motors = Robot.instance.motors;
+		SwerveWheel rightFront = new SwerveWheel("rightFront", motors.rightFront, motors.rightFrontTurner,
+				Robot.instance.sensors.rightFrontTurnConfig, this.rightFrontLoc, this.pivotLoc);
+		SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner,
+				Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
+		SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner,
+				Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
+		SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner,
+				Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
+		swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
 
-        new DockTask(targetOne, targetTwo, imgLock),
-        // new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(), 
-        new UpdateMotors(this.motors)
-    };
-    
-    super.teleopInit();
-  }
-  
-  @Override
-  public void disabledInit() {
-    super.disabledInit();
-  }
+		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
+			
+			double now = Timer.getFPGATimestamp();
+			SmartDashboard.putNumber("vision thread time", now-time);
+			if (pipeline.filterContoursOutput().size() == 2) {
+				this.broker.setRects(Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)),
+						Imgproc.boundingRect(pipeline.filterContoursOutput().get(1)));
+				System.out.println("2 rect");
+			} 
+			else if (pipeline.filterContoursOutput().size() == 1) {
+				this.broker.setRects(Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)), null);
+				System.out.println("1 rect");
+			} 
+			else {
+				this.broker.setRects(null, null);
+				System.out.println("0 rect");
+			}
+			// System.out.println("target 1 " + this.targetOne);
+			// System.out.println("target 2 " + this.targetTwo);
+
+			time = now;
+		});
+
+		visionThread.start();
+
+		this.teleopTasks = new Task[] { leftBack, leftFront, rightBack, rightFront, new ResetGyro(), swerveControl,
+
+				new ToHeading(() -> c.DPAD_UP(), 0.0), new ToHeading(() -> c.DPAD_RIGHT(), 90.0),
+				new ToHeading(() -> c.DPAD_DOWN(), 180.0), new ToHeading(() -> c.DPAD_LEFT(), 270.0),
+
+				new DockTask(this.broker, this.swerveControl),
+				// new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(),
+				new UpdateMotors(this.motors) };
+
+		super.teleopInit();
+	}
+
+	@Override
+	public void disabledInit() {
+		super.disabledInit();
+	}
 }
