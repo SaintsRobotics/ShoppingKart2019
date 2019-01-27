@@ -23,7 +23,7 @@ public class SwerveWheel {
 	private PIDController headingPidController;
 	private PIDSource encoder;
 
-	public SwerveWheel(String name, Motor driveMotor, Motor turnMotor, TurnConfiguration pidConfig, double[] wheelLoc,
+	public SwerveWheel(Motor driveMotor, Motor turnMotor, TurnConfiguration pidConfig, double[] wheelLoc,
 			double[] pivotLoc) {
 		this.driveMotor = driveMotor;
 		this.turnMotor = turnMotor;

@@ -87,19 +87,22 @@ public class Robot extends TaskRobot {
 	@Override
 	public void teleopInit() {
 
-		XboxInput c = Robot.instance.oi.xboxInput;
 		RobotMotors motors = Robot.instance.motors;
-		SwerveWheel rightFront = new SwerveWheel("rightFront", motors.rightFront, motors.rightFrontTurner,
+		SwerveWheel rightFront = new SwerveWheel(motors.rightFront, motors.rightFrontTurner,
 				Robot.instance.sensors.rightFrontTurnConfig, this.rightFrontLoc, this.pivotLoc);
-		SwerveWheel leftFront = new SwerveWheel("leftFront", motors.leftFront, motors.leftFrontTurner,
+
+		SwerveWheel leftFront = new SwerveWheel(motors.leftFront, motors.leftFrontTurner,
 				Robot.instance.sensors.leftFrontTurnConfig, this.leftFrontLoc, this.pivotLoc);
-		SwerveWheel leftBack = new SwerveWheel("leftBack", motors.leftBack, motors.leftBackTurner,
+
+		SwerveWheel leftBack = new SwerveWheel(motors.leftBack, motors.leftBackTurner,
 				Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
-		SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner,
+
+		SwerveWheel rightBack = new SwerveWheel(motors.rightBack, motors.rightBackTurner,
 				Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
+
 		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
-		swerveControl = new SwerveControl(c, wheels, Robot.instance.sensors.gyro);
-		SwerveInput swerveInput = new SwerveInput(c, this.sensors.gyro, swerveControl);
+		swerveControl = new SwerveControl(wheels, Robot.instance.sensors.gyro);
+		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl);
 		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
 
 			double now = Timer.getFPGATimestamp();
@@ -122,8 +125,10 @@ public class Robot extends TaskRobot {
 
 		this.teleopTasks = new Task[] { new ResetGyro(), swerveInput, swerveControl,
 
-				new ToHeading(() -> c.DPAD_UP(), 0.0), new ToHeading(() -> c.DPAD_RIGHT(), 90.0),
-				new ToHeading(() -> c.DPAD_DOWN(), 180.0), new ToHeading(() -> c.DPAD_LEFT(), 270.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
 
 				new DockTask(this.broker, this.swerveControl),
 				// new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(),

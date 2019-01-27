@@ -15,7 +15,6 @@ public class SwerveControl extends RunEachFrameTask {
 	private static final double SPEED_GAIN = 0.75;
 	private static final double TURN_GAIN = 0.25;
 
-	private XboxInput xboxInput;
 	private SwerveWheel[] wheels;
 	private boolean isTurning;
 	private double maxRad;
@@ -30,8 +29,7 @@ public class SwerveControl extends RunEachFrameTask {
 	private double translationY;
 	private double rotationX;
 
-	public SwerveControl(XboxInput xboxInput, SwerveWheel[] wheels, ADXRS450_Gyro gyro) {
-		this.xboxInput = xboxInput;
+	public SwerveControl(SwerveWheel[] wheels, ADXRS450_Gyro gyro) {
 		this.wheels = wheels;
 
 		for (SwerveWheel s : wheels) {
@@ -52,37 +50,45 @@ public class SwerveControl extends RunEachFrameTask {
 		this.headingPidController.enable();
 	}
 
+	/**
+	 * sets horizontal and vertical movement vectors
+	 * 
+	 * @param x direction (and magnitude) of the horizontal-movement vector
+	 * @param y direction (and magnitude) of the vertical-movement vector
+	 */
 	public void setTranslationVector(double x, double y) {
 		this.translationX = x;
 		this.translationY = y;
 	}
 
+	/**
+	 * sets the magnitude and direction of rotation vector (eg. turn stick input)
+	 * 
+	 * @param x the magnitude and direction of the raw rotation vector
+	 */
 	public void setRotationVector(double x) {
 		this.rotationX = x;
 	}
 
+	/**
+	 * sends target heading to pid, in degrees will maintain heading over time, and
+	 * is an absolute position
+	 * 
+	 * @param n the target heading in degrees
+	 */
 	public void setRobotTargetHead(double n) {
 		this.headingPidController.setSetpoint(n);
 	}
 
 	@Override
 	public void runEachFrame() {
-		// double now = Timer.getFPGATimestamp();
-		// SmartDashboard.putNumber("elapsed time", now - time);
-		// this.time = now;
 
 		this.translationX *= SPEED_GAIN;
 		this.translationY *= SPEED_GAIN;
 
-		// // dead zone
-		// if (Math.abs(rotationX) <= 0.15) {
-		// rotationX = 0;
-		// }
-
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
 
-		// this.robotTargetHead = AngleUtilities.findAngle(rotationX, rightStickY);
 		double rotationInput = this.headingPidReceiver.getOutput();
 		if (this.rotationX != 0.0) {
 			rotationInput = this.rotationX;
@@ -92,9 +98,9 @@ public class SwerveControl extends RunEachFrameTask {
 			this.isTurning = false;
 		}
 
-		// combination of rotation and translation vectors for each of the four
-		// SwerveWheels
-		// ultimately will be a polar vector {heading, velocity}
+		// Doing math with each of the vectors for the SwerveWheels
+		// Calculating the rotation vector, then adding that to the translation vector
+		// Finally, converting it to a polar vector
 		double[][] vectors = new double[wheels.length][2];
 		for (int i = 0; i < wheels.length; i++) {
 			vectors[i][0] = wheels[i].getRotationVector()[0] * this.turnCoefficient * rotationInput + translationX;
@@ -102,9 +108,5 @@ public class SwerveControl extends RunEachFrameTask {
 			vectors[i] = AngleUtilities.cartesianToPolar(vectors[i]);
 			wheels[i].setHeadAndVelocity(vectors[i][0], vectors[i][1]);
 		}
-
-		SmartDashboard.putNumber("gyro ", ((this.gyro.getAngle() % 360) + 360) % 360);
-		SmartDashboard.putNumber("error ", this.headingPidController.getError());
-		SmartDashboard.putNumber("output ", this.headingPidReceiver.getOutput());
 	}
 }
