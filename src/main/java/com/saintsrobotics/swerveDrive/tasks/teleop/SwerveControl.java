@@ -21,12 +21,14 @@ public class SwerveControl extends RunEachFrameTask {
 	private double maxRad;
 	private double turnCoefficient;
 
-	private double time;
-
 	private ADXRS450_Gyro gyro;
 
 	private PIDReceiver headingPidReceiver;
 	private PIDController headingPidController;
+
+	private double translationX;
+	private double translationY;
+	private double rotationX;
 
 	public SwerveControl(XboxInput xboxInput, SwerveWheel[] wheels, ADXRS450_Gyro gyro) {
 		this.xboxInput = xboxInput;
@@ -48,8 +50,15 @@ public class SwerveControl extends RunEachFrameTask {
 		this.headingPidController.setContinuous();
 		this.headingPidController.reset();
 		this.headingPidController.enable();
+	}
 
-		time = Timer.getFPGATimestamp();
+	public void setTranslationVector(double x, double y) {
+		this.translationX = x;
+		this.translationY = y;
+	}
+
+	public void setRotationVector(double x) {
+		this.rotationX = x;
 	}
 
 	public void setRobotTargetHead(double n) {
@@ -58,48 +67,29 @@ public class SwerveControl extends RunEachFrameTask {
 
 	@Override
 	public void runEachFrame() {
-		double now = Timer.getFPGATimestamp();
-		SmartDashboard.putNumber("elapsed time", now - time);
-		time = now;
+		// double now = Timer.getFPGATimestamp();
+		// SmartDashboard.putNumber("elapsed time", now - time);
+		// this.time = now;
 
-		double leftStickX = xboxInput.leftStickX();
-		double leftStickY = -xboxInput.leftStickY();
-		double rightStickX = xboxInput.rightStickX();
+		this.translationX *= SPEED_GAIN;
+		this.translationY *= SPEED_GAIN;
 
-		leftStickX *= this.SPEED_GAIN;
-		leftStickY *= this.SPEED_GAIN;
-
-		if (Math.abs(rightStickX) <= 0.15) {
-			rightStickX = 0;
-		}
+		// // dead zone
+		// if (Math.abs(rotationX) <= 0.15) {
+		// rotationX = 0;
+		// }
 
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
 
-		// this.robotTargetHead = AngleUtilities.findAngle(rightStickX, rightStickY);
+		// this.robotTargetHead = AngleUtilities.findAngle(rotationX, rightStickY);
 		double rotationInput = this.headingPidReceiver.getOutput();
-		if (rightStickX != 0.0) {
-			rotationInput = rightStickX;
+		if (this.rotationX != 0.0) {
+			rotationInput = this.rotationX;
 			this.isTurning = true;
-		} else if (rightStickX == 0.0 && this.isTurning) {
+		} else if (this.rotationX == 0.0 && this.isTurning) {
 			this.headingPidController.setSetpoint(currentHead);
 			this.isTurning = false;
-		}
-
-		// Absolute control
-		if (this.xboxInput.RB()) {
-			// Gyro coords are continous so this restricts it to 360 degrees
-			double robotAngle = ((this.gyro.getAngle() % 360) + 360) % 360;
-
-			// Temporary save of x and y pre-translation
-			double tempX = leftStickX;
-			double tempY = leftStickY;
-
-			// Overwriting x and y
-			leftStickX = (tempX * Math.cos(Math.toRadians(robotAngle)))
-					- (tempY * Math.sin(Math.toRadians(robotAngle)));
-			leftStickY = (tempX * Math.sin(Math.toRadians(robotAngle)))
-					+ (tempY * Math.cos(Math.toRadians(robotAngle)));
 		}
 
 		// combination of rotation and translation vectors for each of the four
@@ -107,8 +97,8 @@ public class SwerveControl extends RunEachFrameTask {
 		// ultimately will be a polar vector {heading, velocity}
 		double[][] vectors = new double[wheels.length][2];
 		for (int i = 0; i < wheels.length; i++) {
-			vectors[i][0] = wheels[i].getRotationVector()[0] * this.turnCoefficient * rotationInput + leftStickX;
-			vectors[i][1] = wheels[i].getRotationVector()[1] * this.turnCoefficient * rotationInput + leftStickY;
+			vectors[i][0] = wheels[i].getRotationVector()[0] * this.turnCoefficient * rotationInput + translationX;
+			vectors[i][1] = wheels[i].getRotationVector()[1] * this.turnCoefficient * rotationInput + translationY;
 			vectors[i] = AngleUtilities.cartesianToPolar(vectors[i]);
 			wheels[i].setHeadAndVelocity(vectors[i][0], vectors[i][1]);
 		}

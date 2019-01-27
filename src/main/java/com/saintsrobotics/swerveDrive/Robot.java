@@ -13,6 +13,7 @@ import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
+import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveInput;
 import com.saintsrobotics.swerveDrive.util.Pipeline;
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
@@ -96,23 +97,21 @@ public class Robot extends TaskRobot {
 				Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
 		SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner,
 				Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
-		SwerveWheel[] wheels = {rightFront, leftFront, leftBack, rightBack};
+		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
 		swerveControl = new SwerveControl(c, wheels, Robot.instance.sensors.gyro);
-
+		SwerveInput swerveInput = new SwerveInput(c, this.sensors.gyro, swerveControl);
 		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
-			
+
 			double now = Timer.getFPGATimestamp();
-			SmartDashboard.putNumber("vision thread time", now-time);
+			SmartDashboard.putNumber("vision thread time", now - time);
 			if (pipeline.filterContoursOutput().size() == 2) {
 				this.broker.setRects(Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)),
 						Imgproc.boundingRect(pipeline.filterContoursOutput().get(1)));
 				System.out.println("2 rect");
-			} 
-			else if (pipeline.filterContoursOutput().size() == 1) {
+			} else if (pipeline.filterContoursOutput().size() == 1) {
 				this.broker.setRects(Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)), null);
 				System.out.println("1 rect");
-			} 
-			else {
+			} else {
 				this.broker.setRects(null, null);
 				System.out.println("0 rect");
 			}
@@ -121,7 +120,7 @@ public class Robot extends TaskRobot {
 
 		visionThread.start();
 
-		this.teleopTasks = new Task[] { new ResetGyro(), swerveControl,
+		this.teleopTasks = new Task[] { new ResetGyro(), swerveInput, swerveControl,
 
 				new ToHeading(() -> c.DPAD_UP(), 0.0), new ToHeading(() -> c.DPAD_RIGHT(), 90.0),
 				new ToHeading(() -> c.DPAD_DOWN(), 180.0), new ToHeading(() -> c.DPAD_LEFT(), 270.0),
