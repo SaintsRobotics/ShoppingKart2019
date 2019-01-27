@@ -1,10 +1,9 @@
 package com.saintsrobotics.swerveDrive;
 
 import java.util.function.Supplier;
+
 import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
-import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-import com.github.dozer.coroutine.helpers.RunParallelTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.input.OI;
 import com.saintsrobotics.swerveDrive.input.Sensors;
@@ -12,25 +11,23 @@ import com.saintsrobotics.swerveDrive.input.TestSensors;
 import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
-import com.saintsrobotics.swerveDrive.tasks.teleop.*;
+import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
+import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
+import com.saintsrobotics.swerveDrive.util.Pipeline;
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
-import com.saintsrobotics.swerveDrive.util.Pipeline;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 import com.saintsrobotics.swerveDrive.util.VisionBroker;
 
-import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -72,8 +69,6 @@ public class Robot extends TaskRobot {
 		this.sensors.init();
 		this.sensors.gyro.calibrate();
 		this.sensors.gyro.reset();
-		// this.temp = new SpeedController[8];
-		// for(int i = 1; i < 9; i++) this.temp[i-1] = new Talon(i);
 		this.flags = new Flags();
 
 		this.flags.pdp = new PowerDistributionPanel();
@@ -101,7 +96,8 @@ public class Robot extends TaskRobot {
 				Robot.instance.sensors.leftBackTurnConfig, this.leftBackLoc, this.pivotLoc);
 		SwerveWheel rightBack = new SwerveWheel("rightBack", motors.rightBack, motors.rightBackTurner,
 				Robot.instance.sensors.rightBackTurnConfig, this.rightBackLoc, this.pivotLoc);
-		swerveControl = new SwerveControl(c, rightFront, leftFront, leftBack, rightBack, Robot.instance.sensors.gyro);
+		SwerveWheel[] wheels = {rightFront, leftFront, leftBack, rightBack};
+		swerveControl = new SwerveControl(c, wheels, Robot.instance.sensors.gyro);
 
 		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
 			
@@ -120,15 +116,12 @@ public class Robot extends TaskRobot {
 				this.broker.setRects(null, null);
 				System.out.println("0 rect");
 			}
-			// System.out.println("target 1 " + this.targetOne);
-			// System.out.println("target 2 " + this.targetTwo);
-
 			time = now;
 		});
 
 		visionThread.start();
 
-		this.teleopTasks = new Task[] { leftBack, leftFront, rightBack, rightFront, new ResetGyro(), swerveControl,
+		this.teleopTasks = new Task[] { new ResetGyro(), swerveControl,
 
 				new ToHeading(() -> c.DPAD_UP(), 0.0), new ToHeading(() -> c.DPAD_RIGHT(), 90.0),
 				new ToHeading(() -> c.DPAD_DOWN(), 180.0), new ToHeading(() -> c.DPAD_LEFT(), 270.0),

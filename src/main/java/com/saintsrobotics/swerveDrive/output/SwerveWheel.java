@@ -1,45 +1,38 @@
 package com.saintsrobotics.swerveDrive.output;
 
-import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.output.Motor;
-import com.saintsrobotics.swerveDrive.Robot;
-import com.saintsrobotics.swerveDrive.input.AbsoluteEncoder;
-import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 import com.saintsrobotics.swerveDrive.util.PIDReceiver;
-import edu.wpi.first.wpilibj.DriverStation;
+import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
+
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class SwerveWheel extends RunEachFrameTask {
+public class SwerveWheel {
   private Motor driveMotor;
   private Motor turnMotor;
   public double targetHead;
   public double targetVelocity;
-  //x and y coordinates of wheel and location of pivot point on robot
+  // x and y coordinates of wheel and location of pivot point on robot
   private double[] wheelLoc = new double[2];
   private double[] pivotLoc = new double[2];
+  private double[] rotationVector;
   // distance of wheel from pivot
   private double radius;
-  // right stick sensitivity
-  private final static double TURN_GAIN = 0.25;
-  // the maximum distance from one wheel to the pivot point
-  private static double MAX_RADIUS;
 
   private PIDReceiver headingPidReceiver;
   private PIDController headingPidController;
-  private String name;
   private PIDSource encoder;
 
   public SwerveWheel(String name, Motor driveMotor, Motor turnMotor, TurnConfiguration pidConfig,
       double[] wheelLoc, double[] pivotLoc) {
-    this.name = name;
     this.driveMotor = driveMotor;
     this.turnMotor = turnMotor;
     this.encoder = pidConfig.encoder;
 
     this.wheelLoc = wheelLoc;
     this.pivotLoc = pivotLoc;
+
+    this.rotationVector = new double[] {this.wheelLoc[1] - this.pivotLoc[1], this.pivotLoc[0] - this.wheelLoc[0]};
 
     this.radius = Math.sqrt(Math.pow((this.wheelLoc[0] - this.pivotLoc[0]), 2)
         + Math.pow((this.wheelLoc[1] - this.pivotLoc[1]), 2));
@@ -71,64 +64,27 @@ public class SwerveWheel extends RunEachFrameTask {
     this.targetVelocity = targetVelocity;
     this.targetHead = targetHead;
 
-    // SmartDashboard.putNumber(this.name + " targetHead", this.targetHead);
-    // SmartDashboard.putNumber(this.name + " targetVelocity", this.targetVelocity);
+    //this was in RunEachFrame
+    this.driveMotor.set(this.targetVelocity);
+    this.headingPidController.setSetpoint(this.targetHead);
+    this.turnMotor.set(this.headingPidReceiver.getOutput());
   }
 
-  public void setRotationHeadingAndVelocity(double leftStickX, double leftStickY,
-      double rightStickX) {
-    double[] rotationVector = new double[2];
-    rotationVector[0] = (this.wheelLoc[1] - this.pivotLoc[1]) / this.radius;
-    rotationVector[1] = (this.pivotLoc[0] - this.wheelLoc[0]) / this.radius;
-
-    rotationVector[0] *= (TURN_GAIN / MAX_RADIUS) * this.radius * rightStickX;
-    rotationVector[1] *= (TURN_GAIN / MAX_RADIUS) * this.radius * rightStickX;
-
-    double[] totalVector = {leftStickX + rotationVector[0], leftStickY + rotationVector[1]};
-    double[] polar = cartesianToPolar(totalVector);
-    
-    this.setHeadAndVelocity(polar[0], polar[1]);
-  }
-
-  private static double[] cartesianToPolar(double[] coords) {
-    //returns in the format of {heading, velocity}
-    double[] polar = new double[2];
-    polar[0] = findAngle(coords[0], coords[1]);
-    polar[1] = Math.sqrt(Math.pow(coords[0], 2) + Math.pow(coords[1], 2));
-    return polar;
-  }
-
-  public static double findAngle(double x, double y) {
-    // finds angle from y-axis to given coordinates
-    if (y == 0 && x < 0)
-      return 270.00;
-    if (y == 0 && x > 0)
-      return 90.00;
-
-    if (y >= 0)
-      return (360 + Math.toDegrees(Math.atan(x / y))) % 360;
-
-    else
-      return 180 + Math.toDegrees(Math.atan(x / y));
-  }
-
+  /**
+   * Gets distance of the swerve wheel from the pivot point
+   * @return The distance of the wheel to the pivot point
+   */
   public double getRadius() {
     return this.radius;
   }
 
-  public static void setMaxRadius(double newRadius) {
-    SwerveWheel.MAX_RADIUS = newRadius;
-  }
-
-  public double getTurningEncoder() {
-    return this.encoder.pidGet();
-  }
-
-  @Override
-  public void runEachFrame() {
-    this.driveMotor.set(this.targetVelocity);
-    this.headingPidController.setSetpoint(this.targetHead);
-    double headingOutput = this.headingPidReceiver.getOutput();
-    this.turnMotor.set(headingOutput);
+  /**
+   * vector returned is used for calculating head and velocity (cartesian form) for each wheel
+   * the direction of the vector is fully calculated, and so is part of its magnitude
+   * the rest of the calculation is done in SwerveControl because we need to know the SwerveWheel's siblings' states
+   * @return a partially-calculated rotation vector, unique to each wheel
+   */
+  public double[] getRotationVector() {
+    return this.rotationVector;
   }
 }

@@ -9,7 +9,6 @@ package com.saintsrobotics.swerveDrive.util;
 
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
 import com.saintsrobotics.swerveDrive.Robot;
-import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
