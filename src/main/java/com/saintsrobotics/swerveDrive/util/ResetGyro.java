@@ -14,14 +14,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class ResetGyro extends RunContinuousTask {
 
-    @Override
-    public void runForever() {
-        while (true) {
-            DriverStation.reportWarning("wait", false);
-            wait.until(() -> Robot.instance.oi.xboxInput.Y());
-            Robot.instance.sensors.gyro.reset();
-            Robot.instance.swerveControl.setRobotTargetHead(0.0);
-            DriverStation.reportWarning("gyro reset", false);
-        }
-    }
+	@Override
+	public void runForever() {
+		while (true) {
+			DriverStation.reportWarning("wait", false);
+			wait.until(() -> Robot.instance.oi.xboxInput.Y());
+			Robot.instance.sensors.gyro.reset();
+			Robot.instance.swerveControl.setRobotTargetHead(0.0);
+			DriverStation.reportWarning("gyro reset", false);
+		}
+	}
 }

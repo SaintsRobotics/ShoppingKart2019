@@ -11,24 +11,21 @@ import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
 import com.saintsrobotics.swerveDrive.Robot;
-import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
-
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class ToHeading extends RunContinuousTask {
-    private BooleanSupplier dpadButton;
-    private double targetHead;
+	private BooleanSupplier dpadButton;
+	private double targetHead;
 
-    public ToHeading(BooleanSupplier dpadButton, double targetHead) {
-        this.dpadButton = dpadButton;
-        this.targetHead = targetHead;
-    }
+	public ToHeading(BooleanSupplier dpadButton, double targetHead) {
+		this.dpadButton = dpadButton;
+		this.targetHead = targetHead;
+	}
 
-    @Override
-    public void runForever() {
-        while (true) {
-            wait.until(this.dpadButton);
-            Robot.instance.swerveControl.setRobotTargetHead(this.targetHead);
-        }
-    }
+	@Override
+	public void runForever() {
+		while (true) {
+			wait.until(this.dpadButton);
+			Robot.instance.swerveControl.setRobotTargetHead(this.targetHead);
+		}
+	}
 }

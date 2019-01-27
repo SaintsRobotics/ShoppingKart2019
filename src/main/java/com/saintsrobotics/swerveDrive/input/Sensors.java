@@ -1,28 +1,28 @@
 package com.saintsrobotics.swerveDrive.input;
 
 import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
-import com.saintsrobotics.swerveDrive.input.AbsoluteEncoder;
 
 public abstract class Sensors {
-  public AbsoluteEncoder rightFrontEncoder;
-  public AbsoluteEncoder leftFrontEncoder;
-  public AbsoluteEncoder rightBackEncoder;
-  public AbsoluteEncoder leftBackEncoder;
+	public AbsoluteEncoder rightFrontEncoder;
+	public AbsoluteEncoder leftFrontEncoder;
+	public AbsoluteEncoder rightBackEncoder;
+	public AbsoluteEncoder leftBackEncoder;
 
-  public TurnConfiguration leftFrontTurnConfig;
-  public TurnConfiguration leftBackTurnConfig;
-  public TurnConfiguration rightFrontTurnConfig;
-  public TurnConfiguration rightBackTurnConfig;
+	public TurnConfiguration leftFrontTurnConfig;
+	public TurnConfiguration leftBackTurnConfig;
+	public TurnConfiguration rightFrontTurnConfig;
+	public TurnConfiguration rightBackTurnConfig;
 
-  public ADXRS450_Gyro gyro;
+	public ADXRS450_Gyro gyro;
 
-  public DistanceEncoder liftEncoder;
+	public DistanceEncoder liftEncoder;
 
-  public DigitalInput intake;
-  public DigitalInput lifterUp;
-  public DigitalInput lifterDown;
-  
-  public abstract void init();
+	public DigitalInput intake;
+	public DigitalInput lifterUp;
+	public DigitalInput lifterDown;
+
+	public abstract void init();
 }

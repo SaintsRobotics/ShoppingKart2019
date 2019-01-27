@@ -4,15 +4,15 @@ import edu.wpi.first.wpilibj.PIDOutput;
 
 public class PIDReceiver implements PIDOutput {
 
-  private volatile double output;
+	private volatile double output;
 
-  @Override
-  public void pidWrite(double output) {
-    this.output = output;
-  }
+	@Override
+	public void pidWrite(double output) {
+		this.output = output;
+	}
 
-  public double getOutput() {
-    return this.output;
-  }
+	public double getOutput() {
+		return this.output;
+	}
 
 }

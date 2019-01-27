@@ -7,18 +7,16 @@
 
 package com.saintsrobotics.swerveDrive.tasks.teleop;
 
-import com.saintsrobotics.swerveDrive.Robot;
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
-import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-
+import com.saintsrobotics.swerveDrive.Robot;
 
 public class OuttakeWheel extends RunContinuousTask {
 
-  @Override
-  protected void runForever() {
-    wait.until(()->Robot.instance.oi.xboxInput.LB() && !Robot.instance.oi.xboxInput.RB());
-    Robot.instance.motors.intake.set(-1);
-    wait.until(()->!Robot.instance.oi.xboxInput.LB() || Robot.instance.oi.xboxInput.RB());
-    Robot.instance.motors.intake.stop();
-  }
+	@Override
+	protected void runForever() {
+		wait.until(() -> Robot.instance.oi.xboxInput.LB() && !Robot.instance.oi.xboxInput.RB());
+		Robot.instance.motors.intake.set(-1);
+		wait.until(() -> !Robot.instance.oi.xboxInput.LB() || Robot.instance.oi.xboxInput.RB());
+		Robot.instance.motors.intake.stop();
+	}
 }

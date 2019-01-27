@@ -7,19 +7,16 @@
 
 package com.saintsrobotics.swerveDrive.tasks.teleop;
 
-import com.saintsrobotics.swerveDrive.Robot;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-
+import com.saintsrobotics.swerveDrive.Robot;
 
 public class SimpleLiftTask extends RunEachFrameTask {
 
-  @Override
-  protected void runEachFrame() {
-    double speedMultiplier = .25;
-    double movementAmount = Robot.instance.oi.xboxInput.rightTrigger() - Robot.instance.oi.xboxInput.leftTrigger();
-    movementAmount *= speedMultiplier;
-    Robot.instance.motors.lifter.set(movementAmount);
-  }
+	@Override
+	protected void runEachFrame() {
+		double speedMultiplier = .25;
+		double movementAmount = Robot.instance.oi.xboxInput.rightTrigger() - Robot.instance.oi.xboxInput.leftTrigger();
+		movementAmount *= speedMultiplier;
+		Robot.instance.motors.lifter.set(movementAmount);
+	}
 }
