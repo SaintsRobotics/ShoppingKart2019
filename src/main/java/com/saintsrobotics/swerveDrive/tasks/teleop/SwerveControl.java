@@ -1,15 +1,11 @@
 package com.saintsrobotics.swerveDrive.tasks.teleop;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.util.AngleUtilities;
-import com.saintsrobotics.swerveDrive.util.PIDReceiver;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveControl extends RunEachFrameTask {
 	private static final double SPEED_GAIN = 0.75;
@@ -22,8 +18,8 @@ public class SwerveControl extends RunEachFrameTask {
 
 	private ADXRS450_Gyro gyro;
 
-	private PIDReceiver headingPidReceiver;
 	private PIDController headingPidController;
+	private double headingPidOutput;
 
 	private double translationX;
 	private double translationY;
@@ -40,8 +36,8 @@ public class SwerveControl extends RunEachFrameTask {
 		this.turnCoefficient = this.TURN_GAIN / this.maxRad;
 
 		this.gyro = gyro;
-		this.headingPidReceiver = new PIDReceiver();
-		this.headingPidController = new PIDController(0.1, 0.0, 0.0, this.gyro, headingPidReceiver);
+		this.headingPidController = new PIDController(0.1, 0.0, 0.0, this.gyro,
+				(output) -> this.headingPidOutput = output);
 		this.headingPidController.setAbsoluteTolerance(2.0);
 		this.headingPidController.setOutputRange(-1, 1);
 		this.headingPidController.setInputRange(0, 360);
@@ -89,7 +85,7 @@ public class SwerveControl extends RunEachFrameTask {
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
 
-		double rotationInput = this.headingPidReceiver.getOutput();
+		double rotationInput = this.headingPidOutput;
 		if (this.rotationX != 0.0) {
 			rotationInput = this.rotationX;
 			this.isTurning = true;

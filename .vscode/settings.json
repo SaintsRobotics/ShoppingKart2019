@@ -11,5 +11,6 @@
     ".project": true
   },
   "wpilib.online": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "java.saveActions.organizeImports": true
 }

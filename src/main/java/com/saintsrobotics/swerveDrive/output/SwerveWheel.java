@@ -1,7 +1,6 @@
 package com.saintsrobotics.swerveDrive.output;
 
 import com.github.dozer.output.Motor;
-import com.saintsrobotics.swerveDrive.util.PIDReceiver;
 import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -9,7 +8,6 @@ import edu.wpi.first.wpilibj.PIDSource;
 
 public class SwerveWheel {
 	private Motor driveMotor;
-	private Motor turnMotor;
 	public double targetHead;
 	public double targetVelocity;
 	// x and y coordinates of wheel and location of pivot point on robot
@@ -19,14 +17,13 @@ public class SwerveWheel {
 	// distance of wheel from pivot
 	private double radius;
 
-	private PIDReceiver headingPidReceiver;
+	// private PIDReceiver headingPidReceiver;
 	private PIDController headingPidController;
 	private PIDSource encoder;
 
 	public SwerveWheel(Motor driveMotor, Motor turnMotor, TurnConfiguration pidConfig, double[] wheelLoc,
 			double[] pivotLoc) {
 		this.driveMotor = driveMotor;
-		this.turnMotor = turnMotor;
 		this.encoder = pidConfig.encoder;
 
 		this.wheelLoc = wheelLoc;
@@ -37,9 +34,9 @@ public class SwerveWheel {
 		this.radius = Math.sqrt(Math.pow((this.wheelLoc[0] - this.pivotLoc[0]), 2)
 				+ Math.pow((this.wheelLoc[1] - this.pivotLoc[1]), 2));
 
-		this.headingPidReceiver = new PIDReceiver();
+		// this.headingPidReceiver = new PIDReceiver();
 		this.headingPidController = new PIDController(pidConfig.forwardHeadingKP, pidConfig.forwardHeadingKI,
-				pidConfig.forwardHeadingKD, pidConfig.encoder, headingPidReceiver);
+				pidConfig.forwardHeadingKD, pidConfig.encoder, (output) -> turnMotor.set(output));
 		this.headingPidController.setAbsoluteTolerance(pidConfig.forwardHeadingTolerance);
 		this.headingPidController.setOutputRange(-01, 01);
 		this.headingPidController.setInputRange(0, 360);
@@ -67,7 +64,6 @@ public class SwerveWheel {
 		// this was in RunEachFrame
 		this.driveMotor.set(this.targetVelocity);
 		this.headingPidController.setSetpoint(this.targetHead);
-		this.turnMotor.set(this.headingPidReceiver.getOutput());
 	}
 
 	/**
