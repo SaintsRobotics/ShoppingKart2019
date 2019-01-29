@@ -8,8 +8,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
 
 public class SwerveControl extends RunEachFrameTask {
-	private static final double SPEED_GAIN = 0.75;
-	private static final double TURN_GAIN = 0.25;
+	private final double SPEED_COEF = 1;
 
 	private SwerveWheel[] wheels;
 	private boolean isTurning;
@@ -33,7 +32,7 @@ public class SwerveControl extends RunEachFrameTask {
 				this.maxRad = s.getRadius();
 			}
 		}
-		this.turnCoefficient = this.TURN_GAIN / this.maxRad;
+		this.turnCoefficient = 1 / this.maxRad;
 
 		this.gyro = gyro;
 		this.headingPidController = new PIDController(0.1, 0.0, 0.0, this.gyro,
@@ -79,9 +78,6 @@ public class SwerveControl extends RunEachFrameTask {
 	@Override
 	public void runEachFrame() {
 
-		this.translationX *= SPEED_GAIN;
-		this.translationY *= SPEED_GAIN;
-
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
 
@@ -96,12 +92,30 @@ public class SwerveControl extends RunEachFrameTask {
 
 		// Doing math with each of the vectors for the SwerveWheels
 		// Calculating the rotation vector, then adding that to the translation vector
-		// Finally, converting it to a polar vector
+		// Converting them to polar vectors
 		double[][] vectors = new double[wheels.length][2];
 		for (int i = 0; i < wheels.length; i++) {
 			vectors[i][0] = wheels[i].getRotationVector()[0] * this.turnCoefficient * rotationInput + translationX;
 			vectors[i][1] = wheels[i].getRotationVector()[1] * this.turnCoefficient * rotationInput + translationY;
 			vectors[i] = AngleUtilities.cartesianToPolar(vectors[i]);
+		}
+		
+		// If any of the velocities are greater than SPEED_COEF, then scale them all down
+		boolean needsScale = false;
+		double maxVelocity = 0; //an arbitrary value
+		int v = 0; //index used for traversing the vectors array
+		while (!needsScale && v < vectors.length) {
+			needsScale = vectors[v][1] > this.SPEED_COEF;
+			maxVelocity = Math.max(maxVelocity, vectors[v][1]); //which is cheaper, if statement or Math.max?
+			v++;
+		}
+		if (needsScale) {
+			for (double[] i : vectors) {
+				i[1] /= maxVelocity;
+			}
+		}
+		
+		for (int i = 0; i < wheels.length; i++) {
 			wheels[i].setHeadAndVelocity(vectors[i][0], vectors[i][1]);
 		}
 	}
