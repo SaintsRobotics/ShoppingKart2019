@@ -20,6 +20,9 @@ public class SwerveInput extends RunEachFrameTask {
 	private ADXRS450_Gyro gyro;
 	private SwerveControl control;
 
+	private final double SPEED_GAIN = .5;
+	private final double TURN_GAIN = .5;
+
 	public SwerveInput(XboxInput xboxInput, ADXRS450_Gyro gyro, SwerveControl control) {
 		this.xboxInput = xboxInput;
 		this.gyro = gyro;
@@ -27,15 +30,15 @@ public class SwerveInput extends RunEachFrameTask {
 	}
 
 	/**
-	 * returns array of leftStickX, leftStickY, and rightStickX values
+	 * gets translation and rotation input from the xbox controller
 	 * 
-	 * @return
+	 * @return an array in the format of {leftStickX, leftSticyY, rightStickX}
 	 */
 	public double[] readXboxInput() {
 		double[] xboxValues = new double[3];
-		double leftStickX = xboxInput.leftStickX();
-		double leftStickY = -xboxInput.leftStickY();
-		double rightStickX = xboxInput.rightStickX();
+		double leftStickX = xboxInput.leftStickX() * this.SPEED_GAIN;
+		double leftStickY = -xboxInput.leftStickY() * this.SPEED_GAIN;
+		double rightStickX = xboxInput.rightStickX() * this.TURN_GAIN;
 
 		// dead zone
 		if (Math.abs(rightStickX) <= 0.15) {
