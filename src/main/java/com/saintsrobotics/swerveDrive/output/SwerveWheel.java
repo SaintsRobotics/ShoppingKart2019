@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj.PIDSource;
 
 public class SwerveWheel {
 	private Motor driveMotor;
-	public double targetHead;
-	public double targetVelocity;
 	// x and y coordinates of wheel and location of pivot point on robot
 	private double[] wheelLoc = new double[2];
 	private double[] pivotLoc = new double[2];
@@ -58,12 +56,19 @@ public class SwerveWheel {
 			targetHead %= 360;
 			targetVelocity = -targetVelocity;
 		}
-		this.targetVelocity = targetVelocity;
-		this.targetHead = targetHead;
 
 		// this was in RunEachFrame
-		this.driveMotor.set(this.targetVelocity);
-		this.headingPidController.setSetpoint(this.targetHead);
+		this.setVelocity(targetVelocity);
+		this.headingPidController.setSetpoint(targetHead);
+	}
+
+	/**
+	 * sets drive motor
+	 * 
+	 * @param velocity the velocity to that the motor gets set
+	 */
+	public void setVelocity(double velocity) {
+		this.driveMotor.set(velocity);
 	}
 
 	/**

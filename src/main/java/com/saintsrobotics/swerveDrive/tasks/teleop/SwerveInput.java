@@ -21,6 +21,7 @@ public class SwerveInput extends RunEachFrameTask {
 	private SwerveControl control;
 
 	private final double SPEED_GAIN = .5;
+	private final double BOOST_GAIN = .75;
 	private final double TURN_GAIN = .5;
 
 	public SwerveInput(XboxInput xboxInput, ADXRS450_Gyro gyro, SwerveControl control) {
@@ -36,13 +37,21 @@ public class SwerveInput extends RunEachFrameTask {
 	 */
 	public double[] readXboxInput() {
 		double[] xboxValues = new double[3];
-		double leftStickX = xboxInput.leftStickX() * this.SPEED_GAIN;
-		double leftStickY = -xboxInput.leftStickY() * this.SPEED_GAIN;
+		double leftStickX = xboxInput.leftStickX();
+		double leftStickY = -xboxInput.leftStickY();
 		double rightStickX = xboxInput.rightStickX() * this.TURN_GAIN;
 
 		// dead zone
 		if (Math.abs(rightStickX) <= 0.15) {
 			rightStickX = 0;
+		}
+
+		if (this.xboxInput.LB()) {
+			leftStickX *= this.BOOST_GAIN;
+			leftStickY *= this.BOOST_GAIN;
+		} else {
+			leftStickX *= this.SPEED_GAIN;
+			leftStickY *= this.SPEED_GAIN;
 		}
 
 		// Absolute control
