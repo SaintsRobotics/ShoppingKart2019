@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
-import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.input.OI;
 import com.saintsrobotics.swerveDrive.input.Sensors;
 import com.saintsrobotics.swerveDrive.input.TestSensors;
@@ -12,23 +11,15 @@ import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
+import com.saintsrobotics.swerveDrive.tasks.teleop.SimpleLiftTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveInput;
-import com.saintsrobotics.swerveDrive.util.Pipeline;
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
-import com.saintsrobotics.swerveDrive.util.VisionBroker;
 
-import org.opencv.imgproc.Imgproc;
-
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -51,11 +42,6 @@ public class Robot extends TaskRobot {
 	private double[] rightBackLoc = { 12, -12.5 };
 	private double[] pivotLoc = { 0, 0 };
 	public SwerveControl swerveControl;
-	public UsbCamera camera;
-	private VisionThread visionThread;
-	private VisionBroker broker;
-
-	private double time = Timer.getFPGATimestamp();
 
 	public static Robot instance;
 
@@ -73,10 +59,6 @@ public class Robot extends TaskRobot {
 		this.flags = new Flags();
 
 		this.flags.pdp = new PowerDistributionPanel();
-		this.camera = CameraServer.getInstance().startAutomaticCapture();
-		camera.setResolution(360, 240);
-
-		this.broker = new VisionBroker();
 
 	}
 
@@ -102,36 +84,16 @@ public class Robot extends TaskRobot {
 
 		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
 		swerveControl = new SwerveControl(wheels, Robot.instance.sensors.gyro);
-		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl);
-		visionThread = new VisionThread(camera, new Pipeline(), pipeline -> {
-
-			double now = Timer.getFPGATimestamp();
-			SmartDashboard.putNumber("vision thread time", now - time);
-			if (pipeline.filterContoursOutput().size() == 2) {
-				this.broker.setRects(Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)),
-						Imgproc.boundingRect(pipeline.filterContoursOutput().get(1)));
-				System.out.println("2 rect");
-			} else if (pipeline.filterContoursOutput().size() == 1) {
-				this.broker.setRects(Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)), null);
-				System.out.println("1 rect");
-			} else {
-				this.broker.setRects(null, null);
-				System.out.println("0 rect");
-			}
-			time = now;
-		});
-
-		visionThread.start();
+		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl, new DockTask());
 
 		this.teleopTasks = new Task[] { new ResetGyro(), swerveInput, swerveControl,
 
 				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(),90.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
 
-				new DockTask(this.broker, this.swerveControl),
-				// new SimpleLiftTask(), new IntakeWheel(), new OuttakeWheel(),
+				new SimpleLiftTask(), // new IntakeWheel(), new OuttakeWheel(),
 				new UpdateMotors(this.motors) };
 
 		super.teleopInit();

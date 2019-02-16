@@ -32,6 +32,6 @@ public class TestSensors extends Sensors {
 
 		// SMASH
 		this.intake = new DigitalInput(19);
-		// these parameter values (port #s etc) may need to be changed
+				// these parameter values (port #s etc) may need to be changed
 	}
 }

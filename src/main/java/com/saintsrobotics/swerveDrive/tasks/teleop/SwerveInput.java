@@ -10,7 +10,9 @@ package com.saintsrobotics.swerveDrive.tasks.teleop;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Task to switch between inputs for SwerveControl
@@ -19,15 +21,17 @@ public class SwerveInput extends RunEachFrameTask {
 	private XboxInput xboxInput;
 	private ADXRS450_Gyro gyro;
 	private SwerveControl control;
+	private DockTask dock;
 
 	private final double SPEED_GAIN = .5;
 	private final double BOOST_GAIN = .75;
 	private final double TURN_GAIN = .5;
 
-	public SwerveInput(XboxInput xboxInput, ADXRS450_Gyro gyro, SwerveControl control) {
+	public SwerveInput(XboxInput xboxInput, ADXRS450_Gyro gyro, SwerveControl control, DockTask dock) {
 		this.xboxInput = xboxInput;
 		this.gyro = gyro;
 		this.control = control;
+		this.dock = dock;
 	}
 
 	/**
@@ -76,6 +80,10 @@ public class SwerveInput extends RunEachFrameTask {
 		return xboxValues;
 	}
 
+	public double readDockTaskInput() {
+		return dock.getOutput();
+	}
+
 	@Override
 	// Pass the values into SwerveControl
 	public void runEachFrame() {
@@ -83,7 +91,19 @@ public class SwerveInput extends RunEachFrameTask {
 		double leftStickX = xboxValues[0];
 		double leftStickY = xboxValues[1];
 		double rightStickX = xboxValues[2];
-		this.control.setTranslationVector(leftStickX, leftStickY);
-		this.control.setRotationVector(rightStickX);
+		if (xboxInput.A()) {
+			// Switches limelight camera mode to vision processing
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+			this.control.setTranslationVector(this.dock.getOutput(), 0);
+			SmartDashboard.putNumber("Dock Output", this.dock.getOutput());
+			this.control.setRotationVector(0);
+		} else {
+			// Switches limelight camera mode back to regular.
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+			this.control.setTranslationVector(leftStickX, leftStickY);
+			this.control.setRotationVector(rightStickX);
+		}
 	}
 }

@@ -1,58 +1,55 @@
 package com.saintsrobotics.swerveDrive.tasks.teleop;
 
-import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.saintsrobotics.swerveDrive.util.PIDReceiver;
 import com.saintsrobotics.swerveDrive.util.PidSender;
 import com.saintsrobotics.swerveDrive.util.VisionBroker;
 
 import org.opencv.core.Rect;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DockTask extends RunEachFrameTask {
+public class DockTask {
 
-	private VisionBroker broker;
-
-	private PIDReceiver pidReciever;
 	private PidSender pidSender;
 	private PIDController pidController;
+	private double pidTranslationOutput;
+	private NetworkTable limelight;
 
-	private SwerveControl sc;
+	public DockTask() {
 
-	public DockTask(VisionBroker broker, SwerveControl sc) {
-		this.broker = broker;
-		this.sc = sc;
-
-		this.pidReciever = new PIDReceiver();
 		this.pidSender = new PidSender();
-		this.pidController = new PIDController(0.0, 0.0, 0.0, this.pidSender, pidReciever);
+		this.pidController = new PIDController(0.0003, 0.0, 0.0, this.pidSender,
+				(output) -> this.pidTranslationOutput = output);
+		this.pidController.setSetpoint(0.0);
 		this.pidController.setAbsoluteTolerance(2.0);
 		this.pidController.setOutputRange(-1, 1);
 		this.pidController.setInputRange(0, 360);
-		this.pidController.setContinuous();
 		this.pidController.reset();
 		this.pidController.enable();
+		this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
 	}
 
-	@Override
-	protected void runEachFrame() {
-		Rect targetOne = broker.getRects()[0];
-		Rect targetTwo = broker.getRects()[1];
-		if (targetOne == null || targetTwo == null) {
-			DriverStation.reportWarning("No rectangles", false);
-			return;
-		}
-		DriverStation.reportWarning("Yes rectangles", false);
-		Double t1 = targetOne.tl().x;
-		Double t2 = targetTwo.br().x;
-		SmartDashboard.putNumber("Target 1", targetOne.tl().x);
-		SmartDashboard.putNumber("Target 2", targetTwo.br().x);
-		SmartDashboard.putNumber("Center", t1 + (t2 - t1));
+	public void setPIDSetpoint() {
 
-		// write PID loop here
-		this.pidSender.setValue((t2 + t1) / 2);
-		this.pidController.setSetpoint(180); // any way to bring this value up a few abstractions?
+	}
+
+	public double getOutput() {
+
+		if (limelight.getEntry("tv").getDouble(0) == 1) {
+
+			this.pidSender.setValue(limelight.getEntry("tx").getDouble(0));
+		}
+		SmartDashboard.putNumber("X Offset", limelight.getEntry("tx").getDouble(0));
+		SmartDashboard.putNumber("Y Offset", limelight.getEntry("ty").getDouble(0));
+		SmartDashboard.putNumber("Area offset", limelight.getEntry("ta").getDouble(0));
+		SmartDashboard.putNumber("Translation Output", this.pidTranslationOutput);
+		return this.pidTranslationOutput;
 	}
 }
