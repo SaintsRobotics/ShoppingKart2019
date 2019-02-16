@@ -26,7 +26,5 @@ public abstract class Sensors {
 
 	public AbsoluteEncoder kicker;
 
-	public AbsoluteEncoder arms;
-
 	public abstract void init();
 }

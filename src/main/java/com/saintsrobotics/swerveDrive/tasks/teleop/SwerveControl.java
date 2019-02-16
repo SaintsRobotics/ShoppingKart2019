@@ -108,20 +108,20 @@ public class SwerveControl extends RunEachFrameTask {
 			maxVelocity = Math.max(maxVelocity, vectors[v][1]);
 			v++;
 		}
-		if (needsScale) {
-			for (double[] i : vectors) {
-				i[1] /= maxVelocity;
-			}
-		}
+		// if (needsScale) {
+		// for (double[] i : vectors) {
+		// i[1] /= maxVelocity;
+		// }
+		// }
 
-		if (Math.abs(maxVelocity) < 0.05) {
-			for (int i = 0; i < wheels.length; i++) {
-				wheels[i].setVelocity(0.0);
-			}
-		} else {
-			for (int i = 0; i < wheels.length; i++) {
-				wheels[i].setHeadAndVelocity(vectors[i][0], vectors[i][1]);
-			}
-		}
+		// if (Math.abs(maxVelocity) < 0.05) {
+		// for (int i = 0; i < wheels.length; i++) {
+		// wheels[i].setVelocity(0.0);
+		// }
+		// } else {
+		// for (int i = 0; i < wheels.length; i++) {
+		// wheels[i].setHeadAndVelocity(vectors[i][0], vectors[i][1]);
+		// }
+		// }
 	}
 }
