@@ -18,9 +18,10 @@ public class ArmsTask extends RunEachFrameTask {
     private double targetPosition;
 
     // Find actual values later
-    private double fullInPosition = 300;
-    private double engagedPosition = 265;
-    private double fullOutPosition = 181;
+    private static final double fullInPosition = 300;
+    private static final double engagedPosition = 265;
+    private static final double fullOutPosition = 57;
+
 
     private PIDController pidController;
 

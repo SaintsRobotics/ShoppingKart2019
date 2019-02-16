@@ -18,8 +18,8 @@ public abstract class RobotMotors extends Motors {
 	public Motor lifter;
 	public Motor intake;
 	public Motor arms;
-	// public Motor turners;
-	// public Motor drive;
+
+	public Motor kicker;
 
 	protected Motor[] allMotors;
 	protected MotorRamping[] rampedMotors;

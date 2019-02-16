@@ -24,7 +24,10 @@ public class TestSensors extends Sensors {
 
 		this.liftEncoder = new DistanceEncoder(2, 3, 0, false);
 		this.lifterDown = new DigitalInput(1);
-		// this.lifterUp = new DigitalInput(7);
+		this.lifterUp = new DigitalInput(0);
+
+		this.kicker = new AbsoluteEncoder(4, 0, true);
+
 		this.arms = new AbsoluteEncoder(5, 0, false);
 
 	}

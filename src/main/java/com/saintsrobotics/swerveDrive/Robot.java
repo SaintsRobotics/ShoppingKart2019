@@ -15,6 +15,8 @@ import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.IntakeWheel;
+
+import com.saintsrobotics.swerveDrive.tasks.teleop.Kicker;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SimpleLiftTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveInput;
@@ -25,6 +27,7 @@ import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -103,6 +106,9 @@ public class Robot extends TaskRobot {
 				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake),
 				new ArmsTask(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
 						this.sensors.arms, this.motors.arms),
+
+				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 220, 109),
+
 				new UpdateMotors(this.motors),
 
 				new RunEachFrameTask() {

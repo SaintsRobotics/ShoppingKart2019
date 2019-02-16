@@ -20,9 +20,12 @@ public abstract class Sensors {
 	public ADXRS450_Gyro gyro;
 
 	public DistanceEncoder liftEncoder;
-
 	public DigitalInput lifterUp;
 	public DigitalInput lifterDown;
+	public AbsoluteEncoder arms;
+
+	public AbsoluteEncoder kicker;
+
 	public AbsoluteEncoder arms;
 
 	public abstract void init();
