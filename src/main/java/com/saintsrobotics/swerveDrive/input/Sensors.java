@@ -1,5 +1,6 @@
 package com.saintsrobotics.swerveDrive.input;
 
+import com.github.dozer.input.sensors.Potentiometer;
 import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -20,9 +21,9 @@ public abstract class Sensors {
 
 	public DistanceEncoder liftEncoder;
 
-	public DigitalInput intake;
 	public DigitalInput lifterUp;
 	public DigitalInput lifterDown;
+	public AbsoluteEncoder arms;
 
 	public abstract void init();
 }

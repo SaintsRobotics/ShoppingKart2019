@@ -1,5 +1,6 @@
 package com.saintsrobotics.swerveDrive.input;
 
+import com.github.dozer.input.sensors.Potentiometer;
 import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -9,15 +10,10 @@ public class TestSensors extends Sensors {
 
 	@Override
 	public void init() {
-		// this.leftFrontEncoder = new AbsoluteEncoder(2, -65, true);
-		// this.rightFrontEncoder = new AbsoluteEncoder(1, -202, true);
-		// this.leftBackEncoder = new AbsoluteEncoder(3, 10, true);
-		// this.rightBackEncoder = new AbsoluteEncoder(0, -109, true);
-
-		this.leftFrontEncoder = new AbsoluteEncoder(0, -109, true);
-		this.rightFrontEncoder = new AbsoluteEncoder(3, 10, true);
-		this.leftBackEncoder = new AbsoluteEncoder(1, -202, true);
-		this.rightBackEncoder = new AbsoluteEncoder(2, -65, true);
+		this.leftFrontEncoder = new AbsoluteEncoder(1, -82, true);
+		this.rightFrontEncoder = new AbsoluteEncoder(0, 144, true);
+		this.leftBackEncoder = new AbsoluteEncoder(2, -56, true);
+		this.rightBackEncoder = new AbsoluteEncoder(3, 13, true);
 
 		this.leftFrontTurnConfig = new TurnConfiguration(this.leftFrontEncoder);
 		this.leftBackTurnConfig = new TurnConfiguration(this.leftBackEncoder);
@@ -26,12 +22,10 @@ public class TestSensors extends Sensors {
 
 		this.gyro = new ADXRS450_Gyro();
 
-		this.liftEncoder = new DistanceEncoder(0, 1, 0, false);
-		this.lifterDown = new DigitalInput(8);
-		this.lifterUp = new DigitalInput(7);
+		this.liftEncoder = new DistanceEncoder(2, 3, 0, false);
+		this.lifterDown = new DigitalInput(1);
+		// this.lifterUp = new DigitalInput(7);
+		this.arms = new AbsoluteEncoder(5, 0, false);
 
-		// SMASH
-		this.intake = new DigitalInput(19);
-				// these parameter values (port #s etc) may need to be changed
 	}
 }

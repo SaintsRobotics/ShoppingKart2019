@@ -4,13 +4,17 @@ import java.util.function.Supplier;
 
 import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
+import com.github.dozer.coroutine.helpers.RunEachFrameTask;
+import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.swerveDrive.input.OI;
 import com.saintsrobotics.swerveDrive.input.Sensors;
 import com.saintsrobotics.swerveDrive.input.TestSensors;
 import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
+import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
+import com.saintsrobotics.swerveDrive.tasks.teleop.IntakeWheel;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SimpleLiftTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveInput;
@@ -18,6 +22,7 @@ import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.util.ToHeading;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
@@ -60,6 +65,8 @@ public class Robot extends TaskRobot {
 
 		this.flags.pdp = new PowerDistributionPanel();
 
+		NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+
 	}
 
 	@Override
@@ -86,15 +93,24 @@ public class Robot extends TaskRobot {
 		swerveControl = new SwerveControl(wheels, Robot.instance.sensors.gyro);
 		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl, new DockTask());
 
-		this.teleopTasks = new Task[] { new ResetGyro(), swerveInput, swerveControl,
+		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y()), swerveInput, swerveControl,
 
 				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(),90.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
 
-				new SimpleLiftTask(), // new IntakeWheel(), new OuttakeWheel(),
-				new UpdateMotors(this.motors) };
+				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake),
+				new ArmsTask(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
+						this.sensors.arms, this.motors.arms),
+				new UpdateMotors(this.motors),
+
+				new RunEachFrameTask() {
+					@Override
+					protected void runEachFrame() {
+						// empty task for telemetries
+					}
+				} };
 
 		super.teleopInit();
 	}

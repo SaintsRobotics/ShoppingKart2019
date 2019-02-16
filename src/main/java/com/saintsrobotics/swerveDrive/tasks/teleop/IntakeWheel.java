@@ -7,18 +7,27 @@
 
 package com.saintsrobotics.swerveDrive.tasks.teleop;
 
+import java.util.function.BooleanSupplier;
+
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
+import com.github.dozer.output.Motor;
 import com.saintsrobotics.swerveDrive.Robot;
 
 public class IntakeWheel extends RunContinuousTask {
+	private BooleanSupplier trigger;
+	private Motor motor;
+
+	public IntakeWheel(BooleanSupplier trigger, Motor motor) {
+		this.trigger = trigger;
+		this.motor = motor;
+	}
 
 	@Override
 	protected void runForever() {
-		wait.until(() -> Robot.instance.oi.xboxInput.RB() && Robot.instance.sensors.intake.get()
-				&& !Robot.instance.oi.xboxInput.LB());
-		Robot.instance.motors.intake.set(1);
-		wait.until(() -> !Robot.instance.oi.xboxInput.RB() || !Robot.instance.sensors.intake.get());
-		Robot.instance.motors.intake.stop();
+		wait.until(this.trigger);
+		this.motor.set(1);
+		wait.until(() -> !this.trigger.getAsBoolean());
+		this.motor.stop();
 	}
 
 }

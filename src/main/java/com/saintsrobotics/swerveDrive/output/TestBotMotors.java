@@ -9,40 +9,31 @@ public class TestBotMotors extends RobotMotors {
 
 	@Override
 	public void init() {
-		this.leftBack = new MotorRamping(new Talon(7), true);
-		this.leftFront = new MotorRamping(new Talon(5), true);
-		this.rightBack = new MotorRamping(new Talon(1), false);
-		this.rightFront = new MotorRamping(new Talon(3), false);
+		this.leftBack = new MotorRamping(new Talon(2), true);
+		this.leftFront = new MotorRamping(new Talon(1), true);
+		this.rightBack = new MotorRamping(new Talon(3), false);
+		this.rightFront = new MotorRamping(new Talon(0), false);
 
-		// this.leftBack = new MotorRamping(new Talon(3), true);
-		// this.leftFront = new MotorRamping(new Talon(1), true);
-		// this.rightBack = new MotorRamping(new Talon(5), false);
-		// this.rightFront = new MotorRamping(new Talon(7), false);
+		// this.leftDrive = new MotorGroup(this.leftBack, this.leftFront);
+		// this.rightDrive = new MotorGroup(this.rightBack, this.rightFront);
 
-		this.leftDrive = new MotorGroup(this.leftBack, this.leftFront);
-		this.rightDrive = new MotorGroup(this.rightBack, this.rightFront);
-
-		this.leftBackTurner = new MotorSimple(new Talon(8), true);
-		this.leftFrontTurner = new MotorSimple(new Talon(6), true);
-		this.rightBackTurner = new MotorSimple(new Talon(2), true);
+		this.leftBackTurner = new MotorSimple(new Talon(6), true);
+		this.leftFrontTurner = new MotorSimple(new Talon(5), false);
+		this.rightBackTurner = new MotorSimple(new Talon(7), true);
 		this.rightFrontTurner = new MotorSimple(new Talon(4), true);
 
-		// this.leftBackTurner = new MotorSimple(new Talon(4), true);
-		// this.leftFrontTurner = new MotorSimple(new Talon(2), true);
-		// this.rightBackTurner = new MotorSimple(new Talon(6), true);
-		// this.rightFrontTurner = new MotorSimple(new Talon(8), true);
-
-		this.lifter = new MotorSimple(new Talon(18), true);
-		this.intake = new MotorSimple(new Talon(17), false);
+		this.lifter = new MotorSimple(new Talon(8), true);
+		this.intake = new MotorSimple(new Talon(9), false);
+		this.arms = new MotorSimple(new Talon(11), true);
 
 		// this.turners = new MotorGroup(this.leftBackTurner, this.leftFrontTurner,
 		// this.rightBackTurner, this.rightFrontTurner);
 		// this.drive = new MotorGroup(this.leftBack, this.leftFront, this.rightBack,
 		// this.rightFront);
 
-		this.allMotors = new Motor[] { this.leftDrive, this.rightDrive, this.leftBack, this.leftFront, this.rightBack,
-				this.rightFront, this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner, this.rightFrontTurner,
-				this.lifter,
+		this.allMotors = new Motor[] { /* this.leftDrive, this.rightDrive, */ this.leftBack, this.leftFront,
+				this.rightBack, this.rightFront, this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner,
+				this.rightFrontTurner, this.lifter,
 				// this.turners,
 				// this.drive,
 		};

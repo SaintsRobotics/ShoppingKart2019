@@ -91,19 +91,22 @@ public class SwerveInput extends RunEachFrameTask {
 		double leftStickX = xboxValues[0];
 		double leftStickY = xboxValues[1];
 		double rightStickX = xboxValues[2];
-		if (xboxInput.A()) {
-			// Switches limelight camera mode to vision processing
-			NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
-			NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
-			this.control.setTranslationVector(this.dock.getOutput(), 0);
-			SmartDashboard.putNumber("Dock Output", this.dock.getOutput());
-			this.control.setRotationVector(0);
-		} else {
-			// Switches limelight camera mode back to regular.
-			NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
-			NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-			this.control.setTranslationVector(leftStickX, leftStickY);
-			this.control.setRotationVector(rightStickX);
-		}
+		// if (xboxInput.A()) {
+		// // Switches limelight camera mode to vision processing
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+		// this.control.setTranslationVector(this.dock.getOutput(), 0);
+		// SmartDashboard.putNumber("Dock Output", this.dock.getOutput());
+		// this.control.setRotationVector(0);
+		// } else {
+		// // Switches limelight camera mode back to regular.
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+		// this.control.setTranslationVector(leftStickX, leftStickY);
+		// this.control.setRotationVector(rightStickX);
+		// }
+
+		this.control.setTranslationVector(leftStickX, leftStickY);
+		this.control.setRotationVector(rightStickX);
 	}
 }

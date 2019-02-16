@@ -7,18 +7,25 @@
 
 package com.saintsrobotics.swerveDrive.util;
 
+import java.util.function.BooleanSupplier;
+
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
 import com.saintsrobotics.swerveDrive.Robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class ResetGyro extends RunContinuousTask {
+	private BooleanSupplier trigger;
+
+	public ResetGyro(BooleanSupplier trigger) {
+		this.trigger = trigger;
+	}
 
 	@Override
 	public void runForever() {
 		while (true) {
 			DriverStation.reportWarning("wait", false);
-			wait.until(() -> Robot.instance.oi.xboxInput.Y());
+			wait.until(this.trigger);
 			Robot.instance.sensors.gyro.reset();
 			Robot.instance.swerveControl.setRobotTargetHead(0.0);
 			DriverStation.reportWarning("gyro reset", false);
