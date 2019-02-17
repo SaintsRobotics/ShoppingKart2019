@@ -48,10 +48,10 @@ public class Robot extends TaskRobot {
 	public Sensors sensors;
 	public OI oi;
 	public Flags flags;
-	private double[] rightFrontLoc = { 12, 12.75 };
-	private double[] leftFrontLoc = { -12, 12.75 };
-	private double[] leftBackLoc = { -12, -12.75 };
-	private double[] rightBackLoc = { 12, -12.5 };
+	private double[] rightFrontLoc = { 12, 12 };
+	private double[] leftFrontLoc = { -12, 12 };
+	private double[] leftBackLoc = { -12, -12 };
+	private double[] rightBackLoc = { 12, -12 };
 	private double[] pivotLoc = { 0, 0 };
 	private LiftControl liftControl;
 	public SwerveControl swerveControl;
