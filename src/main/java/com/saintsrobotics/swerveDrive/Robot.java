@@ -7,9 +7,11 @@ import com.github.dozer.coroutine.Task;
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
+import com.saintsrobotics.swerveDrive.input.CompSensors;
 import com.saintsrobotics.swerveDrive.input.OI;
 import com.saintsrobotics.swerveDrive.input.Sensors;
 import com.saintsrobotics.swerveDrive.input.TestSensors;
+import com.saintsrobotics.swerveDrive.output.CompBotMotors;
 import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
@@ -48,10 +50,10 @@ public class Robot extends TaskRobot {
 	public Sensors sensors;
 	public OI oi;
 	public Flags flags;
-	private double[] rightFrontLoc = { 12, 12 };
-	private double[] leftFrontLoc = { -12, 12 };
-	private double[] leftBackLoc = { -12, -12 };
-	private double[] rightBackLoc = { 12, -12 };
+	private double[] rightFrontLoc = { 12.75, 11 };
+	private double[] leftFrontLoc = { -12.75, 11 };
+	private double[] leftBackLoc = { -12.75, -11 };
+	private double[] rightBackLoc = { 12.75, -11 };
 	private double[] pivotLoc = { 0, 0 };
 	private LiftControl liftControl;
 	public SwerveControl swerveControl;
@@ -63,9 +65,9 @@ public class Robot extends TaskRobot {
 		Robot.instance = this;
 		taskChooser = new SendableChooser<>();
 		this.oi = new OI();
-		this.motors = new TestBotMotors();
+		this.motors = new CompBotMotors();
 		this.motors.init();
-		this.sensors = new TestSensors();
+		this.sensors = new CompSensors();
 		this.sensors.init();
 		this.sensors.gyro.calibrate();
 		this.sensors.gyro.reset();
@@ -114,7 +116,6 @@ public class Robot extends TaskRobot {
 				// new ToHeight(() -> this.oi.xboxInput.B(), liftControl, 48.0),
 
 				new LiftInput(this.oi.oppInput, this.liftControl),
-				// new ResetLift(() -> this.oi.xboxInput.B(), this.liftControl),
 
 				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake),
 				new ArmsTask(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),

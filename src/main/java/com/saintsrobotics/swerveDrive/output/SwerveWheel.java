@@ -5,6 +5,7 @@ import com.saintsrobotics.swerveDrive.util.TurnConfiguration;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveWheel {
 	private Motor driveMotor;
@@ -58,6 +59,7 @@ public class SwerveWheel {
 		}
 
 		// this was in RunEachFrame
+		SmartDashboard.putNumber("encoder", this.encoder.pidGet());
 		this.setVelocity(targetVelocity);
 		this.headingPidController.setSetpoint(targetHead);
 	}
@@ -68,7 +70,7 @@ public class SwerveWheel {
 	 * @param velocity the velocity to that the motor gets set
 	 */
 	public void setVelocity(double velocity) {
-		this.driveMotor.set(velocity);
+		// this.driveMotor.set(velocity);
 	}
 
 	/**
