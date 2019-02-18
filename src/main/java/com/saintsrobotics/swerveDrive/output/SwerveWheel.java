@@ -59,7 +59,6 @@ public class SwerveWheel {
 		}
 
 		// this was in RunEachFrame
-		SmartDashboard.putNumber("encoder", this.encoder.pidGet());
 		this.setVelocity(targetVelocity);
 		this.headingPidController.setSetpoint(targetHead);
 	}
@@ -70,7 +69,7 @@ public class SwerveWheel {
 	 * @param velocity the velocity to that the motor gets set
 	 */
 	public void setVelocity(double velocity) {
-		// this.driveMotor.set(velocity);
+		this.driveMotor.set(velocity);
 	}
 
 	/**

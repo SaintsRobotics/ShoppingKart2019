@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class CompSensors extends Sensors {
     @Override
     public void init() {
-        this.leftFrontEncoder = new AbsoluteEncoder(1, -82, true);
-        this.rightFrontEncoder = new AbsoluteEncoder(0, 144, true);
-        this.leftBackEncoder = new AbsoluteEncoder(2, -56, true);
-        this.rightBackEncoder = new AbsoluteEncoder(3, 13, true);
+        this.leftFrontEncoder = new AbsoluteEncoder(1, -105, true);
+        this.rightFrontEncoder = new AbsoluteEncoder(0, -243, true);
+        this.leftBackEncoder = new AbsoluteEncoder(2, -176, true);
+        this.rightBackEncoder = new AbsoluteEncoder(3, -173, true);
 
         this.leftFrontTurnConfig = new TurnConfiguration(this.leftFrontEncoder);
         this.leftBackTurnConfig = new TurnConfiguration(this.leftBackEncoder);

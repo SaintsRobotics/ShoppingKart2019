@@ -18,10 +18,9 @@ public class ArmsTask extends RunEachFrameTask {
     private double targetPosition;
 
     // Find actual values later
-    private static final double fullInPosition = 300;
-    private static final double engagedPosition = 265;
-    private static final double fullOutPosition = 57;
-
+    private static final double fullInPosition = 186;
+    private static final double engagedPosition = 218;
+    private static final double fullOutPosition = 338;
 
     private PIDController pidController;
 
@@ -33,11 +32,11 @@ public class ArmsTask extends RunEachFrameTask {
 
         this.targetPosition = fullInPosition;
 
-        this.pidController = new PIDController(0.015, 0.0, 0.0, encoder, (output) -> motor.set(output));
+        this.pidController = new PIDController(0.05, 0.0, 0.0, encoder, (output) -> motor.set(output));
 
         this.pidController.setSetpoint(this.targetPosition);
         this.pidController.setAbsoluteTolerance(2.0);
-        this.pidController.setOutputRange(-0.5, 0.5);
+        this.pidController.setOutputRange(-0.6, 0.6);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
@@ -52,6 +51,9 @@ public class ArmsTask extends RunEachFrameTask {
         else if (!fullIn.getAsBoolean() && !engaged.getAsBoolean() && fullOut.getAsBoolean())
             targetPosition = fullOutPosition;
 
+        SmartDashboard.putNumber("output", Robot.instance.motors.arms.get());
+        SmartDashboard.putNumber("error", this.pidController.getError());
+        SmartDashboard.putNumber("encoder", Robot.instance.sensors.arms.getRotation());
         this.pidController.setSetpoint(targetPosition);
     }
 

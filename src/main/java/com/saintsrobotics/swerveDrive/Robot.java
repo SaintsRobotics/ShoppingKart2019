@@ -15,6 +15,8 @@ import com.saintsrobotics.swerveDrive.output.CompBotMotors;
 import com.saintsrobotics.swerveDrive.output.RobotMotors;
 import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
+import com.saintsrobotics.swerveDrive.output.TestDriveSwerveWheel;
+import com.saintsrobotics.swerveDrive.output.TestTurnSwerveWheel;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftControl;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftInput;
 import com.saintsrobotics.swerveDrive.tasks.lift.ToHeight;
@@ -101,17 +103,19 @@ public class Robot extends TaskRobot {
 
 		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
 		swerveControl = new SwerveControl(wheels, Robot.instance.sensors.gyro);
+
 		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl, new DockTask());
+
 		liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown);
 
 		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y()), swerveInput, swerveControl,
 				liftControl,
 
-				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
 
 				// new ToHeight(() -> this.oi.xboxInput.B(), liftControl, 48.0),
 
@@ -121,11 +125,9 @@ public class Robot extends TaskRobot {
 				new ArmsTask(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
 						this.sensors.arms, this.motors.arms),
 
-				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 220, 109),
+				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
 
-				new UpdateMotors(this.motors),
-
-				new RunEachFrameTask() {
+				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries

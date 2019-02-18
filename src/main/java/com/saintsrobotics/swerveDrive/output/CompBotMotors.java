@@ -15,13 +15,13 @@ public class CompBotMotors extends RobotMotors {
         this.rightFront = new MotorRamping(new Talon(0), false);
 
         this.leftBackTurner = new MotorSimple(new Talon(6), true);
-        this.leftFrontTurner = new MotorSimple(new Talon(5), false);
+        this.leftFrontTurner = new MotorSimple(new Talon(5), true);
         this.rightBackTurner = new MotorSimple(new Talon(7), true);
         this.rightFrontTurner = new MotorSimple(new Talon(4), true);
 
         this.lifter = new MotorSimple(new Talon(8), false);
-        this.intake = new MotorSimple(new Talon(9), false);
-        this.arms = new MotorSimple(new Talon(11), true);
+        this.intake = new MotorSimple(new Talon(9), true);
+        this.arms = new MotorSimple(new Talon(11), false);
         this.kicker = new MotorSimple(new Talon(10), true);
 
         // this.turners = new MotorGroup(this.leftBackTurner, this.leftFrontTurner,
