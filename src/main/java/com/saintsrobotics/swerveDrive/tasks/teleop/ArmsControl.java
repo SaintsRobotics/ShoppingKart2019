@@ -23,7 +23,7 @@ public class ArmsControl extends RunEachFrameTask {
     private double targetPosition;
 
     private static double offset;
-    private static final double fullInOffset = -201;
+    private static final double fullInOffset = -208;
     private static final double engagedOffset = -153;
     private static final double fullOutOffset = -10;
     private static double fullInPosition;
@@ -104,11 +104,8 @@ public class ArmsControl extends RunEachFrameTask {
             speed = 0;
             this.targetPosition = fullInPosition;
         }
-
-        SmartDashboard.putNumber("arms pid output", this.pidOutput);
-        SmartDashboard.putNumber("arms speed", speed);
         SmartDashboard.putNumber("arms target", this.targetPosition);
-
+        SmartDashboard.putNumber("arms speed", speed);
         this.motor.set(speed);
     }
 

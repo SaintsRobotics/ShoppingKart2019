@@ -138,7 +138,11 @@ public class Robot extends TaskRobot {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
-						SmartDashboard.putNumber("arms encoder", Robot.instance.sensors.arms.getRotation());
+						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						SmartDashboard.putNumber("left front encoder", sensors.leftFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left back encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("right fornt encoder", sensors.rightFrontEncoder.getRotation());
 					}
 				} };
 
