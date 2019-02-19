@@ -10,7 +10,7 @@ import com.saintsrobotics.swerveDrive.input.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ArmsInput extends RunEachFrameTask {
+public class ArmsControl extends RunEachFrameTask {
     private BooleanSupplier fullIn;
     private BooleanSupplier engaged;
     private BooleanSupplier fullOut;
@@ -21,23 +21,27 @@ public class ArmsInput extends RunEachFrameTask {
     private double targetPosition;
 
     private static double offset;
-    private static double fullInPosition = 0;
-    private static double engagedPosition = 48;
-    private static double fullOutPosition = 205;
+    private static final double fullInOffset = -205;
+    private static final double engagedOffset = -157;
+    private static final double fullOutOffset = 0;
+    private static double fullInPosition;
+    private static double engagedPosition;
+    private static double fullOutPosition;
 
     private PIDController pidController;
     private double pidOutput;
 
-    public ArmsInput(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut,
+    public ArmsControl(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut,
             BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor) {
         this.fullIn = fullIn;
         this.engaged = engaged;
         this.fullOut = fullOut;
         this.motorPause = motorPause;
+        setOffset(HARD-CODE A VALUE HEREEEEE);
 
         this.motor = motor;
 
-        this.targetPosition = fullInPosition;
+        this.targetPosition = fullInOffset;
 
         this.pidController = new PIDController(0.03, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
 
@@ -50,9 +54,9 @@ public class ArmsInput extends RunEachFrameTask {
 
     public void setOffset(double n) {
         offset = n;
-        fullInPosition += offset;
-        engagedPosition += offset;
-        fullOutPosition += offset;
+        fullInPosition = offset + fullInOffset;
+        engagedPosition = offset + engagedOffset;
+        fullOutPosition = offset + fullOutOffset;
     }
 
     @Override
@@ -64,12 +68,15 @@ public class ArmsInput extends RunEachFrameTask {
         else if (!fullIn.getAsBoolean() && !engaged.getAsBoolean() && fullOut.getAsBoolean())
             targetPosition = fullOutPosition;
         this.pidController.setSetpoint(targetPosition);
+
         double speed = this.pidOutput;
         if (motorPause.getAsBoolean()) {
             speed = 0;
             this.targetPosition = fullInPosition;
         }
         SmartDashboard.putNumber("arms pid output", this.pidOutput);
+        SmartDashboard.putNumber("motor value", this.motor.get());
+        SmartDashboard.putNumber("offset", offset);
 
         this.motor.set(speed);
     }

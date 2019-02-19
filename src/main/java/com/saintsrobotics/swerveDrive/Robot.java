@@ -17,15 +17,15 @@ import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.output.TestDriveSwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestTurnSwerveWheel;
-import com.saintsrobotics.swerveDrive.tasks.ResetArmsEncoder;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftControl;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftInput;
 import com.saintsrobotics.swerveDrive.tasks.lift.ToHeight;
-import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsInput;
+import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsControl;
 import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.IntakeWheel;
 
 import com.saintsrobotics.swerveDrive.tasks.teleop.Kicker;
+import com.saintsrobotics.swerveDrive.tasks.teleop.ResetArms;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveInput;
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
@@ -60,7 +60,7 @@ public class Robot extends TaskRobot {
 	private double[] rightBackLoc = { 12.75, -11 };
 	private double[] pivotLoc = { 0, 0 };
 	private LiftControl liftControl;
-	private ArmsInput armsInput;
+	private ArmsControl armsControl;
 	public SwerveControl swerveControl;
 
 	public static Robot instance;
@@ -112,7 +112,7 @@ public class Robot extends TaskRobot {
 		liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown);
 
-		this.armsInput = new ArmsInput(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(),
+		this.armsControl = new ArmsControl(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(),
 				() -> this.oi.oppInput.A(), () -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
 
 		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y()), swerveInput, swerveControl,
@@ -132,8 +132,8 @@ public class Robot extends TaskRobot {
 
 				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
 
-				this.armsInput,
-				new ResetArmsEncoder(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, this.armsInput),
+				this.armsControl,
+				new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.motors.arms, this.sensors.arms, this.armsControl),
 
 				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
