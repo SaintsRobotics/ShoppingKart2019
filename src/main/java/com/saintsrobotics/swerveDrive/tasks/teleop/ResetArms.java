@@ -9,7 +9,6 @@ import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsControl;;
 
 public class ResetArms extends RunContinuousTask {
     private BooleanSupplier trigger;
-    private Motor motor;
     private AbsoluteEncoder encoder;
     private ArmsControl armsControl;
 
@@ -18,9 +17,8 @@ public class ResetArms extends RunContinuousTask {
      * offset is slightly less than where the arms are currently
      * 
      */
-    public ResetArms(BooleanSupplier trigger, Motor motor, AbsoluteEncoder encoder, ArmsControl armsControl) {
+    public ResetArms(BooleanSupplier trigger, AbsoluteEncoder encoder, ArmsControl armsControl) {
         this.trigger = trigger;
-        this.motor = motor;
         this.encoder = encoder;
         this.armsControl = armsControl;
     }
@@ -28,9 +26,9 @@ public class ResetArms extends RunContinuousTask {
     @Override
     protected void runForever() {
         wait.until(this.trigger);
-        this.motor.set(0.4);
+        this.armsControl.setResetSpeed(0.5);
         wait.until(() -> !this.trigger.getAsBoolean());
-        this.motor.set(0);
+        this.armsControl.setResetSpeed(0);
         armsControl.setOffset(this.encoder.getRotation());
     }
 }

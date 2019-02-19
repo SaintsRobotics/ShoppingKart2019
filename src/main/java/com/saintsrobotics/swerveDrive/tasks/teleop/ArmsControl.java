@@ -16,14 +16,16 @@ public class ArmsControl extends RunEachFrameTask {
     private BooleanSupplier fullOut;
     private BooleanSupplier motorPause;
 
+    private double resetSpeed;
+
     private Motor motor;
 
     private double targetPosition;
 
     private static double offset;
-    private static final double fullInOffset = -205;
-    private static final double engagedOffset = -157;
-    private static final double fullOutOffset = 0;
+    private static final double fullInOffset = -201;
+    private static final double engagedOffset = -153;
+    private static final double fullOutOffset = -10;
     private static double fullInPosition;
     private static double engagedPosition;
     private static double fullOutPosition;
@@ -31,17 +33,20 @@ public class ArmsControl extends RunEachFrameTask {
     private PIDController pidController;
     private double pidOutput;
 
+    /**
+     * @param encoder assumes that as the arms spin in, the encoder decreases
+     */
     public ArmsControl(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut,
             BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor) {
         this.fullIn = fullIn;
         this.engaged = engaged;
         this.fullOut = fullOut;
         this.motorPause = motorPause;
-        setOffset(HARD-CODE A VALUE HEREEEEE);
+        setOffset(331); // where the hard stop is
 
         this.motor = motor;
 
-        this.targetPosition = fullInOffset;
+        this.targetPosition = fullInPosition;
 
         this.pidController = new PIDController(0.03, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
 
@@ -52,11 +57,30 @@ public class ArmsControl extends RunEachFrameTask {
         this.pidController.enable();
     }
 
+    /**
+     * 
+     * @param n where the encoders are is the location of the hard stop (not full
+     *          out)
+     */
     public void setOffset(double n) {
         offset = n;
         fullInPosition = offset + fullInOffset;
         engagedPosition = offset + engagedOffset;
         fullOutPosition = offset + fullOutOffset;
+    }
+
+    /**
+     * used by reset arms task to proposed arms speed
+     */
+    public void setResetSpeed(double s) {
+        this.resetSpeed = s;
+    }
+
+    /**
+     * gets speed proposed by reset arms task
+     */
+    public double getResetSpeed() {
+        return this.resetSpeed;
     }
 
     @Override
@@ -70,13 +94,20 @@ public class ArmsControl extends RunEachFrameTask {
         this.pidController.setSetpoint(targetPosition);
 
         double speed = this.pidOutput;
+
+        if (this.getResetSpeed() != 0) {
+            speed = this.getResetSpeed();
+            this.targetPosition = fullInPosition;
+        }
+
         if (motorPause.getAsBoolean()) {
             speed = 0;
             this.targetPosition = fullInPosition;
         }
+
         SmartDashboard.putNumber("arms pid output", this.pidOutput);
-        SmartDashboard.putNumber("motor value", this.motor.get());
-        SmartDashboard.putNumber("offset", offset);
+        SmartDashboard.putNumber("arms speed", speed);
+        SmartDashboard.putNumber("arms target", this.targetPosition);
 
         this.motor.set(speed);
     }

@@ -132,8 +132,7 @@ public class Robot extends TaskRobot {
 
 				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
 
-				this.armsControl,
-				new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.motors.arms, this.sensors.arms, this.armsControl),
+				this.armsControl, new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, this.armsControl),
 
 				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
