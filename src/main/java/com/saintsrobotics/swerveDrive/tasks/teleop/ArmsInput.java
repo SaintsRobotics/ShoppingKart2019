@@ -14,29 +14,30 @@ public class ArmsInput extends RunEachFrameTask {
     private BooleanSupplier fullIn;
     private BooleanSupplier engaged;
     private BooleanSupplier fullOut;
-    private BooleanSupplier estop;
+    private BooleanSupplier motorPause;
 
     private Motor motor;
 
     private double targetPosition;
 
-    private static final double fullInPosition = 79;
-    private static final double engagedPosition = 111;
-    private static final double fullOutPosition = 259;
+    private static double offset;
+    private static double fullInPosition = 0;
+    private static double engagedPosition = 48;
+    private static double fullOutPosition = 205;
 
     private PIDController pidController;
     private double pidOutput;
 
-    public ArmsInput(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut, BooleanSupplier estop,
-            AbsoluteEncoder encoder, Motor motor) {
+    public ArmsInput(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut,
+            BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor) {
         this.fullIn = fullIn;
         this.engaged = engaged;
         this.fullOut = fullOut;
-        this.estop = estop;
+        this.motorPause = motorPause;
 
         this.motor = motor;
 
-        this.targetPosition = this.fullInPosition;
+        this.targetPosition = fullInPosition;
 
         this.pidController = new PIDController(0.03, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
 
@@ -45,6 +46,13 @@ public class ArmsInput extends RunEachFrameTask {
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
+    }
+
+    public void setOffset(double n) {
+        offset = n;
+        fullInPosition += offset;
+        engagedPosition += offset;
+        fullOutPosition += offset;
     }
 
     @Override
@@ -57,10 +65,11 @@ public class ArmsInput extends RunEachFrameTask {
             targetPosition = fullOutPosition;
         this.pidController.setSetpoint(targetPosition);
         double speed = this.pidOutput;
-        if (estop.getAsBoolean()) {
+        if (motorPause.getAsBoolean()) {
             speed = 0;
             this.targetPosition = fullInPosition;
         }
+        SmartDashboard.putNumber("arms pid output", this.pidOutput);
 
         this.motor.set(speed);
     }

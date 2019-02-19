@@ -77,7 +77,8 @@ public class SwerveControl extends RunEachFrameTask {
 	@Override
 	public void runEachFrame() {
 		SmartDashboard.putNumber("gyro", this.gyro.getAngle());
-		SmartDashboard.putNumber("pid output", this.headingPidOutput);
+		SmartDashboard.putNumber("heading pid output", this.headingPidOutput);
+		SmartDashboard.putNumber("heading pid error", this.headingPidController.getError());
 
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;

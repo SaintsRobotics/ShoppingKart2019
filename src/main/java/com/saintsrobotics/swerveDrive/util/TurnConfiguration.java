@@ -20,8 +20,8 @@ public class TurnConfiguration {
 		// this.forwardDistanceKI = prefs.getDouble("forwardDistanceKI",0.00001);
 		// this.forwardDistanceKD = prefs.getDouble("forwardDistanceKD", 0.476);
 		// //default not in SmartDashboard
-		this.forwardHeadingKP = prefs.getDouble("forwardHeadingKP", 0.02);
-		this.forwardHeadingKI = prefs.getDouble("forwardHeadingKI", 0.0); // default not in SmartDashboard
+		this.forwardHeadingKP = prefs.getDouble("forwardHeadingKP", 0.018);
+		this.forwardHeadingKI = prefs.getDouble("forwardHeadingKI", 0.0);
 		this.forwardHeadingKD = prefs.getDouble("forwardHeadingKD", 0.0);
 
 		this.forwardHeadingTolerance = 2.5;
