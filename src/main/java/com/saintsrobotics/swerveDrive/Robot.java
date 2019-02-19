@@ -17,6 +17,7 @@ import com.saintsrobotics.swerveDrive.output.SwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestBotMotors;
 import com.saintsrobotics.swerveDrive.output.TestDriveSwerveWheel;
 import com.saintsrobotics.swerveDrive.output.TestTurnSwerveWheel;
+import com.saintsrobotics.swerveDrive.tasks.ResetArmsEncoder;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftControl;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftInput;
 import com.saintsrobotics.swerveDrive.tasks.lift.ToHeight;
@@ -59,6 +60,7 @@ public class Robot extends TaskRobot {
 	private double[] rightBackLoc = { 12.75, -11 };
 	private double[] pivotLoc = { 0, 0 };
 	private LiftControl liftControl;
+	private ArmsInput armsInput;
 	public SwerveControl swerveControl;
 
 	public static Robot instance;
@@ -110,6 +112,9 @@ public class Robot extends TaskRobot {
 		liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown);
 
+		this.armsInput = new ArmsInput(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(),
+				() -> this.oi.oppInput.A(), () -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
+
 		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y()), swerveInput, swerveControl,
 				liftControl,
 
@@ -125,10 +130,10 @@ public class Robot extends TaskRobot {
 				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake, 1),
 				new IntakeWheel(() -> this.oi.oppInput.SELECT(), this.motors.intake, -1),
 
-				new ArmsInput(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
-						() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms),
-
 				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
+
+				this.armsInput,
+				new ResetArmsEncoder(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, this.armsInput),
 
 				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
