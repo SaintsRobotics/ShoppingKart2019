@@ -20,18 +20,19 @@ import com.saintsrobotics.swerveDrive.output.TestTurnSwerveWheel;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftControl;
 import com.saintsrobotics.swerveDrive.tasks.lift.LiftInput;
 import com.saintsrobotics.swerveDrive.tasks.lift.ToHeight;
-import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsTask;
+import com.saintsrobotics.swerveDrive.tasks.teleop.ArmsInput;
 import com.saintsrobotics.swerveDrive.tasks.teleop.DockTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.IntakeWheel;
 
 import com.saintsrobotics.swerveDrive.tasks.teleop.Kicker;
-import com.saintsrobotics.swerveDrive.tasks.teleop.SimpleLiftTask;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveControl;
 import com.saintsrobotics.swerveDrive.tasks.teleop.SwerveInput;
 import com.saintsrobotics.swerveDrive.util.ResetGyro;
 import com.saintsrobotics.swerveDrive.tasks.teleop.ToHeading;
 import com.saintsrobotics.swerveDrive.util.UpdateMotors;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -77,7 +78,7 @@ public class Robot extends TaskRobot {
 
 		this.flags.pdp = new PowerDistributionPanel();
 
-		NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+		UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 
 	}
 
@@ -112,18 +113,20 @@ public class Robot extends TaskRobot {
 		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y()), swerveInput, swerveControl,
 				liftControl,
 
-				// new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
-				// new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
-				// new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
-				// new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
+				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
 
 				// new ToHeight(() -> this.oi.xboxInput.B(), liftControl, 48.0),
 
-				new LiftInput(this.oi.oppInput, this.liftControl),
+				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.Y(), this.liftControl),
 
-				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake),
-				new ArmsTask(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
-						this.sensors.arms, this.motors.arms),
+				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake, 1),
+				new IntakeWheel(() -> this.oi.oppInput.SELECT(), this.motors.intake, -1),
+
+				new ArmsInput(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
+						() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms),
 
 				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
 
@@ -131,6 +134,7 @@ public class Robot extends TaskRobot {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
+						SmartDashboard.putBoolean("arms off", oi.oppInput.START());
 					}
 				} };
 

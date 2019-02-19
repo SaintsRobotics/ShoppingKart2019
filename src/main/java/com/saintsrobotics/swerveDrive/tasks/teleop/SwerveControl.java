@@ -6,6 +6,7 @@ import com.saintsrobotics.swerveDrive.util.AngleUtilities;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveControl extends RunEachFrameTask {
 	private static final double SPEED_COEF = 1;
@@ -33,7 +34,7 @@ public class SwerveControl extends RunEachFrameTask {
 		}
 
 		this.gyro = gyro;
-		this.headingPidController = new PIDController(0.0125, 0.0, 0.0, this.gyro,
+		this.headingPidController = new PIDController(0.0120, 0.0, 0.01, this.gyro,
 				(output) -> this.headingPidOutput = output);
 		this.headingPidController.setAbsoluteTolerance(2.0);
 		this.headingPidController.setOutputRange(-1, 1);
@@ -75,6 +76,8 @@ public class SwerveControl extends RunEachFrameTask {
 
 	@Override
 	public void runEachFrame() {
+		SmartDashboard.putNumber("gyro", this.gyro.getAngle());
+		SmartDashboard.putNumber("pid output", this.headingPidOutput);
 
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;

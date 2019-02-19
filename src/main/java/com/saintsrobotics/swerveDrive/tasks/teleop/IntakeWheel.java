@@ -16,16 +16,18 @@ import com.saintsrobotics.swerveDrive.Robot;
 public class IntakeWheel extends RunContinuousTask {
 	private BooleanSupplier trigger;
 	private Motor motor;
+	private double speed;
 
-	public IntakeWheel(BooleanSupplier trigger, Motor motor) {
+	public IntakeWheel(BooleanSupplier trigger, Motor motor, double speed) {
 		this.trigger = trigger;
 		this.motor = motor;
+		this.speed = speed;
 	}
 
 	@Override
 	protected void runForever() {
 		wait.until(this.trigger);
-		this.motor.set(1);
+		this.motor.set(this.speed);
 		wait.until(() -> !this.trigger.getAsBoolean());
 		this.motor.stop();
 	}

@@ -7,11 +7,14 @@
 
 package com.saintsrobotics.swerveDrive.tasks.lift;
 
+import java.util.function.BooleanSupplier;
+
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 
 public class LiftInput extends RunEachFrameTask {
     private XboxInput xboxInput;
+    private BooleanSupplier resetTrigger;
     private boolean isResetting;
     private LiftControl liftControl;
     private final double XBOX_MULTIPLIER = 1;
@@ -21,8 +24,9 @@ public class LiftInput extends RunEachFrameTask {
      * @param xboxInput controller
      * @param offset    height of the arms at the lower limit switch
      */
-    public LiftInput(XboxInput xboxInput, LiftControl liftControl) {
+    public LiftInput(XboxInput xboxInput, BooleanSupplier resetTrigger, LiftControl liftControl) {
         this.xboxInput = xboxInput;
+        this.resetTrigger = resetTrigger;
         this.liftControl = liftControl;
     }
 
@@ -35,11 +39,16 @@ public class LiftInput extends RunEachFrameTask {
     @Override
     protected void runEachFrame() {
         double speed = this.readXbox();
-        if (this.xboxInput.Y()) {
+        if (this.resetTrigger.getAsBoolean()) {
             this.isResetting = true;
         }
-        if ((speed == 0) && this.isResetting) {
-            speed = -0.2;
+
+        if (speed != 0) {
+            this.isResetting = false;
+        }
+
+        if (this.isResetting) {
+            speed = -0.4;
             if (this.liftControl.isAtBottom()) {
                 speed = 0;
                 this.isResetting = false;

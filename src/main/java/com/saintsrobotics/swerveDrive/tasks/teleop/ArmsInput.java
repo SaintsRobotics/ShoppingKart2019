@@ -10,33 +10,38 @@ import com.saintsrobotics.swerveDrive.input.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ArmsTask extends RunEachFrameTask {
+public class ArmsInput extends RunEachFrameTask {
     private BooleanSupplier fullIn;
     private BooleanSupplier engaged;
     private BooleanSupplier fullOut;
+    private BooleanSupplier estop;
+
+    private Motor motor;
 
     private double targetPosition;
 
-    // Find actual values later
-    private static final double fullInPosition = 186;
-    private static final double engagedPosition = 218;
-    private static final double fullOutPosition = 338;
+    private static final double fullInPosition = 79;
+    private static final double engagedPosition = 111;
+    private static final double fullOutPosition = 259;
 
     private PIDController pidController;
+    private double pidOutput;
 
-    public ArmsTask(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut, AbsoluteEncoder encoder,
-            Motor motor) {
+    public ArmsInput(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut, BooleanSupplier estop,
+            AbsoluteEncoder encoder, Motor motor) {
         this.fullIn = fullIn;
         this.engaged = engaged;
         this.fullOut = fullOut;
+        this.estop = estop;
 
-        this.targetPosition = fullInPosition;
+        this.motor = motor;
 
-        this.pidController = new PIDController(0.05, 0.0, 0.0, encoder, (output) -> motor.set(output));
+        this.targetPosition = this.fullInPosition;
 
-        this.pidController.setSetpoint(this.targetPosition);
+        this.pidController = new PIDController(0.03, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
+
         this.pidController.setAbsoluteTolerance(2.0);
-        this.pidController.setOutputRange(-0.6, 0.6);
+        this.pidController.setOutputRange(-0.75, 0.75);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
@@ -50,11 +55,14 @@ public class ArmsTask extends RunEachFrameTask {
             targetPosition = engagedPosition;
         else if (!fullIn.getAsBoolean() && !engaged.getAsBoolean() && fullOut.getAsBoolean())
             targetPosition = fullOutPosition;
-
-        SmartDashboard.putNumber("output", Robot.instance.motors.arms.get());
-        SmartDashboard.putNumber("error", this.pidController.getError());
-        SmartDashboard.putNumber("encoder", Robot.instance.sensors.arms.getRotation());
         this.pidController.setSetpoint(targetPosition);
+        double speed = this.pidOutput;
+        if (estop.getAsBoolean()) {
+            speed = 0;
+            this.targetPosition = fullInPosition;
+        }
+
+        this.motor.set(speed);
     }
 
 }
