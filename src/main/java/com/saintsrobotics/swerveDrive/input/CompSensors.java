@@ -9,7 +9,7 @@ public class CompSensors extends Sensors {
     @Override
     public void init() {
         this.leftFrontEncoder = new AbsoluteEncoder(1, -105, true);
-        this.rightFrontEncoder = new AbsoluteEncoder(0, -243, true);
+        this.rightFrontEncoder = new AbsoluteEncoder(0, -99, true);
         this.leftBackEncoder = new AbsoluteEncoder(2, -176, true);
         this.rightBackEncoder = new AbsoluteEncoder(3, -173, true);
 

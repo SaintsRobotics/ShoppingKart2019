@@ -42,7 +42,7 @@ public class ArmsControl extends RunEachFrameTask {
         this.engaged = engaged;
         this.fullOut = fullOut;
         this.motorPause = motorPause;
-        setOffset(331); // where the hard stop is
+        setOffset(230); // where the hard stop is
 
         this.motor = motor;
 
