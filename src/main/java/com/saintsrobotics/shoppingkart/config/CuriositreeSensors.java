@@ -7,7 +7,7 @@ import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class TestSensors extends Sensors {
+public class CuriositreeSensors extends RobotSensors {
 
 	@Override
 	public void init() {

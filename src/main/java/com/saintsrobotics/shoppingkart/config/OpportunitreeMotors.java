@@ -7,7 +7,7 @@ import com.saintsrobotics.shoppingkart.util.MotorRamping;
 
 import edu.wpi.first.wpilibj.Talon;
 
-public class CompBotMotors extends RobotMotors {
+public class OpportunitreeMotors extends RobotMotors {
 
     @Override
     public void init() {

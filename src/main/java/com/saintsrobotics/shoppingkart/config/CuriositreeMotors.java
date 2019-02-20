@@ -6,7 +6,7 @@ import com.saintsrobotics.shoppingkart.util.MotorRamping;
 
 import edu.wpi.first.wpilibj.Talon;
 
-public class TestBotMotors extends RobotMotors {
+public class CuriositreeMotors extends RobotMotors {
 
 	@Override
 	public void init() {

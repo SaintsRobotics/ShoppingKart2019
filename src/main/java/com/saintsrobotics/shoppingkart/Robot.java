@@ -5,11 +5,11 @@ import com.github.dozer.coroutine.Task;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.saintsrobotics.shoppingkart.arms.ArmsControl;
 import com.saintsrobotics.shoppingkart.arms.ResetArms;
-import com.saintsrobotics.shoppingkart.config.CompBotMotors;
-import com.saintsrobotics.shoppingkart.config.CompSensors;
 import com.saintsrobotics.shoppingkart.config.OI;
-import com.saintsrobotics.shoppingkart.config.Sensors;
+import com.saintsrobotics.shoppingkart.config.OpportunitreeMotors;
+import com.saintsrobotics.shoppingkart.config.OpportunitreeSensors;
 import com.saintsrobotics.shoppingkart.config.RobotMotors;
+import com.saintsrobotics.shoppingkart.config.RobotSensors;
 import com.saintsrobotics.shoppingkart.drive.SwerveWheel;
 import com.saintsrobotics.shoppingkart.lift.LiftControl;
 import com.saintsrobotics.shoppingkart.lift.LiftInput;
@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TaskRobot {
 
 	public RobotMotors motors;
-	public Sensors sensors;
+	public RobotSensors sensors;
 	public OI oi;
 	public Flags flags;
 	private double[] rightFrontLoc = { 12.75, 11 };
@@ -55,9 +55,9 @@ public class Robot extends TaskRobot {
 	public void robotInit() {
 		Robot.instance = this;
 		this.oi = new OI();
-		this.motors = new CompBotMotors();
+		this.motors = new OpportunitreeMotors();
 		this.motors.init();
-		this.sensors = new CompSensors();
+		this.sensors = new OpportunitreeSensors();
 		this.sensors.init();
 		this.sensors.gyro.calibrate();
 		this.sensors.gyro.reset();
