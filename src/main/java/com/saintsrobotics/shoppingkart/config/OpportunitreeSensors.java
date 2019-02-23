@@ -7,7 +7,7 @@ import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class CompSensors extends Sensors {
+public class OpportunitreeSensors extends RobotSensors {
     @Override
     public void init() {
         this.leftFrontEncoder = new AbsoluteEncoder(1, -105, true);
