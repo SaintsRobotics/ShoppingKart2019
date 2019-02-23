@@ -73,6 +73,12 @@ public class SwerveInput extends RunEachFrameTask {
 					+ (tempY * Math.cos(Math.toRadians(robotAngle)));
 		}
 
+		if (this.xboxInput.leftTrigger() > 0.25) {
+			leftStickX = 0;
+			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN / 2;
+			rightStickX = 0;
+		}
+
 		xboxValues[0] = leftStickX;
 		xboxValues[1] = leftStickY;
 		xboxValues[2] = rightStickX;
