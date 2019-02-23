@@ -10,9 +10,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArmsControl extends RunEachFrameTask {
-    private BooleanSupplier fullIn;
-    private BooleanSupplier engaged;
-    private BooleanSupplier fullOut;
     private BooleanSupplier motorPause;
 
     private double resetSpeed;
@@ -21,34 +18,21 @@ public class ArmsControl extends RunEachFrameTask {
 
     private double targetPosition;
 
-    private static double offset;
-    private static final double fullInOffset = -208;
-    private static final double engagedOffset = -153;
-    private static final double fullOutOffset = -10;
-    private static double fullInPosition;
-    private static double engagedPosition;
-    private static double fullOutPosition;
+    private static double offset = 230; // location of the hard stop
 
     private PIDController pidController;
     private double pidOutput;
 
     /**
-     * @param encoder assumes that as the arms spin in, the encoder decreases
+     * @param motorPause trigger that pauses motor speed
+     * @param encoder    assumes that as the arms spin in, the encoder decreases
      */
-    public ArmsControl(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut,
-            BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor) {
-        this.fullIn = fullIn;
-        this.engaged = engaged;
-        this.fullOut = fullOut;
+    public ArmsControl(BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor) {
         this.motorPause = motorPause;
-        setOffset(230); // where the hard stop is
 
         this.motor = motor;
 
-        this.targetPosition = fullInPosition;
-
         this.pidController = new PIDController(0.03, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
-
         this.pidController.setAbsoluteTolerance(2.0);
         this.pidController.setOutputRange(-0.75, 0.75);
         this.pidController.setInputRange(0, 360);
@@ -58,14 +42,20 @@ public class ArmsControl extends RunEachFrameTask {
 
     /**
      * 
-     * @param n where the encoders are is the location of the hard stop (not full
+     * @param n where the encoder is at the location of the hard stop (passed full
      *          out)
      */
     public void setOffset(double n) {
         offset = n;
-        fullInPosition = offset + fullInOffset;
-        engagedPosition = offset + engagedOffset;
-        fullOutPosition = offset + fullOutOffset;
+    }
+
+    /**
+     * sets pid setpoint to an encoder positon
+     * 
+     * @param o the offset of the target position relative to the hard stop
+     */
+    public void setTarget(double o) {
+        this.pidController.setSetpoint(offset + o);
     }
 
     /**
@@ -75,33 +65,19 @@ public class ArmsControl extends RunEachFrameTask {
         this.resetSpeed = s;
     }
 
-    /**
-     * gets speed proposed by reset arms task
-     */
-    public double getResetSpeed() {
-        return this.resetSpeed;
-    }
-
     @Override
     protected void runEachFrame() {
-        if (fullIn.getAsBoolean() && !engaged.getAsBoolean() && !fullOut.getAsBoolean())
-            targetPosition = fullInPosition;
-        else if (!fullIn.getAsBoolean() && engaged.getAsBoolean() && !fullOut.getAsBoolean())
-            targetPosition = engagedPosition;
-        else if (!fullIn.getAsBoolean() && !engaged.getAsBoolean() && fullOut.getAsBoolean())
-            targetPosition = fullOutPosition;
-        this.pidController.setSetpoint(targetPosition);
 
         double speed = this.pidOutput;
 
-        if (this.getResetSpeed() != 0) {
-            speed = this.getResetSpeed();
-            this.targetPosition = fullInPosition;
+        if (this.resetSpeed != 0) {
+            speed = this.resetSpeed;
+            this.setTarget(-208); // use a config constant instead of double
         }
 
         if (motorPause.getAsBoolean()) {
             speed = 0;
-            this.targetPosition = fullInPosition;
+            this.setTarget(-208); // use a config constant instead of double
         }
         SmartDashboard.putNumber("arms target", this.targetPosition);
         SmartDashboard.putNumber("arms speed", speed);

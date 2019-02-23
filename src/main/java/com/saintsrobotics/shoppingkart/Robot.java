@@ -4,6 +4,7 @@ import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.saintsrobotics.shoppingkart.arms.ArmsControl;
+import com.saintsrobotics.shoppingkart.arms.ArmsTarget;
 import com.saintsrobotics.shoppingkart.arms.ResetArms;
 import com.saintsrobotics.shoppingkart.config.CompBotMotors;
 import com.saintsrobotics.shoppingkart.config.CompSensors;
@@ -14,6 +15,7 @@ import com.saintsrobotics.shoppingkart.drive.SwerveWheel;
 import com.saintsrobotics.shoppingkart.lift.LiftControl;
 import com.saintsrobotics.shoppingkart.lift.LiftInput;
 import com.saintsrobotics.shoppingkart.vision.DockTask;
+import com.saintsrobotics.shoppingkart.manipulators.DetatchPanel;
 import com.saintsrobotics.shoppingkart.manipulators.IntakeWheel;
 
 import com.saintsrobotics.shoppingkart.manipulators.Kicker;
@@ -96,8 +98,7 @@ public class Robot extends TaskRobot {
 		liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown);
 
-		this.armsControl = new ArmsControl(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(),
-				() -> this.oi.oppInput.A(), () -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
+		this.armsControl = new ArmsControl(() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
 
 		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.START()), swerveInput, swerveControl,
 				liftControl,
@@ -120,6 +121,12 @@ public class Robot extends TaskRobot {
 
 				this.armsControl, new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, this.armsControl),
 
+				new ArmsTarget(() -> this.oi.oppInput.B(), -208, this.armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.X(), -153, this.armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.A(), -10, this.armsControl),
+
+				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl,
+						Robot.instance.sensors.liftEncoder),
 				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
 					protected void runEachFrame() {

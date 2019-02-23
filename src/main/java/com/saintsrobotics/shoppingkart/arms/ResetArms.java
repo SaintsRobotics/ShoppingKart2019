@@ -12,7 +12,8 @@ public class ResetArms extends RunContinuousTask {
 
     /**
      * opens the arms while the trigger is pressed when trigger is released, the new
-     * offset is slightly less than where the arms are currently
+     * offset is slightly less than where the arms are currently also known as the
+     * hard stop
      * 
      */
     public ResetArms(BooleanSupplier trigger, AbsoluteEncoder encoder, ArmsControl armsControl) {
