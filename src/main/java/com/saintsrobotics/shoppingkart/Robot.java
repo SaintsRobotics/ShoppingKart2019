@@ -99,13 +99,15 @@ public class Robot extends TaskRobot {
 		this.armsControl = new ArmsControl(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(),
 				() -> this.oi.oppInput.A(), () -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
 
-		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y()), swerveInput, swerveControl,
+		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.START()), swerveInput, swerveControl,
 				liftControl,
 
 				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0),
+				new ToHeading(() -> this.oi.xboxInput.B(), 28.8), new ToHeading(() -> this.oi.xboxInput.Y(), 151.2),
+				new ToHeading(() -> this.oi.xboxInput.X(), 208.8), new ToHeading(() -> this.oi.xboxInput.A(), 331.2),
 
 				// new ToHeight(() -> this.oi.xboxInput.B(), liftControl, 48.0),
 
