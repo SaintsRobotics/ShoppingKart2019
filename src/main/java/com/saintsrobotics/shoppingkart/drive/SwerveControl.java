@@ -33,7 +33,7 @@ public class SwerveControl extends RunEachFrameTask {
 		}
 
 		this.gyro = gyro;
-		this.headingPidController = new PIDController(0.0125, 0.0, 0.0, this.gyro,
+		this.headingPidController = new PIDController(0.0120, 0.0, 0.01, this.gyro,
 				(output) -> this.headingPidOutput = output);
 		this.headingPidController.setAbsoluteTolerance(2.0);
 		this.headingPidController.setOutputRange(-1, 1);

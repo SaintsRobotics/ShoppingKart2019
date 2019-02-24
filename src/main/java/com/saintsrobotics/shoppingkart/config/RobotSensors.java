@@ -7,7 +7,7 @@ import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public abstract class Sensors {
+public abstract class RobotSensors {
 	public AbsoluteEncoder rightFrontEncoder;
 	public AbsoluteEncoder leftFrontEncoder;
 	public AbsoluteEncoder rightBackEncoder;

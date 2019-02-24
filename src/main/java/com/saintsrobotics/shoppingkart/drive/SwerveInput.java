@@ -11,9 +11,7 @@ import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.shoppingkart.vision.DockTask;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Task to switch between inputs for SwerveControl
@@ -73,6 +71,12 @@ public class SwerveInput extends RunEachFrameTask {
 					- (tempY * Math.sin(Math.toRadians(robotAngle)));
 			leftStickY = (tempX * Math.sin(Math.toRadians(robotAngle)))
 					+ (tempY * Math.cos(Math.toRadians(robotAngle)));
+		}
+
+		if (this.xboxInput.leftTrigger() > 0.25) {
+			leftStickX = 0;
+			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN / 2;
+			rightStickX = 0;
 		}
 
 		xboxValues[0] = leftStickX;

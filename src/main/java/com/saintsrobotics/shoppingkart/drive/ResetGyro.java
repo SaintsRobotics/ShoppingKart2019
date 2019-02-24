@@ -24,7 +24,6 @@ public class ResetGyro extends RunContinuousTask {
 	@Override
 	public void runForever() {
 		while (true) {
-			DriverStation.reportWarning("wait", false);
 			wait.until(this.trigger);
 			Robot.instance.sensors.gyro.reset();
 			Robot.instance.swerveControl.setRobotTargetHead(0.0);

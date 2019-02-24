@@ -16,7 +16,7 @@ public class TurnConfiguration {
 
 	public TurnConfiguration(PIDSource encoder) {
 		Preferences prefs = Preferences.getInstance();
-		this.forwardHeadingKP = prefs.getDouble("forwardHeadingKP", 0.02);
+		this.forwardHeadingKP = prefs.getDouble("forwardHeadingKP", 0.018);
 		this.forwardHeadingKI = prefs.getDouble("forwardHeadingKI", 0.0); // default not in SmartDashboard
 		this.forwardHeadingKD = prefs.getDouble("forwardHeadingKD", 0.0);
 

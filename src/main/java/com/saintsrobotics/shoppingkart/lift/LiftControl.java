@@ -7,19 +7,12 @@
 
 package com.saintsrobotics.shoppingkart.lift;
 
-import java.sql.Driver;
-
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-import com.github.dozer.input.OI.XboxInput;
 import com.github.dozer.output.Motor;
-import com.saintsrobotics.shoppingkart.Robot;
 import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftControl extends RunEachFrameTask {
     private Motor lifter;
@@ -93,17 +86,16 @@ public class LiftControl extends RunEachFrameTask {
             this.encoder.reset();
         }
 
-        SmartDashboard.putNumber("lift encoder", this.encoder.getDistance());
-        SmartDashboard.putBoolean("lifting", this.isLifting);
+        // SmartDashboard.putNumber("liftInput", liftInput);
+        // SmartDashboard.putNumber("lift encoder", this.encoder.getDistance());
+        // SmartDashboard.putBoolean("lifterUp", !this.lifterUp.get());
+        // SmartDashboard.putBoolean("lifterDown", !this.lifterDown.get());
+        // SmartDashboard.putBoolean("lifting", this.isLifting);
 
-        SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
-        SmartDashboard.putNumber("pid output", this.pidOutput);
-        SmartDashboard.putNumber("lift input", liftInput);
+        // SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
+        // SmartDashboard.putNumber("pid output", this.pidOutput);
+        // SmartDashboard.putNumber("lift input", liftInput);
 
         this.lifter.set(liftInput);
     }
-
-    // public void runForever(){
-
-    // }
 }

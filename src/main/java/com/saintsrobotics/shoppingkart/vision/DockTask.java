@@ -1,18 +1,10 @@
 package com.saintsrobotics.shoppingkart.vision;
 
-import com.saintsrobotics.shoppingkart.util.PIDReceiver;
 import com.saintsrobotics.shoppingkart.util.PidSender;
-import com.saintsrobotics.shoppingkart.vision.VisionBroker;
-
-import org.opencv.core.Rect;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DockTask {
