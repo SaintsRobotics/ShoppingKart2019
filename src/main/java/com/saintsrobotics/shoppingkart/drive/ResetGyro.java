@@ -10,25 +10,26 @@ package com.saintsrobotics.shoppingkart.drive;
 import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
-import com.saintsrobotics.shoppingkart.Robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 public class ResetGyro extends RunContinuousTask {
 	private BooleanSupplier trigger;
+	private ADXRS450_Gyro gyro;
+	private SwerveControl swerveControl;
 
-	public ResetGyro(BooleanSupplier trigger) {
+	public ResetGyro(BooleanSupplier trigger, ADXRS450_Gyro gyro, SwerveControl swerveControl) {
 		this.trigger = trigger;
+		this.gyro = gyro;
+		this.swerveControl = swerveControl;
 	}
 
 	@Override
 	public void runForever() {
 		while (true) {
-			DriverStation.reportWarning("wait", false);
 			wait.until(this.trigger);
-			Robot.instance.sensors.gyro.reset();
-			Robot.instance.swerveControl.setRobotTargetHead(0.0);
-			DriverStation.reportWarning("gyro reset", false);
+			this.gyro.reset();
+			this.swerveControl.setRobotTargetHead(0.0);
 		}
 	}
 }

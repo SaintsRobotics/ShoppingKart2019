@@ -8,15 +8,23 @@
 package com.saintsrobotics.shoppingkart.tests;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-import com.saintsrobotics.shoppingkart.Robot;
+import com.github.dozer.input.OI.XboxInput;
+import com.github.dozer.output.Motor;
 
 public class SimpleLiftTask extends RunEachFrameTask {
+	private XboxInput xboxInput;
+	private Motor lifterMotor;
+
+	public SimpleLiftTask(XboxInput xboxInput, Motor lifterMotor) {
+		this.xboxInput = xboxInput;
+		this.lifterMotor = lifterMotor;
+	}
 
 	@Override
 	protected void runEachFrame() {
 		double speedMultiplier = .25;
-		double movementAmount = Robot.instance.oi.xboxInput.rightTrigger() - Robot.instance.oi.xboxInput.leftTrigger();
+		double movementAmount = this.xboxInput.rightTrigger() - this.xboxInput.leftTrigger();
 		movementAmount *= speedMultiplier;
-		Robot.instance.motors.lifter.set(movementAmount);
+		this.lifterMotor.set(movementAmount);
 	}
 }

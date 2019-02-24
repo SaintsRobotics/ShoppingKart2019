@@ -10,22 +10,23 @@ package com.saintsrobotics.shoppingkart.drive;
 import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunContinuousTask;
-import com.saintsrobotics.shoppingkart.Robot;
 
 public class ToHeading extends RunContinuousTask {
 	private BooleanSupplier dpadButton;
 	private double targetHead;
+	private SwerveControl swerveControl;
 
-	public ToHeading(BooleanSupplier dpadButton, double targetHead) {
+	public ToHeading(BooleanSupplier dpadButton, double targetHead, SwerveControl swerveControl) {
 		this.dpadButton = dpadButton;
 		this.targetHead = targetHead;
+		this.swerveControl = swerveControl;
 	}
 
 	@Override
 	public void runForever() {
 		while (true) {
 			wait.until(this.dpadButton);
-			Robot.instance.swerveControl.setRobotTargetHead(this.targetHead);
+			this.swerveControl.setRobotTargetHead(this.targetHead);
 		}
 	}
 }

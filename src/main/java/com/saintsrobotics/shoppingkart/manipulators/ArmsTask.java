@@ -4,11 +4,10 @@ import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.output.Motor;
-import com.saintsrobotics.shoppingkart.Robot;
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.util.AbsoluteEncoder;
 
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ArmsTask extends RunEachFrameTask {
     private BooleanSupplier fullIn;
@@ -25,17 +24,18 @@ public class ArmsTask extends RunEachFrameTask {
     private PIDController pidController;
 
     public ArmsTask(BooleanSupplier fullIn, BooleanSupplier engaged, BooleanSupplier fullOut, AbsoluteEncoder encoder,
-            Motor motor) {
+            Motor motor, PidConfig pidConfig) {
         this.fullIn = fullIn;
         this.engaged = engaged;
         this.fullOut = fullOut;
 
         this.targetPosition = fullInPosition;
 
-        this.pidController = new PIDController(0.015, 0.0, 0.0, encoder, (output) -> motor.set(output));
+        this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, encoder,
+                (output) -> motor.set(output));
 
         this.pidController.setSetpoint(this.targetPosition);
-        this.pidController.setAbsoluteTolerance(2.0);
+        this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
         this.pidController.setOutputRange(-0.5, 0.5);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();

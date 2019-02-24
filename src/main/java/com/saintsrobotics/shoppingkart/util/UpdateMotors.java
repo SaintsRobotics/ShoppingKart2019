@@ -1,7 +1,7 @@
 package com.saintsrobotics.shoppingkart.util;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-import com.saintsrobotics.shoppingkart.util.Motors;
+import com.saintsrobotics.shoppingkart.config.Motors;
 
 public class UpdateMotors extends RunEachFrameTask {
 	private Motors motors;

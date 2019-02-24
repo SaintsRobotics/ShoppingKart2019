@@ -1,18 +1,11 @@
 package com.saintsrobotics.shoppingkart.vision;
 
-import com.saintsrobotics.shoppingkart.util.PIDReceiver;
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.util.PidSender;
-import com.saintsrobotics.shoppingkart.vision.VisionBroker;
-
-import org.opencv.core.Rect;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DockTask {
@@ -22,13 +15,13 @@ public class DockTask {
 	private double pidTranslationOutput;
 	private NetworkTable limelight;
 
-	public DockTask() {
+	public DockTask(PidConfig pidConfig) {
 
 		this.pidSender = new PidSender();
-		this.pidController = new PIDController(0.0003, 0.0, 0.0, this.pidSender,
+		this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, this.pidSender,
 				(output) -> this.pidTranslationOutput = output);
 		this.pidController.setSetpoint(0.0);
-		this.pidController.setAbsoluteTolerance(2.0);
+		this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
 		this.pidController.setOutputRange(-1, 1);
 		this.pidController.setInputRange(0, 360);
 		this.pidController.reset();

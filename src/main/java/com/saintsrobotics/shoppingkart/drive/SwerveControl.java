@@ -3,6 +3,7 @@ package com.saintsrobotics.shoppingkart.drive;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.saintsrobotics.shoppingkart.drive.SwerveWheel;
 import com.saintsrobotics.shoppingkart.util.AngleUtilities;
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
@@ -23,7 +24,7 @@ public class SwerveControl extends RunEachFrameTask {
 	private double translationY;
 	private double rotationX;
 
-	public SwerveControl(SwerveWheel[] wheels, ADXRS450_Gyro gyro) {
+	public SwerveControl(SwerveWheel[] wheels, ADXRS450_Gyro gyro, PidConfig headingPidConfig) {
 		this.wheels = wheels;
 
 		for (SwerveWheel s : wheels) {
@@ -33,9 +34,9 @@ public class SwerveControl extends RunEachFrameTask {
 		}
 
 		this.gyro = gyro;
-		this.headingPidController = new PIDController(0.0125, 0.0, 0.0, this.gyro,
-				(output) -> this.headingPidOutput = output);
-		this.headingPidController.setAbsoluteTolerance(2.0);
+		this.headingPidController = new PIDController(headingPidConfig.kP, headingPidConfig.kI, headingPidConfig.kD,
+				this.gyro, (output) -> this.headingPidOutput = output);
+		this.headingPidController.setAbsoluteTolerance(headingPidConfig.tolerance);
 		this.headingPidController.setOutputRange(-1, 1);
 		this.headingPidController.setInputRange(0, 360);
 		this.headingPidController.setContinuous();

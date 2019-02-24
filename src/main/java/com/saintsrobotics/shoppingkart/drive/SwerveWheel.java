@@ -1,7 +1,7 @@
 package com.saintsrobotics.shoppingkart.drive;
 
 import com.github.dozer.output.Motor;
-import com.saintsrobotics.shoppingkart.drive.TurnConfiguration;
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
@@ -19,10 +19,10 @@ public class SwerveWheel {
 	private PIDController headingPidController;
 	private PIDSource encoder;
 
-	public SwerveWheel(Motor driveMotor, Motor turnMotor, TurnConfiguration pidConfig, double[] wheelLoc,
+	public SwerveWheel(Motor driveMotor, Motor turnMotor, PIDSource encoder, PidConfig pidConfig, double[] wheelLoc,
 			double[] pivotLoc) {
 		this.driveMotor = driveMotor;
-		this.encoder = pidConfig.encoder;
+		this.encoder = encoder;
 
 		this.wheelLoc = wheelLoc;
 		this.pivotLoc = pivotLoc;
@@ -33,9 +33,9 @@ public class SwerveWheel {
 				+ Math.pow((this.wheelLoc[1] - this.pivotLoc[1]), 2));
 
 		// this.headingPidReceiver = new PIDReceiver();
-		this.headingPidController = new PIDController(pidConfig.forwardHeadingKP, pidConfig.forwardHeadingKI,
-				pidConfig.forwardHeadingKD, pidConfig.encoder, (output) -> turnMotor.set(output));
-		this.headingPidController.setAbsoluteTolerance(pidConfig.forwardHeadingTolerance);
+		this.headingPidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, encoder,
+				(output) -> turnMotor.set(output));
+		this.headingPidController.setAbsoluteTolerance(pidConfig.tolerance);
 		this.headingPidController.setOutputRange(-01, 01);
 		this.headingPidController.setInputRange(0, 360);
 		this.headingPidController.setContinuous();

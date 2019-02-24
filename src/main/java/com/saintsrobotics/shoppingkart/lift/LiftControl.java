@@ -7,18 +7,13 @@
 
 package com.saintsrobotics.shoppingkart.lift;
 
-import java.sql.Driver;
-
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
-import com.github.dozer.input.OI.XboxInput;
 import com.github.dozer.output.Motor;
-import com.saintsrobotics.shoppingkart.Robot;
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftControl extends RunEachFrameTask {
@@ -32,14 +27,16 @@ public class LiftControl extends RunEachFrameTask {
     private PIDController pidController;
     private double pidOutput;
 
-    public LiftControl(Motor lifter, DistanceEncoder encoder, DigitalInput lifterUp, DigitalInput lifterDown) {
+    public LiftControl(Motor lifter, DistanceEncoder encoder, DigitalInput lifterUp, DigitalInput lifterDown,
+            PidConfig pidConfig) {
         this.lifter = lifter;
         this.encoder = encoder;
         this.lifterUp = lifterUp;
         this.lifterDown = lifterDown;
 
-        this.pidController = new PIDController(0.1, 0, 0, this.encoder, (output) -> this.pidOutput = output);
-        // this.picController.setAbsoluteTolerance();
+        this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, this.encoder,
+                (output) -> this.pidOutput = output);
+        this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
         this.pidController.setOutputRange(-01, 01);
         this.pidController.reset();
         this.pidController.enable();
