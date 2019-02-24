@@ -22,7 +22,7 @@ public class CuriositreeMotors extends RobotMotors {
 
 		this.lifter = new MotorSimple(new Talon(8), false);
 		this.intake = new MotorSimple(new Talon(9), false);
-		this.arms = new MotorSimple(new Talon(11), true);
+		this.arms = new MotorSimple(new Talon(11), false);
 		this.kicker = new MotorSimple(new Talon(10), true);
 
 		// this.turners = new MotorGroup(this.leftBackTurner, this.leftFrontTurner,

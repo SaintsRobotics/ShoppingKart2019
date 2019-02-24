@@ -16,9 +16,7 @@ public class ArmsControl extends RunEachFrameTask {
 
     private Motor motor;
 
-    private double targetPosition;
-
-    private static double offset = 230; // location of the hard stop
+    private static double offset = 285; // location of the hard stop
 
     private PIDController pidController;
     private double pidOutput;
@@ -32,12 +30,14 @@ public class ArmsControl extends RunEachFrameTask {
 
         this.motor = motor;
 
-        this.pidController = new PIDController(0.03, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
+        this.pidController = new PIDController(0.025, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
         this.pidController.setAbsoluteTolerance(2.0);
-        this.pidController.setOutputRange(-0.75, 0.75);
+        this.pidController.setOutputRange(-0.5, 0.5);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
+
+        this.setTarget(-208);
     }
 
     /**
@@ -52,10 +52,10 @@ public class ArmsControl extends RunEachFrameTask {
     /**
      * sets pid setpoint to an encoder positon
      * 
-     * @param o the offset of the target position relative to the hard stop
+     * @param d the offset of the target position relative to the hard stop
      */
-    public void setTarget(double o) {
-        this.pidController.setSetpoint(offset + o);
+    public void setTarget(double d) {
+        this.pidController.setSetpoint(offset + d);
     }
 
     /**
