@@ -79,7 +79,7 @@ public class ArmsControl extends RunEachFrameTask {
             speed = 0;
             this.setTarget(-208); // use a config constant instead of double
         }
-        SmartDashboard.putNumber("arms target", this.targetPosition);
+        SmartDashboard.putNumber("arms target", this.pidController.getSetpoint());
         SmartDashboard.putNumber("arms speed", speed);
         this.motor.set(speed);
     }

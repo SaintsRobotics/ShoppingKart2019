@@ -11,10 +11,10 @@ public class CuriositreeSensors extends RobotSensors {
 
 	@Override
 	public void init() {
-		this.leftFrontEncoder = new AbsoluteEncoder(1, -82, true);
-		this.rightFrontEncoder = new AbsoluteEncoder(0, 144, true);
-		this.leftBackEncoder = new AbsoluteEncoder(2, -56, true);
-		this.rightBackEncoder = new AbsoluteEncoder(3, 13, true);
+		this.leftFrontEncoder = new AbsoluteEncoder(1, -86, true);
+		this.rightFrontEncoder = new AbsoluteEncoder(0, -215, true);
+		this.leftBackEncoder = new AbsoluteEncoder(2, -57, true);
+		this.rightBackEncoder = new AbsoluteEncoder(3, -306, true);
 
 		this.leftFrontTurnConfig = new TurnConfiguration(this.leftFrontEncoder);
 		this.leftBackTurnConfig = new TurnConfiguration(this.leftBackEncoder);

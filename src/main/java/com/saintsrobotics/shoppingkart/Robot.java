@@ -6,6 +6,8 @@ import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.saintsrobotics.shoppingkart.arms.ArmsControl;
 import com.saintsrobotics.shoppingkart.arms.ArmsTarget;
 import com.saintsrobotics.shoppingkart.arms.ResetArms;
+import com.saintsrobotics.shoppingkart.config.CuriositreeMotors;
+import com.saintsrobotics.shoppingkart.config.CuriositreeSensors;
 import com.saintsrobotics.shoppingkart.config.OI;
 import com.saintsrobotics.shoppingkart.config.OpportunitreeMotors;
 import com.saintsrobotics.shoppingkart.config.OpportunitreeSensors;
@@ -42,10 +44,10 @@ public class Robot extends TaskRobot {
 	public RobotSensors sensors;
 	public OI oi;
 	public Flags flags;
-	private double[] rightFrontLoc = { 12.75, 11 };
-	private double[] leftFrontLoc = { -12.75, 11 };
-	private double[] leftBackLoc = { -12.75, -11 };
-	private double[] rightBackLoc = { 12.75, -11 };
+	private double[] rightFrontLoc = { 12, 12 };
+	private double[] leftFrontLoc = { -12, 12 };
+	private double[] leftBackLoc = { -12, -12 };
+	private double[] rightBackLoc = { 12, -12 };
 	private double[] pivotLoc = { 0, 0 };
 	private LiftControl liftControl;
 	private ArmsControl armsControl;
@@ -57,9 +59,9 @@ public class Robot extends TaskRobot {
 	public void robotInit() {
 		Robot.instance = this;
 		this.oi = new OI();
-		this.motors = new OpportunitreeMotors();
+		this.motors = new CuriositreeMotors();
 		this.motors.init();
-		this.sensors = new OpportunitreeSensors();
+		this.sensors = new CuriositreeSensors();
 		this.sensors.init();
 		this.sensors.gyro.calibrate();
 		this.sensors.gyro.reset();
