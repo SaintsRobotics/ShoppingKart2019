@@ -13,6 +13,7 @@ import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LiftControl extends RunEachFrameTask {
     private Motor lifter;
@@ -31,11 +32,14 @@ public class LiftControl extends RunEachFrameTask {
         this.lifterUp = lifterUp;
         this.lifterDown = lifterDown;
 
+        encoder.setOffset(17);
+
         this.pidController = new PIDController(0.1, 0, 0, this.encoder, (output) -> this.pidOutput = output);
         // this.picController.setAbsoluteTolerance();
-        this.pidController.setOutputRange(-01, 01);
+        this.pidController.setOutputRange(-1, 1);
         this.pidController.reset();
         this.pidController.enable();
+        this.pidController.setSetpoint(encoder.getDistance());
     }
 
     /**
@@ -92,7 +96,7 @@ public class LiftControl extends RunEachFrameTask {
         // SmartDashboard.putBoolean("lifterDown", !this.lifterDown.get());
         // SmartDashboard.putBoolean("lifting", this.isLifting);
 
-        // SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
+        SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
         // SmartDashboard.putNumber("pid output", this.pidOutput);
         // SmartDashboard.putNumber("lift input", liftInput);
 

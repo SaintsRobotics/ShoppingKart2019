@@ -23,7 +23,7 @@ public class CuriositreeSensors extends RobotSensors {
 
 		this.gyro = new ADXRS450_Gyro();
 
-		this.liftEncoder = new DistanceEncoder(2, 3, 146.58, true);
+		this.liftEncoder = new DistanceEncoder(2, 3, 146.58, false);
 		this.lifterDown = new DigitalInput(1);
 		this.lifterUp = new DigitalInput(0);
 
