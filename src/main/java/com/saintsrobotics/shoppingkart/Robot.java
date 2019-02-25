@@ -39,11 +39,11 @@ public class Robot extends TaskRobot {
 	private Sensors sensors;
 	private OI oi;
 	private Flags flags;
-	private double[] rightFrontLoc = { 12, 12 };
-	private double[] leftFrontLoc = { -12, 12 };
-	private double[] leftBackLoc = { -12, -12 };
-	private double[] rightBackLoc = { 12, -12 };
-	private double[] pivotLoc = { 0, 0 };
+	private double[] rightFrontLoc;
+	private double[] leftFrontLoc;
+	private double[] leftBackLoc;
+	private double[] rightBackLoc;
+	private double[] pivotLoc;
 
 	@Override
 	public void robotInit() {
@@ -54,6 +54,17 @@ public class Robot extends TaskRobot {
 			DriverStation.reportError("Could not load config", false);
 			return;
 		}
+
+		this.rightFrontLoc = new double[] { robotConfig.getDouble("robot.location.rightFront.x"),
+				robotConfig.getDouble("robot.location.rightFront.y") };
+		this.leftFrontLoc = new double[] { robotConfig.getDouble("robot.location.leftFront.x"),
+				robotConfig.getDouble("robot.location.leftFront.y") };
+		this.leftBackLoc = new double[] { robotConfig.getDouble("robot.location.leftBack.x"),
+				robotConfig.getDouble("robot.location.leftBack.y") };
+		this.rightBackLoc = new double[] { robotConfig.getDouble("robot.location.rightBack.x"),
+				robotConfig.getDouble("robot.location.rightBack.y") };
+		this.pivotLoc = new double[] { robotConfig.getDouble("robot.location.pivot.x"),
+				robotConfig.getDouble("robot.location.pivot.y") };
 
 		this.oi = new OI();
 		this.motors = new Motors(robotConfig);
