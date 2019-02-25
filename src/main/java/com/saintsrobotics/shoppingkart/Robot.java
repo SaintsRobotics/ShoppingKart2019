@@ -5,10 +5,14 @@ import java.io.IOException;
 import com.github.dozer.TaskRobot;
 import com.github.dozer.coroutine.Task;
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
+import com.saintsrobotics.shoppingkart.arms.ArmsControl;
+import com.saintsrobotics.shoppingkart.arms.ArmsTarget;
+import com.saintsrobotics.shoppingkart.arms.ResetArms;
 import com.saintsrobotics.shoppingkart.config.Config;
 import com.saintsrobotics.shoppingkart.config.Motors;
 import com.saintsrobotics.shoppingkart.config.OI;
-import com.saintsrobotics.shoppingkart.config.Sensors;
+import com.saintsrobotics.shoppingkart.config.RobotSensors;
+import com.saintsrobotics.shoppingkart.config.RobotSensors;
 import com.saintsrobotics.shoppingkart.drive.ResetGyro;
 import com.saintsrobotics.shoppingkart.drive.SwerveControl;
 import com.saintsrobotics.shoppingkart.drive.SwerveInput;
@@ -16,7 +20,9 @@ import com.saintsrobotics.shoppingkart.drive.SwerveWheel;
 import com.saintsrobotics.shoppingkart.drive.ToHeading;
 import com.saintsrobotics.shoppingkart.lift.LiftControl;
 import com.saintsrobotics.shoppingkart.lift.LiftInput;
+import com.saintsrobotics.shoppingkart.lift.ToHeight;
 import com.saintsrobotics.shoppingkart.manipulators.ArmsTask;
+import com.saintsrobotics.shoppingkart.manipulators.DetatchPanel;
 import com.saintsrobotics.shoppingkart.manipulators.IntakeWheel;
 import com.saintsrobotics.shoppingkart.manipulators.Kicker;
 import com.saintsrobotics.shoppingkart.util.UpdateMotors;
@@ -26,6 +32,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,7 +44,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
  */
 public class Robot extends TaskRobot {
 	private Motors motors;
-	private Sensors sensors;
+	private RobotSensors sensors;
 	private OI oi;
 	private Flags flags;
 	private double[] rightFrontLoc;
@@ -68,15 +76,14 @@ public class Robot extends TaskRobot {
 
 		this.oi = new OI();
 		this.motors = new Motors(robotConfig);
-		this.sensors = new Sensors(robotConfig);
+		this.sensors = new RobotSensors(robotConfig);
 		this.sensors.gyro.calibrate();
 		this.sensors.gyro.reset();
 		this.flags = new Flags();
 
 		this.flags.pdp = new PowerDistributionPanel();
 
-		NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-
+		CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	@Override
@@ -99,36 +106,51 @@ public class Robot extends TaskRobot {
 
 		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
 		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.sensors.headingPidConfig);
+
 		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl,
 				new DockTask(this.sensors.dockPidConfig));
+
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown, this.sensors.liftPidConfig);
 
-		this.teleopTasks = new Task[] { new ResetGyro(() -> this.oi.xboxInput.Y(), this.sensors.gyro, swerveControl),
-				swerveInput, swerveControl, liftControl,
+		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
+
+		this.teleopTasks = new Task[] {
+				new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro, swerveControl), swerveInput,
+				swerveControl, liftControl,
 
 				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.B(), 28.8, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.Y(), 151.2, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.X(), 208.8, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.A(), 331.2, swerveControl),
 
 				// new ToHeight(() -> this.oi.xboxInput.B(), liftControl, 48.0),
 
-				new LiftInput(this.oi.oppInput, liftControl),
-				// new ResetLift(() -> this.oi.xboxInput.B(), this.liftControl),
+				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.Y(), liftControl),
+				new ToHeight(() -> this.oi.oppInput.DPAD_DOWN(), liftControl, 35),
 
-				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake),
-				new ArmsTask(() -> this.oi.oppInput.B(), () -> this.oi.oppInput.X(), () -> this.oi.oppInput.A(),
-						this.sensors.arms, this.motors.arms, this.sensors.armsPidConfig),
+				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake, 1),
+				new IntakeWheel(() -> this.oi.oppInput.SELECT(), this.motors.intake, -1),
 
-				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 220, 109),
+				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
 
-				new UpdateMotors(this.motors),
+				armsControl, new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, armsControl),
 
-				new RunEachFrameTask() {
+				new ArmsTarget(() -> this.oi.oppInput.B(), -208, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.X(), -153, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.A(), -10, armsControl),
+
+				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl, this.sensors.liftEncoder),
+				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
+						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
+						SmartDashboard.putNumber("lift speed", motors.lifter.get());
 					}
 				} };
 
@@ -149,7 +171,7 @@ public class Robot extends TaskRobot {
 	 */
 	private Config loadConfig() throws IOException {
 		DigitalInput testBotJumper = new DigitalInput(10);
-		Config robotConfig = Config.fromFile(testBotJumper.get());
+		Config robotConfig = Config.fromFile(true);
 		testBotJumper.close();
 		return robotConfig;
 	}

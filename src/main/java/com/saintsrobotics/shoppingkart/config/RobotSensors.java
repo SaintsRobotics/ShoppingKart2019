@@ -6,7 +6,7 @@ import com.saintsrobotics.shoppingkart.util.DistanceEncoder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Sensors {
+public class RobotSensors {
 	public AbsoluteEncoder rightFrontEncoder;
 	public AbsoluteEncoder leftFrontEncoder;
 	public AbsoluteEncoder rightBackEncoder;
@@ -29,7 +29,7 @@ public class Sensors {
 
 	public PidConfig dockPidConfig;
 
-	public Sensors(Config robotConfig) {
+	public RobotSensors(Config robotConfig) {
 		this.leftFrontEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.leftFront");
 		this.rightFrontEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.rightFront");
 		this.leftBackEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.leftBack");

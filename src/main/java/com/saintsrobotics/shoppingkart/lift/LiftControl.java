@@ -40,6 +40,7 @@ public class LiftControl extends RunEachFrameTask {
         this.pidController.setOutputRange(-01, 01);
         this.pidController.reset();
         this.pidController.enable();
+        this.pidController.setSetpoint(encoder.getDistance());
     }
 
     /**
@@ -90,17 +91,16 @@ public class LiftControl extends RunEachFrameTask {
             this.encoder.reset();
         }
 
-        SmartDashboard.putNumber("lift encoder", this.encoder.getDistance());
-        SmartDashboard.putBoolean("lifting", this.isLifting);
+        // SmartDashboard.putNumber("liftInput", liftInput);
+        // SmartDashboard.putNumber("lift encoder", this.encoder.getDistance());
+        // SmartDashboard.putBoolean("lifterUp", !this.lifterUp.get());
+        // SmartDashboard.putBoolean("lifterDown", !this.lifterDown.get());
+        // SmartDashboard.putBoolean("lifting", this.isLifting);
 
         SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
-        SmartDashboard.putNumber("pid output", this.pidOutput);
-        SmartDashboard.putNumber("lift input", liftInput);
+        // SmartDashboard.putNumber("pid output", this.pidOutput);
+        // SmartDashboard.putNumber("lift input", liftInput);
 
         this.lifter.set(liftInput);
     }
-
-    // public void runForever(){
-
-    // }
 }

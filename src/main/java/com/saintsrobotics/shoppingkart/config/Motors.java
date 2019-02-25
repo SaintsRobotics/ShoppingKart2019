@@ -30,7 +30,7 @@ public class Motors {
 
 	public Motors(Config robotConfig) {
 		this.leftBack = buildTalonMotor(robotConfig, "motors.drive.leftBack", true);
-		this.leftFront = buildTalonMotor(robotConfig, "motors.drive.rightFront", true);
+		this.leftFront = buildTalonMotor(robotConfig, "motors.drive.leftFront", true);
 		this.rightBack = buildTalonMotor(robotConfig, "motors.drive.rightBack", true);
 		this.rightFront = buildTalonMotor(robotConfig, "motors.drive.rightFront", true);
 

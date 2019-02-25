@@ -24,6 +24,7 @@ public class TestTurnSwerveWheel extends RunEachFrameTask {
 	protected void runEachFrame() {
 		double xAxis = xb.leftStickX() * 0.25;
 		this.turner.set(xAxis);
+		SmartDashboard.putNumber("xAxis", xAxis);
 		SmartDashboard.putNumber("encoder ", this.encoder.getRotation());
 
 	}
