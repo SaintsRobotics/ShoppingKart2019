@@ -12,7 +12,6 @@ import com.saintsrobotics.shoppingkart.config.Config;
 import com.saintsrobotics.shoppingkart.config.Motors;
 import com.saintsrobotics.shoppingkart.config.OI;
 import com.saintsrobotics.shoppingkart.config.RobotSensors;
-import com.saintsrobotics.shoppingkart.config.RobotSensors;
 import com.saintsrobotics.shoppingkart.drive.ResetGyro;
 import com.saintsrobotics.shoppingkart.drive.SwerveControl;
 import com.saintsrobotics.shoppingkart.drive.SwerveInput;
@@ -21,7 +20,6 @@ import com.saintsrobotics.shoppingkart.drive.ToHeading;
 import com.saintsrobotics.shoppingkart.lift.LiftControl;
 import com.saintsrobotics.shoppingkart.lift.LiftInput;
 import com.saintsrobotics.shoppingkart.lift.ToHeight;
-import com.saintsrobotics.shoppingkart.manipulators.ArmsTask;
 import com.saintsrobotics.shoppingkart.manipulators.DetatchPanel;
 import com.saintsrobotics.shoppingkart.manipulators.IntakeWheel;
 import com.saintsrobotics.shoppingkart.manipulators.Kicker;
@@ -149,8 +147,8 @@ public class Robot extends TaskRobot {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
-						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
-						SmartDashboard.putNumber("lift speed", motors.lifter.get());
+						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						SmartDashboard.putNumber("arms speed", motors.arms.get());
 					}
 				} };
 

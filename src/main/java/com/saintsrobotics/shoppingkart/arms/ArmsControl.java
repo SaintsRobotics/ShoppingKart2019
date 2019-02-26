@@ -16,7 +16,7 @@ public class ArmsControl extends RunEachFrameTask {
 
     private Motor motor;
 
-    private static double offset = 285; // location of the hard stop
+    private static double offset = 329; // location of the hard stop
 
     private PIDController pidController;
     private double pidOutput;
@@ -67,6 +67,7 @@ public class ArmsControl extends RunEachFrameTask {
 
     @Override
     protected void runEachFrame() {
+        SmartDashboard.putNumber("arms setpoint", this.pidController.getSetpoint());
 
         double speed = this.pidOutput;
 

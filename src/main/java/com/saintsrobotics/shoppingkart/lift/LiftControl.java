@@ -97,7 +97,7 @@ public class LiftControl extends RunEachFrameTask {
         // SmartDashboard.putBoolean("lifterDown", !this.lifterDown.get());
         // SmartDashboard.putBoolean("lifting", this.isLifting);
 
-        SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
+        // SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
         // SmartDashboard.putNumber("pid output", this.pidOutput);
         // SmartDashboard.putNumber("lift input", liftInput);
 
