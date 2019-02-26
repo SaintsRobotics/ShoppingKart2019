@@ -12,6 +12,7 @@ import com.saintsrobotics.shoppingkart.config.Config;
 import com.saintsrobotics.shoppingkart.config.Motors;
 import com.saintsrobotics.shoppingkart.config.OI;
 import com.saintsrobotics.shoppingkart.config.RobotSensors;
+import com.saintsrobotics.shoppingkart.config.Settings;
 import com.saintsrobotics.shoppingkart.drive.ResetGyro;
 import com.saintsrobotics.shoppingkart.drive.SwerveControl;
 import com.saintsrobotics.shoppingkart.drive.SwerveInput;
@@ -43,13 +44,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TaskRobot {
 	private Motors motors;
 	private RobotSensors sensors;
+	private Settings settings;
 	private OI oi;
 	private Flags flags;
-	private double[] rightFrontLoc;
-	private double[] leftFrontLoc;
-	private double[] leftBackLoc;
-	private double[] rightBackLoc;
-	private double[] pivotLoc;
 
 	@Override
 	public void robotInit() {
@@ -61,22 +58,15 @@ public class Robot extends TaskRobot {
 			return;
 		}
 
-		this.rightFrontLoc = new double[] { robotConfig.getDouble("robot.location.rightFront.x"),
-				robotConfig.getDouble("robot.location.rightFront.y") };
-		this.leftFrontLoc = new double[] { robotConfig.getDouble("robot.location.leftFront.x"),
-				robotConfig.getDouble("robot.location.leftFront.y") };
-		this.leftBackLoc = new double[] { robotConfig.getDouble("robot.location.leftBack.x"),
-				robotConfig.getDouble("robot.location.leftBack.y") };
-		this.rightBackLoc = new double[] { robotConfig.getDouble("robot.location.rightBack.x"),
-				robotConfig.getDouble("robot.location.rightBack.y") };
-		this.pivotLoc = new double[] { robotConfig.getDouble("robot.location.pivot.x"),
-				robotConfig.getDouble("robot.location.pivot.y") };
-
 		this.oi = new OI();
 		this.motors = new Motors(robotConfig);
 		this.sensors = new RobotSensors(robotConfig);
+		this.settings = new Settings(robotConfig);
+
 		this.sensors.gyro.calibrate();
 		this.sensors.gyro.reset();
+
+		this.sensors.liftEncoder.setOffset(this.settings.liftOffset);
 		this.flags = new Flags();
 
 		this.flags.pdp = new PowerDistributionPanel();
@@ -91,27 +81,32 @@ public class Robot extends TaskRobot {
 	@Override
 	public void teleopInit() {
 		SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront, this.motors.rightFrontTurner,
-				this.sensors.rightFrontEncoder, this.sensors.wheelAnglePidConfig, this.rightFrontLoc, this.pivotLoc);
+				this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc,
+				this.settings.pivotLoc);
 
 		SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront, this.motors.leftFrontTurner,
-				this.sensors.leftFrontEncoder, this.sensors.wheelAnglePidConfig, this.leftFrontLoc, this.pivotLoc);
+				this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.leftFrontLoc,
+				this.settings.pivotLoc);
 
 		SwerveWheel leftBack = new SwerveWheel(this.motors.leftBack, this.motors.leftBackTurner,
-				this.sensors.leftBackEncoder, this.sensors.wheelAnglePidConfig, this.leftBackLoc, this.pivotLoc);
+				this.sensors.leftBackEncoder, this.settings.wheelAnglePidConfig, this.settings.leftBackLoc,
+				this.settings.pivotLoc);
 
 		SwerveWheel rightBack = new SwerveWheel(this.motors.rightBack, this.motors.rightBackTurner,
-				this.sensors.rightBackEncoder, this.sensors.wheelAnglePidConfig, this.rightBackLoc, this.pivotLoc);
+				this.sensors.rightBackEncoder, this.settings.wheelAnglePidConfig, this.settings.rightBackLoc,
+				this.settings.pivotLoc);
 
 		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
-		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.sensors.headingPidConfig);
+		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.settings.headingPidConfig);
 
 		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl,
-				new DockTask(this.sensors.dockPidConfig));
+				new DockTask(this.settings.dockPidConfig));
 
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown, this.sensors.liftPidConfig);
 
-		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms);
+		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms,
+				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
 				new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro, swerveControl), swerveInput,
@@ -121,12 +116,10 @@ public class Robot extends TaskRobot {
 				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.B(), 28.8, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.Y(), 151.2, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.X(), 208.8, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.A(), 331.2, swerveControl),
-
-				// new ToHeight(() -> this.oi.xboxInput.B(), liftControl, 48.0),
+				new ToHeading(() -> this.oi.xboxInput.B(), 61.25, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.Y(), 118.75, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.X(), 241.25, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.A(), 298.75, swerveControl),
 
 				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.Y(), liftControl),
 				new ToHeight(() -> this.oi.oppInput.DPAD_DOWN(), liftControl, 35),
@@ -134,13 +127,14 @@ public class Robot extends TaskRobot {
 				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake, 1),
 				new IntakeWheel(() -> this.oi.oppInput.SELECT(), this.motors.intake, -1),
 
-				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker, 240, 130),
+				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker,
+						this.settings.kickerUpperbound, this.settings.kickerLowerbound),
 
 				armsControl, new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, armsControl),
 
-				new ArmsTarget(() -> this.oi.oppInput.B(), -208, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.X(), -153, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.A(), -10, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.B(), this.settings.armsFullin, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.X(), this.settings.armsHatch, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.A(), this.settings.armsFullout, armsControl),
 
 				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl, this.sensors.liftEncoder),
 				new UpdateMotors(this.motors), new RunEachFrameTask() {

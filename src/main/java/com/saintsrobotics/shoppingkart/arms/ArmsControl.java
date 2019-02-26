@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.output.Motor;
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.util.AbsoluteEncoder;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -16,28 +17,38 @@ public class ArmsControl extends RunEachFrameTask {
 
     private Motor motor;
 
-    private static double offset = 329; // location of the hard stop
+    private static double offset; // location of the hard stop
+    private static double restPosition; // full in relative to hard stop
 
     private PIDController pidController;
     private double pidOutput;
 
     /**
-     * @param motorPause trigger that pauses motor speed
-     * @param encoder    assumes that as the arms spin in, the encoder decreases
+     * @param motorPause   trigger that pauses motor speed
+     * @param encoder      assumes that as the arms spin in, the encoder decreases
+     * @param offset       the value of the encoder when the arms are against the
+     *                     hard stop
+     * @param restPosition the position to which the arms will go after a reset or
+     *                     disable (full in)
      */
-    public ArmsControl(BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor) {
+    public ArmsControl(BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor, double offset,
+            double restPosition, PidConfig pidConfig) {
         this.motorPause = motorPause;
 
         this.motor = motor;
 
-        this.pidController = new PIDController(0.025, 0.0, 0.0, encoder, (output) -> this.pidOutput = output);
-        this.pidController.setAbsoluteTolerance(2.0);
+        ArmsControl.offset = offset;
+        ArmsControl.restPosition = restPosition;
+
+        this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, encoder,
+                (output) -> this.pidOutput = output);
+        this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
         this.pidController.setOutputRange(-0.5, 0.5);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
 
-        this.setTarget(-208);
+        this.setTarget(restPosition);
     }
 
     /**
@@ -73,12 +84,12 @@ public class ArmsControl extends RunEachFrameTask {
 
         if (this.resetSpeed != 0) {
             speed = this.resetSpeed;
-            this.setTarget(-208); // use a config constant instead of double
+            this.setTarget(restPosition);
         }
 
         if (motorPause.getAsBoolean()) {
             speed = 0;
-            this.setTarget(-208); // use a config constant instead of double
+            this.setTarget(restPosition);
         }
         this.motor.set(speed);
     }

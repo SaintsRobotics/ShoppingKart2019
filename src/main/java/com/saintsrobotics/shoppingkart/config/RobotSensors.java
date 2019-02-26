@@ -12,9 +12,6 @@ public class RobotSensors {
 	public AbsoluteEncoder rightBackEncoder;
 	public AbsoluteEncoder leftBackEncoder;
 
-	public PidConfig wheelAnglePidConfig;
-	public PidConfig headingPidConfig;
-
 	public ADXRS450_Gyro gyro;
 
 	public DistanceEncoder liftEncoder;
@@ -27,30 +24,21 @@ public class RobotSensors {
 
 	public AbsoluteEncoder kicker;
 
-	public PidConfig dockPidConfig;
-
 	public RobotSensors(Config robotConfig) {
 		this.leftFrontEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.leftFront");
 		this.rightFrontEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.rightFront");
 		this.leftBackEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.leftBack");
 		this.rightBackEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.rightBack");
 
-		this.wheelAnglePidConfig = buildPidConfig(robotConfig, "pids.wheelAngle");
-		this.headingPidConfig = buildPidConfig(robotConfig, "pids.heading");
-
 		this.gyro = new ADXRS450_Gyro();
 
 		this.liftEncoder = buildDistanceEncoder(robotConfig, "encoders.lift");
 		this.lifterDown = new DigitalInput(robotConfig.getInt("limits.lift.down.port"));
 		this.lifterUp = new DigitalInput(robotConfig.getInt("limits.lift.up.port"));
-		this.liftPidConfig = buildPidConfig(robotConfig, "pids.lift");
 
 		this.kicker = buildAbsoluteEncoder(robotConfig, "encoders.kicker");
 
 		this.arms = buildAbsoluteEncoder(robotConfig, "encoders.arms");
-		this.armsPidConfig = buildPidConfig(robotConfig, "pids.arms");
-
-		this.dockPidConfig = buildPidConfig(robotConfig, "pids.dock");
 	}
 
 	private static AbsoluteEncoder buildAbsoluteEncoder(Config robotConfig, String keyPrefix) {
@@ -61,10 +49,5 @@ public class RobotSensors {
 	private static DistanceEncoder buildDistanceEncoder(Config robotConfig, String keyPrefix) {
 		return new DistanceEncoder(robotConfig.getInt(keyPrefix + ".port1"), robotConfig.getInt(keyPrefix + ".port2"),
 				robotConfig.getDouble(keyPrefix + ".ticksPerUnit"), robotConfig.getBoolean(keyPrefix + ".reversed"));
-	}
-
-	private static PidConfig buildPidConfig(Config robotConfig, String keyPrefix) {
-		return new PidConfig(robotConfig.getDouble(keyPrefix + ".kP"), robotConfig.getDouble(keyPrefix + ".kI"),
-				robotConfig.getDouble(keyPrefix + ".kD"), robotConfig.getDouble(keyPrefix + ".tolerance"));
 	}
 }
