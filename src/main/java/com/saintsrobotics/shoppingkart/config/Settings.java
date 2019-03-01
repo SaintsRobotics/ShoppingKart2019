@@ -49,7 +49,7 @@ public class Settings {
     }
 
     private static double[] buildLoc(Config robotConfig, String keyPrefix) {
-        return new double[] { robotConfig.getDouble(keyPrefix + "x"), robotConfig.getDouble(keyPrefix + "y") };
+        return new double[] { robotConfig.getDouble(keyPrefix + ".x"), robotConfig.getDouble(keyPrefix + ".y") };
     }
 
     private static PidConfig buildPidConfig(Config robotConfig, String keyPrefix) {
