@@ -103,7 +103,7 @@ public class Robot extends TaskRobot {
 				new DockTask(this.settings.dockPidConfig));
 
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
-				this.sensors.lifterDown, this.sensors.liftPidConfig);
+				this.sensors.lifterDown, this.settings.liftPidConfig);
 
 		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms,
 				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
@@ -141,8 +141,10 @@ public class Robot extends TaskRobot {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
-						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
-						SmartDashboard.putNumber("arms speed", motors.arms.get());
+						SmartDashboard.putNumber("1 encoder", sensors.rightFrontEncoder.getRotation());
+						SmartDashboard.putNumber("2 encoder", sensors.leftFrontEncoder.getRotation());
+						SmartDashboard.putNumber("3 encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("4 encoder", sensors.rightBackEncoder.getRotation());
 					}
 				} };
 

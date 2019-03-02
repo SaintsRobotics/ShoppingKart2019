@@ -17,10 +17,8 @@ public class RobotSensors {
 	public DistanceEncoder liftEncoder;
 	public DigitalInput lifterUp;
 	public DigitalInput lifterDown;
-	public PidConfig liftPidConfig;
 
 	public AbsoluteEncoder arms;
-	public PidConfig armsPidConfig;
 
 	public AbsoluteEncoder kicker;
 

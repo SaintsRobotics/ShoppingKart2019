@@ -31,11 +31,20 @@ public class Config {
     }
 
     public double getDouble(String key) {
-        return Double.parseDouble(this.config.getProperty(key));
+        try {
+            return Double.parseDouble(this.config.getProperty(key));
+        } catch (NullPointerException e) {
+            System.err.println(key);
+            return 0;
+        }
     }
 
     public boolean getBoolean(String key) {
         return Boolean.parseBoolean(this.config.getProperty(key));
+    }
+
+    public String get(String key) {
+        return this.config.getProperty(key);
     }
 
     public static Config fromFile(boolean isTest) throws IOException {
