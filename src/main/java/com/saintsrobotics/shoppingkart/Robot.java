@@ -99,8 +99,7 @@ public class Robot extends TaskRobot {
 		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
 		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.settings.headingPidConfig);
 
-		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl,
-				new DockTask(this.settings.dockPidConfig));
+		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl, new DockTask());
 
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown, this.settings.liftPidConfig);
@@ -136,15 +135,15 @@ public class Robot extends TaskRobot {
 				new ArmsTarget(() -> this.oi.oppInput.X(), this.settings.armsHatch, armsControl),
 				new ArmsTarget(() -> this.oi.oppInput.A(), this.settings.armsFullout, armsControl),
 
-				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl, this.sensors.liftEncoder),
+				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl, this.sensors.liftEncoder,
+						1, this.settings.armsFullin),
 				new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
-						SmartDashboard.putNumber("1 encoder", sensors.rightFrontEncoder.getRotation());
-						SmartDashboard.putNumber("2 encoder", sensors.leftFrontEncoder.getRotation());
-						SmartDashboard.putNumber("3 encoder", sensors.leftBackEncoder.getRotation());
-						SmartDashboard.putNumber("4 encoder", sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
+						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+
 					}
 				} };
 

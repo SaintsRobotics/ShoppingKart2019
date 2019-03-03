@@ -14,6 +14,7 @@ public class Settings {
     public double armsFullin;
 
     public double liftOffset;
+    public double liftWait;
 
     public double kickerUpperbound;
     public double kickerLowerbound;
@@ -37,6 +38,7 @@ public class Settings {
         this.armsFullin = robotConfig.getDouble("settings.arms.fullin");
 
         this.liftOffset = robotConfig.getDouble("settings.lift.offset");
+        this.liftWait = robotConfig.getDouble("settings.lift.waittime");
 
         this.kickerUpperbound = robotConfig.getDouble("settings.kicker.upperbound");
         this.kickerLowerbound = robotConfig.getDouble("settings.kicker.lowerbound");

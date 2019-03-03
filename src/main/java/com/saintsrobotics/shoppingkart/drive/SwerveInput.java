@@ -11,7 +11,9 @@ import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.shoppingkart.vision.DockTask;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Task to switch between inputs for SwerveControl
@@ -26,11 +28,18 @@ public class SwerveInput extends RunEachFrameTask {
 	private final double BOOST_GAIN = .75;
 	private final double TURN_GAIN = .5;
 
+	private State currentState;
+	private State lastState;
+
+	private double[] docking;
+
 	public SwerveInput(XboxInput xboxInput, ADXRS450_Gyro gyro, SwerveControl control, DockTask dock) {
 		this.xboxInput = xboxInput;
 		this.gyro = gyro;
 		this.control = control;
 		this.dock = dock;
+		this.docking = new double[2];
+		this.currentState = State.START_CONTROLLER;
 	}
 
 	/**
@@ -49,13 +58,13 @@ public class SwerveInput extends RunEachFrameTask {
 			rightStickX = 0;
 		}
 
-		if (this.xboxInput.LB()) {
-			leftStickX *= this.BOOST_GAIN;
-			leftStickY *= this.BOOST_GAIN;
-		} else {
-			leftStickX *= this.SPEED_GAIN;
-			leftStickY *= this.SPEED_GAIN;
-		}
+		// if (this.xboxInput.LB()) {
+		// leftStickX *= this.BOOST_GAIN;
+		// leftStickY *= this.BOOST_GAIN;
+		// } else {
+		// leftStickX *= this.SPEED_GAIN;
+		// leftStickY *= this.SPEED_GAIN;
+		// }
 
 		// Absolute control
 		if (this.xboxInput.RB()) {
@@ -73,45 +82,88 @@ public class SwerveInput extends RunEachFrameTask {
 					+ (tempY * Math.cos(Math.toRadians(robotAngle)));
 		}
 
-		if (this.xboxInput.leftTrigger() > 0.25) {
-			leftStickX = 0;
-			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN / 2;
-			rightStickX = 0;
-		}
-
 		xboxValues[0] = leftStickX;
 		xboxValues[1] = leftStickY;
 		xboxValues[2] = rightStickX;
 		return xboxValues;
 	}
 
-	public double readDockTaskInput() {
-		return dock.getOutput();
+	public double[] readDockTaskInput() {
+		return this.docking;
+	}
+
+	private void doController() {
+		double[] xboxValues = readXboxInput();
+		double leftStickX = xboxValues[0];
+		double leftStickY = xboxValues[1];
+		double rightStickX = xboxValues[2];
+		this.control.setTranslationVector(leftStickX, leftStickY);
+		this.control.setRotationVector(rightStickX);
+	}
+
+	private void doStartDocking() {
+		NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+		NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+		this.dock.init();
+	}
+
+	private void doDocking() {
+		this.docking = this.dock.run();
+		this.control.setTranslationVector(this.docking[0], this.docking[1]);
+		this.control.setRotationVector(0);
+	}
+
+	private void doStartController() {
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+	}
+
+	private boolean isXboxNotZero(double xboxInput) {
+		return !(xboxInput > -0.1 && xboxInput < 0.1);
 	}
 
 	@Override
 	// Pass the values into SwerveControl
 	public void runEachFrame() {
-		double[] xboxValues = readXboxInput();
-		double leftStickX = xboxValues[0];
-		double leftStickY = xboxValues[1];
-		double rightStickX = xboxValues[2];
-		// if (xboxInput.A()) {
-		// // Switches limelight camera mode to vision processing
-		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
-		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
-		// this.control.setTranslationVector(this.dock.getOutput(), 0);
-		// SmartDashboard.putNumber("Dock Output", this.dock.getOutput());
-		// this.control.setRotationVector(0);
-		// } else {
-		// // Switches limelight camera mode back to regular.
-		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
-		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-		// this.control.setTranslationVector(leftStickX, leftStickY);
-		// this.control.setRotationVector(rightStickX);
-		// }
+		if (currentState != lastState) {
+			System.out.println(currentState);
+			lastState = currentState;
+		}
+		SmartDashboard.putNumber("Translation Vector", this.docking[0]);
+		SmartDashboard.putNumber("Distance Vector", this.docking[1]);
 
-		this.control.setTranslationVector(leftStickX, leftStickY);
-		this.control.setRotationVector(rightStickX);
+		switch (this.currentState) {
+		case CONTROLLER:
+			doController();
+			if (xboxInput.LB()) {
+				this.currentState = State.START_DOCKING;
+			}
+			// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+			// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
+
+			break;
+		case START_DOCKING:
+			doStartDocking();
+			this.currentState = State.DOCKING;
+			break;
+		case DOCKING:
+			doDocking();
+			double[] xboxInput = readXboxInput();
+			SmartDashboard.putNumber("xboxInput 1", xboxInput[0]);
+			SmartDashboard.putNumber("xboxInput 2", xboxInput[1]);
+			SmartDashboard.putNumber("xboxInput 3", xboxInput[2]);
+			if (isXboxNotZero(xboxInput[0]) || isXboxNotZero(xboxInput[1]) || isXboxNotZero(xboxInput[2])) {
+				this.currentState = State.START_CONTROLLER;
+			}
+			break;
+		case START_CONTROLLER:
+			doStartController();
+			this.currentState = State.CONTROLLER;
+			break;
+		}
+	}
+
+	private static enum State {
+		CONTROLLER, START_DOCKING, DOCKING, START_CONTROLLER
 	}
 }

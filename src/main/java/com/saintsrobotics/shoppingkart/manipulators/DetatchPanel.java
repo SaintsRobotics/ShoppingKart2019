@@ -12,19 +12,29 @@ public class DetatchPanel extends RunContinuousTask {
     private ArmsControl armsControl;
     private LiftControl liftControl;
     private DistanceEncoder encoder;
+    private double time;
+    private double rest;
 
+    /**
+     * 
+     * @param time the amount of seconds it waits to signal the arms
+     * @param rest the position the arms go to after the lift lowers (full in)
+     */
     public DetatchPanel(BooleanSupplier trigger, ArmsControl armsControl, LiftControl liftControl,
-            DistanceEncoder encoder) {
+            DistanceEncoder encoder, double time, double rest) {
         this.trigger = trigger;
         this.armsControl = armsControl;
         this.liftControl = liftControl;
         this.encoder = encoder;
+        this.time = time;
+        this.rest = rest;
     }
 
     @Override
     protected void runForever() {
         wait.until(this.trigger);
-        this.liftControl.setHeight(this.encoder.getDistance() - 5); // remove magic number
-        this.armsControl.setTarget(-208); // remove magic number
+        this.liftControl.setHeight(this.encoder.getDistance() - 1);
+        wait.forSeconds(this.time);
+        this.armsControl.setTarget(this.rest);
     }
 }
