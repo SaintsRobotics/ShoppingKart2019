@@ -13,6 +13,7 @@ import com.saintsrobotics.shoppingkart.config.Motors;
 import com.saintsrobotics.shoppingkart.config.OI;
 import com.saintsrobotics.shoppingkart.config.RobotSensors;
 import com.saintsrobotics.shoppingkart.config.Settings;
+import com.saintsrobotics.shoppingkart.config.UpdateOperatorBoard;
 import com.saintsrobotics.shoppingkart.drive.ResetGyro;
 import com.saintsrobotics.shoppingkart.drive.SwerveControl;
 import com.saintsrobotics.shoppingkart.drive.SwerveInput;
@@ -121,7 +122,7 @@ public class Robot extends TaskRobot {
 				new ToHeading(() -> this.oi.xboxInput.A(), 298.75, swerveControl),
 
 				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.lowerLift(), liftControl),
-				new ToHeight(() -> this.oi.oppInput.lowerLiftBack(), liftControl, 35),
+				new ToHeight(() -> this.oi.oppInput.cargo2(), liftControl, 35),
 
 				new IntakeWheel(() -> this.oi.oppInput.intakeIn(), this.motors.intake, 1),
 				new IntakeWheel(() -> this.oi.oppInput.intakeOut(), this.motors.intake, -1),
@@ -135,19 +136,20 @@ public class Robot extends TaskRobot {
 				new ArmsTarget(() -> this.oi.oppInput.armsPickUp(), this.settings.armsHatch, armsControl),
 				new ArmsTarget(() -> this.oi.oppInput.armsOut(), this.settings.armsFullout, armsControl),
 
-				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl, this.sensors.liftEncoder,
-						1, this.settings.armsFullin),
-				new UpdateMotors(this.motors), new RunEachFrameTask() {
+				new DetatchPanel(() -> this.oi.oppInput.lowerLiftBack(), armsControl, liftControl,
+						this.sensors.liftEncoder, 1, this.settings.armsFullin),
+				new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
 						SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
-						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
 
 					}
 				} };
 
 		super.teleopInit();
+
 	}
 
 	@Override

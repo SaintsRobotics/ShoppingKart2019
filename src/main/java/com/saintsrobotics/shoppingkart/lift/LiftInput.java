@@ -23,7 +23,6 @@ public class LiftInput extends RunEachFrameTask {
     /**
      * 
      * @param xboxInput controller
-     * @param offset    height of the arms at the lower limit switch
      */
     public LiftInput(OperatorBoard xboxInput, BooleanSupplier resetTrigger, LiftControl liftControl) {
         this.xboxInput = xboxInput;

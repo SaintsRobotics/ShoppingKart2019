@@ -43,7 +43,7 @@ public class ArmsControl extends RunEachFrameTask {
         this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, encoder,
                 (output) -> this.pidOutput = output);
         this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
-        this.pidController.setOutputRange(-0.5, 0.5);
+        this.pidController.setOutputRange(-0.75, 0.75);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
