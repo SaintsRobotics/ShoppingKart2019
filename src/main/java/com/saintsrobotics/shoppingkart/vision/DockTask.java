@@ -22,8 +22,7 @@ public class DockTask {
 	private State currentState;
 	private State lastState;
 	private Timer timer;
-	private int numDistanceFrames;
-	private int numCenterFrames;
+	private int holdFrames;
 
 	private final double TRANSLATION_SETPOINT = -1.03;
 	private final double DISTANCE_SETPOINT = -14.72;
@@ -52,8 +51,8 @@ public class DockTask {
 		this.pidDistanceController.reset();
 		this.pidDistanceController.enable();
 
-		this.numDistanceFrames = 0;
-		this.numCenterFrames = 0;
+		this.holdFrames = 0;
+
 		this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
 		this.currentState = State.WARMUP_CAMERA;
 		this.timer = new Timer();
@@ -61,8 +60,7 @@ public class DockTask {
 
 	public void init() {
 		this.currentState = State.WARMUP_CAMERA;
-		this.numDistanceFrames = 0;
-		this.numCenterFrames = 0;
+		this.holdFrames = 0;
 	}
 
 	public void resetPID() {
@@ -100,15 +98,26 @@ public class DockTask {
 
 			SmartDashboard.putBoolean("Distance on Target", this.pidDistanceController.onTarget());
 			SmartDashboard.putBoolean("Center on Target", this.pidTranslationController.onTarget());
+
+			if (Math.abs(this.pidTranslationOutput) < 0.1 && Math.abs(pidDistanceOutput) < 0.1) {
+				this.holdFrames++;
+			} else {
+				this.holdFrames = 0;
+			}
+
 			return new double[] { this.pidTranslationOutput, this.pidDistanceOutput };
 		}
+
 		return new double[] { 0.0, 0.0 };
+	}
+
+	public double getHoldFrames() {
+		return this.holdFrames;
 	}
 
 	public double[] run() {
 		if (currentState != lastState) {
-			System.out.println(currentState);
-			SmartDashboard.putString("State", currentState.toString());
+			SmartDashboard.putString("dock state", currentState.toString());
 			lastState = currentState;
 		}
 		double[] vector = new double[2];

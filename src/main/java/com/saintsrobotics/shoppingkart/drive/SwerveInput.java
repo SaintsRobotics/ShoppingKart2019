@@ -131,6 +131,7 @@ public class SwerveInput extends RunEachFrameTask {
 		}
 		SmartDashboard.putNumber("Translation Vector", this.docking[0]);
 		SmartDashboard.putNumber("Distance Vector", this.docking[1]);
+		SmartDashboard.putString("swerve input string", this.currentState.toString());
 
 		switch (this.currentState) {
 		case CONTROLLER:
@@ -149,10 +150,8 @@ public class SwerveInput extends RunEachFrameTask {
 		case DOCKING:
 			doDocking();
 			double[] xboxInput = readXboxInput();
-			SmartDashboard.putNumber("xboxInput 1", xboxInput[0]);
-			SmartDashboard.putNumber("xboxInput 2", xboxInput[1]);
-			SmartDashboard.putNumber("xboxInput 3", xboxInput[2]);
-			if (isXboxNotZero(xboxInput[0]) || isXboxNotZero(xboxInput[1]) || isXboxNotZero(xboxInput[2])) {
+			if (isXboxNotZero(xboxInput[0]) || isXboxNotZero(xboxInput[1]) || isXboxNotZero(xboxInput[2])
+					|| dock.getHoldFrames() > 100) {
 				this.currentState = State.START_CONTROLLER;
 			}
 			break;

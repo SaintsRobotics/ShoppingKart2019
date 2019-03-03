@@ -78,7 +78,6 @@ public class ArmsControl extends RunEachFrameTask {
 
     @Override
     protected void runEachFrame() {
-        SmartDashboard.putNumber("arms setpoint", this.pidController.getSetpoint());
 
         double speed = this.pidOutput;
 
