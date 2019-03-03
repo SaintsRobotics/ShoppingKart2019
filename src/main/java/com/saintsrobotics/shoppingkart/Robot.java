@@ -104,7 +104,7 @@ public class Robot extends TaskRobot {
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown, this.settings.liftPidConfig);
 
-		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.START(), this.sensors.arms, this.motors.arms,
+		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(), this.sensors.arms, this.motors.arms,
 				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
@@ -120,20 +120,20 @@ public class Robot extends TaskRobot {
 				new ToHeading(() -> this.oi.xboxInput.X(), 241.25, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.A(), 298.75, swerveControl),
 
-				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.Y(), liftControl),
-				new ToHeight(() -> this.oi.oppInput.DPAD_DOWN(), liftControl, 35),
+				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.lowerLift(), liftControl),
+				new ToHeight(() -> this.oi.oppInput.lowerLiftBack(), liftControl, 35),
 
-				new IntakeWheel(() -> this.oi.oppInput.RB(), this.motors.intake, 1),
-				new IntakeWheel(() -> this.oi.oppInput.SELECT(), this.motors.intake, -1),
+				new IntakeWheel(() -> this.oi.oppInput.intakeIn(), this.motors.intake, 1),
+				new IntakeWheel(() -> this.oi.oppInput.intakeOut(), this.motors.intake, -1),
 
-				new Kicker(() -> this.oi.oppInput.LB(), this.motors.kicker, this.sensors.kicker,
+				new Kicker(() -> this.oi.oppInput.kicker(), this.motors.kicker, this.sensors.kicker,
 						this.settings.kickerUpperbound, this.settings.kickerLowerbound),
 
-				armsControl, new ResetArms(() -> this.oi.oppInput.DPAD_UP(), this.sensors.arms, armsControl),
+				armsControl, new ResetArms(() -> this.oi.oppInput.armsHardstop(), this.sensors.arms, armsControl),
 
-				new ArmsTarget(() -> this.oi.oppInput.B(), this.settings.armsFullin, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.X(), this.settings.armsHatch, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.A(), this.settings.armsFullout, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.armsRest(), this.settings.armsFullin, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.armsPickUp(), this.settings.armsHatch, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.armsOut(), this.settings.armsFullout, armsControl),
 
 				new DetatchPanel(() -> this.oi.xboxInput.SELECT(), armsControl, liftControl, this.sensors.liftEncoder,
 						1, this.settings.armsFullin),

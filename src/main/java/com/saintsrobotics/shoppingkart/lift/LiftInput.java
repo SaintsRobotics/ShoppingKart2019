@@ -11,9 +11,10 @@ import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
+import com.saintsrobotics.shoppingkart.config.OperatorBoard;
 
 public class LiftInput extends RunEachFrameTask {
-    private XboxInput xboxInput;
+    private OperatorBoard xboxInput;
     private BooleanSupplier resetTrigger;
     private boolean isResetting;
     private LiftControl liftControl;
@@ -24,7 +25,7 @@ public class LiftInput extends RunEachFrameTask {
      * @param xboxInput controller
      * @param offset    height of the arms at the lower limit switch
      */
-    public LiftInput(XboxInput xboxInput, BooleanSupplier resetTrigger, LiftControl liftControl) {
+    public LiftInput(OperatorBoard xboxInput, BooleanSupplier resetTrigger, LiftControl liftControl) {
         this.xboxInput = xboxInput;
         this.resetTrigger = resetTrigger;
         this.liftControl = liftControl;
@@ -33,7 +34,7 @@ public class LiftInput extends RunEachFrameTask {
     private double readXbox() {
         // Robot.instance.flags.liftEncoderValue = liftEncoder.getDistance();
 
-        return (this.xboxInput.rightTrigger() - this.xboxInput.leftTrigger()) * this.XBOX_MULTIPLIER;
+        return xboxInput.liftY() * this.XBOX_MULTIPLIER;
     }
 
     @Override
