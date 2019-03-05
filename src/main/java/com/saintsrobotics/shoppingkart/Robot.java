@@ -81,69 +81,100 @@ public class Robot extends TaskRobot {
 
 	@Override
 	public void teleopInit() {
-		SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront, this.motors.rightFrontTurner,
-				this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc,
-				this.settings.pivotLoc);
+		// SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront,
+		// this.motors.rightFrontTurner,
+		// this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig,
+		// this.settings.rightFrontLoc,
+		// this.settings.pivotLoc);
 
-		SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront, this.motors.leftFrontTurner,
-				this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.leftFrontLoc,
-				this.settings.pivotLoc);
+		// SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront,
+		// this.motors.leftFrontTurner,
+		// this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig,
+		// this.settings.leftFrontLoc,
+		// this.settings.pivotLoc);
 
-		SwerveWheel leftBack = new SwerveWheel(this.motors.leftBack, this.motors.leftBackTurner,
-				this.sensors.leftBackEncoder, this.settings.wheelAnglePidConfig, this.settings.leftBackLoc,
-				this.settings.pivotLoc);
+		// SwerveWheel leftBack = new SwerveWheel(this.motors.leftBack,
+		// this.motors.leftBackTurner,
+		// this.sensors.leftBackEncoder, this.settings.wheelAnglePidConfig,
+		// this.settings.leftBackLoc,
+		// this.settings.pivotLoc);
 
-		SwerveWheel rightBack = new SwerveWheel(this.motors.rightBack, this.motors.rightBackTurner,
-				this.sensors.rightBackEncoder, this.settings.wheelAnglePidConfig, this.settings.rightBackLoc,
-				this.settings.pivotLoc);
+		// SwerveWheel rightBack = new SwerveWheel(this.motors.rightBack,
+		// this.motors.rightBackTurner,
+		// this.sensors.rightBackEncoder, this.settings.wheelAnglePidConfig,
+		// this.settings.rightBackLoc,
+		// this.settings.pivotLoc);
 
-		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
-		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.settings.headingPidConfig);
+		// SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
+		// SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro,
+		// this.settings.headingPidConfig);
 
-		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl, new DockTask());
+		// SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput,
+		// this.sensors.gyro, swerveControl,
+		// new DockTask(this.settings.dockTranslationPidConfig,
+		// this.settings.dockDistancePidConfig,
+		// this.settings.hatchTranslationTarget, this.settings.hatchDistanceTarget,
+		// this.settings.cargoTranslationTarget, this.settings.hatchDistanceTarget));
 
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
 				this.sensors.lifterDown, this.settings.liftPidConfig);
 
-		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(), this.sensors.arms, this.motors.arms,
-				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
+		// ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(),
+		// this.sensors.arms, this.motors.arms,
+		// this.settings.armsHardstop, this.settings.armsFullin,
+		// this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
-				new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro, swerveControl), swerveInput,
-				swerveControl, liftControl,
+				// new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro,
+				// swerveControl), swerveInput,
+				// swerveControl,
+				liftControl,
 
-				new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.B(), 61.25, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.Y(), 118.75, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.X(), 241.25, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.A(), 298.75, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.B(), 61.25, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.Y(), 118.75, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.X(), 241.25, swerveControl),
+				// new ToHeading(() -> this.oi.xboxInput.A(), 298.75, swerveControl),
 
 				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.lowerLift(), liftControl),
-				new ToHeight(() -> this.oi.oppInput.cargo2(), liftControl, 35),
+				// new ToHeight(() -> this.oi.oppInput.cargo2(), liftControl, 35),
 
-				new IntakeWheel(() -> this.oi.oppInput.intakeIn(), this.motors.intake, 1),
-				new IntakeWheel(() -> this.oi.oppInput.intakeOut(), this.motors.intake, -1),
+				// new IntakeWheel(() -> this.oi.oppInput.intakeIn(), this.motors.intake, 1),
+				// new IntakeWheel(() -> this.oi.oppInput.intakeOut(), this.motors.intake, -1),
 
-				new Kicker(() -> this.oi.oppInput.kicker(), this.motors.kicker, this.sensors.kicker,
-						this.settings.kickerUpperbound, this.settings.kickerLowerbound),
+				// new Kicker(() -> this.oi.oppInput.kicker(), this.motors.kicker,
+				// this.sensors.kicker,
+				// this.settings.kickerUpperbound, this.settings.kickerLowerbound),
 
-				armsControl, new ResetArms(() -> this.oi.oppInput.armsHardstop(), this.sensors.arms, armsControl),
+				// armsControl, new ResetArms(() -> this.oi.oppInput.armsHardstop(),
+				// this.sensors.arms, armsControl),
 
-				new ArmsTarget(() -> this.oi.oppInput.armsRest(), this.settings.armsFullin, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.armsPickUp(), this.settings.armsHatch, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.armsOut(), this.settings.armsFullout, armsControl),
+				// new ArmsTarget(() -> this.oi.oppInput.armsRest(), this.settings.armsFullin,
+				// armsControl),
+				// new ArmsTarget(() -> this.oi.oppInput.armsPickUp(), this.settings.armsHatch,
+				// armsControl),
+				// new ArmsTarget(() -> this.oi.oppInput.armsOut(), this.settings.armsFullout,
+				// armsControl),
 
-				new DetatchPanel(() -> this.oi.oppInput.lowerLiftBack(), armsControl, liftControl,
-						this.sensors.liftEncoder, 1, this.settings.armsFullin),
-				new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors), new RunEachFrameTask() {
+				// new DetatchPanel(() -> this.oi.oppInput.lowerLiftBack(), armsControl,
+				// liftControl,
+				// this.sensors.liftEncoder, 1, this.settings.armsFullin),
+				// new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors),
+				new RunEachFrameTask() {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
 						SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
 						SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
+						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left front encoder", sensors.leftFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left back encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
 
 					}
 				} };
@@ -166,7 +197,8 @@ public class Robot extends TaskRobot {
 	 */
 	private Config loadConfig() throws IOException {
 		DigitalInput testBotJumper = new DigitalInput(10);
-		Config robotConfig = Config.fromFile(true);
+		// if true, runs test configs
+		Config robotConfig = Config.fromFile(false);
 		testBotJumper.close();
 		return robotConfig;
 	}

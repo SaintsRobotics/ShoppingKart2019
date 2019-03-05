@@ -24,7 +24,7 @@ public class OperatorBoard extends Input {
 
     }
 
-    private boolean isBoard = true;
+    private boolean isBoard = false;
 
     @Override
     public void init() {

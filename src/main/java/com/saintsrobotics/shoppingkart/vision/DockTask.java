@@ -1,5 +1,6 @@
 package com.saintsrobotics.shoppingkart.vision;
 
+import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.drive.SwerveControl;
 import com.saintsrobotics.shoppingkart.util.PidSender;
 
@@ -18,22 +19,37 @@ public class DockTask {
 	private double pidTranslationOutput;
 	private double pidDistanceOutput;
 	private NetworkTable limelight;
-	private SwerveControl control;
 	private State currentState;
 	private State lastState;
 	private Timer timer;
 	private int holdFrames;
 
-	private final double TRANSLATION_SETPOINT = -1.03;
-	private final double DISTANCE_SETPOINT = -14.72;
+	private final double HATCH_TRANSLATION_SETPOINT;
+	private final double HATCH_DISTANCE_SETPOINT;
+	private final double CARGO_TRANSLATION_SETPOINT;
+	private final double CARGO_DISTANCE_SETPOINT;
 
-	public DockTask() {
+	/**
+	 * 
+	 * @param translationPidConfig
+	 * @param distancePicConfig
+	 * @param hatchTranslation
+	 * @param hatchDistance
+	 * @param cargoTranslation
+	 * @param cargoDistance
+	 */
+	public DockTask(PidConfig translationPidConfig, PidConfig distancePicConfig, double hatchTranslation,
+			double hatchDistance, double cargoTranslation, double cargoDistance) {
+		this.HATCH_TRANSLATION_SETPOINT = hatchTranslation;
+		this.HATCH_DISTANCE_SETPOINT = hatchDistance;
+		this.CARGO_TRANSLATION_SETPOINT = cargoTranslation;
+		this.CARGO_DISTANCE_SETPOINT = cargoDistance;
 
 		this.pidTranslationSender = new PidSender();
-		this.pidTranslationController = new PIDController(-0.05, 0.0, 0.0, this.pidTranslationSender,
-				(output) -> this.pidTranslationOutput = output);
-		this.pidTranslationController.setSetpoint(TRANSLATION_SETPOINT);
-		this.pidTranslationController.setAbsoluteTolerance(1.0);
+		this.pidTranslationController = new PIDController(translationPidConfig.kP, translationPidConfig.kI,
+				translationPidConfig.kD, this.pidTranslationSender, (output) -> this.pidTranslationOutput = output);
+		this.pidTranslationController.setSetpoint(HATCH_TRANSLATION_SETPOINT);
+		this.pidTranslationController.setAbsoluteTolerance(translationPidConfig.tolerance);
 		this.pidTranslationController.setOutputRange(-0.3, 0.3);
 		this.pidTranslationController.setInputRange(-20, 20);
 		this.pidTranslationController.setContinuous(false);
@@ -41,10 +57,10 @@ public class DockTask {
 		this.pidTranslationController.enable();
 
 		this.pidDistanceSender = new PidSender();
-		this.pidDistanceController = new PIDController(-0.2, 0.0, 0.0, this.pidDistanceSender,
-				(output) -> this.pidDistanceOutput = output);
-		this.pidDistanceController.setSetpoint(DISTANCE_SETPOINT);
-		this.pidDistanceController.setAbsoluteTolerance(0.5);
+		this.pidDistanceController = new PIDController(distancePicConfig.kP, distancePicConfig.kI, distancePicConfig.kD,
+				this.pidDistanceSender, (output) -> this.pidDistanceOutput = output);
+		this.pidDistanceController.setSetpoint(HATCH_DISTANCE_SETPOINT);
+		this.pidDistanceController.setAbsoluteTolerance(distancePicConfig.tolerance);
 		this.pidDistanceController.setOutputRange(-0.3, 0.3);
 		this.pidDistanceController.setInputRange(-20, 20);
 		this.pidDistanceController.setContinuous(false);
@@ -80,11 +96,11 @@ public class DockTask {
 		limelight.getEntry("pipeline").setNumber(2);
 		if (limelight.getEntry("tv").getDouble(0) == 1) {
 			if (limelight.getEntry("ty").getDouble(0) > -0.5) {
-				this.pidDistanceController.setSetpoint(0.0);
-				this.pidTranslationController.setSetpoint(0.0);
+				this.pidDistanceController.setSetpoint(this.CARGO_DISTANCE_SETPOINT);
+				this.pidTranslationController.setSetpoint(this.CARGO_TRANSLATION_SETPOINT);
 			} else if (limelight.getEntry("ty").getDouble(0) < -0.5) {
-				this.pidDistanceController.setSetpoint(this.DISTANCE_SETPOINT);
-				this.pidTranslationController.setSetpoint(this.TRANSLATION_SETPOINT);
+				this.pidDistanceController.setSetpoint(this.HATCH_DISTANCE_SETPOINT);
+				this.pidTranslationController.setSetpoint(this.HATCH_TRANSLATION_SETPOINT);
 			}
 		}
 		this.currentState = State.HOLD;

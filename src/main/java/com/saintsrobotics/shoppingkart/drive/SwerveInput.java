@@ -131,7 +131,7 @@ public class SwerveInput extends RunEachFrameTask {
 		}
 		SmartDashboard.putNumber("Translation Vector", this.docking[0]);
 		SmartDashboard.putNumber("Distance Vector", this.docking[1]);
-		SmartDashboard.putString("swerve input string", this.currentState.toString());
+		SmartDashboard.putString("swerve input state", this.currentState.toString());
 
 		switch (this.currentState) {
 		case CONTROLLER:
