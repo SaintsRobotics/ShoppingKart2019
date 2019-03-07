@@ -3,8 +3,6 @@ package com.saintsrobotics.shoppingkart.config;
 import com.github.dozer.input.OI.Input;
 import com.github.dozer.input.OI.XboxInput;
 
-import edu.wpi.first.wpilibj.XboxController;
-
 public class OperatorBoard extends Input {
 
     private Button[] buttons = new Button[21];
@@ -24,7 +22,7 @@ public class OperatorBoard extends Input {
 
     }
 
-    private boolean isBoard = false;
+    private boolean isBoard = true;
 
     @Override
     public void init() {
@@ -40,11 +38,12 @@ public class OperatorBoard extends Input {
                     this.buttons[18], this.buttons[19] });
             this.nonGroupButtons = new Button[] { this.buttons[7], this.buttons[8], this.buttons[9], this.buttons[11] };
         } else {
+
             xboxInput = new XboxInput(pin);
-            super.init();
             for (int i = 1; i < buttons.length; i++) {
                 buttons[i] = new Button(joystick, 0);
             }
+            super.init();
         }
     }
 
@@ -155,14 +154,14 @@ public class OperatorBoard extends Input {
     }
 
     public double liftX() {
-        return deadzone(joystick.getRawAxis(0));
+        return deadzone(-joystick.getRawAxis(0));
     }
 
     public double liftY() {
         if (!isBoard) {
             return this.xboxInput.leftTrigger() - this.xboxInput.rightTrigger();
         }
-        return deadzone(joystick.getRawAxis(1));
+        return deadzone(-joystick.getRawAxis(1));
     }
 
     public void update() {

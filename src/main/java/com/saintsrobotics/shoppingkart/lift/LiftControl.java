@@ -77,13 +77,16 @@ public class LiftControl extends RunEachFrameTask {
             liftInput = this.controlSpeed;
             this.isLifting = true;
         } else if (this.isLifting) {
-            this.pidController.setSetpoint(this.encoder.getDistance());
+            this.pidController.setSetpoint(this.encoder.getDistance() + 0.5);
             this.isLifting = false;
         }
 
         // the limit switches are inverted (yay.)
         // if there's a magnet nearby, they return false
-        if ((!this.lifterUp.get() && liftInput > 0) || (!this.lifterDown.get() && liftInput < 0)) {
+        // set lift encoder max cuz build is too lazy -- efficient -- to move the limit
+        // switch
+        if (((!this.lifterUp.get() || this.encoder.getDistance() >= 76.5) && liftInput > 0)
+                || (!this.lifterDown.get() && liftInput < 0)) {
             liftInput = 0;
         }
 
@@ -97,8 +100,9 @@ public class LiftControl extends RunEachFrameTask {
         // SmartDashboard.putBoolean("lifterDown", !this.lifterDown.get());
         // SmartDashboard.putBoolean("lifting", this.isLifting);
 
-        // SmartDashboard.putNumber("pid setpoint", this.pidController.getSetpoint());
-        // SmartDashboard.putNumber("pid output", this.pidOutput);
+        // SmartDashboard.putNumber("lift pid setpoint",
+        // this.pidController.getSetpoint());
+        // SmartDashboard.putNumber("lift pid output", this.pidOutput);
         // SmartDashboard.putNumber("lift input", liftInput);
 
         this.lifter.set(liftInput);

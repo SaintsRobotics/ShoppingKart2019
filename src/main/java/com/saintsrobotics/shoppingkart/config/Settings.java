@@ -13,12 +13,12 @@ public class Settings {
     public double armsHatch;
     public double armsFullin;
 
-    public double liftCargoOne;
-    public double liftCargoTwo;
-    public double liftCargoTree;
-    public double liftHatchOne;
-    public double liftHatchTwo;
-    public double liftHatchTree;
+    public double liftCargo1;
+    public double liftCargo2;
+    public double liftCargo3;
+    public double liftHatch1;
+    public double liftHatch2;
+    public double liftHatch3;
 
     public double liftOffset;
     public double liftWait;
@@ -50,12 +50,12 @@ public class Settings {
         this.armsHatch = robotConfig.getDouble("settings.arms.hatch");
         this.armsFullin = robotConfig.getDouble("settings.arms.fullin");
 
-        this.liftCargoOne = robotConfig.getDouble("settings.lift.cargoOne");
-        this.liftCargoTwo = robotConfig.getDouble("settings.lift.cargoTwo");
-        this.liftCargoTree = robotConfig.getDouble("settings.lift.cargoTree");
-        this.liftHatchOne = robotConfig.getDouble("settings.lift.hatchOne");
-        this.liftHatchTwo = robotConfig.getDouble("settings.lift.hatchTwo");
-        this.liftHatchTree = robotConfig.getDouble("settings.lift.hatchTree");
+        this.liftCargo1 = robotConfig.getDouble("settings.lift.cargo1");
+        this.liftCargo2 = robotConfig.getDouble("settings.lift.cargo2");
+        this.liftCargo3 = robotConfig.getDouble("settings.lift.cargo3");
+        this.liftHatch1 = robotConfig.getDouble("settings.lift.hatch1");
+        this.liftHatch2 = robotConfig.getDouble("settings.lift.hatch2");
+        this.liftHatch3 = robotConfig.getDouble("settings.lift.hatch3");
 
         this.liftOffset = robotConfig.getDouble("settings.lift.offset");
         this.liftWait = robotConfig.getDouble("settings.lift.waittime");

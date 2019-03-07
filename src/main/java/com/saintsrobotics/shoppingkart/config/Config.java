@@ -49,6 +49,7 @@ public class Config {
 
     public static Config fromFile(boolean isTest) throws IOException {
         String filename = isTest ? "test.properties" : "competition.properties";
+        System.out.println("loading config: " + filename);
         String deploymentDirectory = Filesystem.getDeployDirectory().getAbsolutePath();
         java.io.File configFile = Paths.get(deploymentDirectory, filename).toFile();
         Properties p = new Properties();

@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 
 import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.output.Motor;
+import com.saintsrobotics.shoppingkart.Robot;
 import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.util.AbsoluteEncoder;
 
@@ -30,9 +31,11 @@ public class ArmsControl extends RunEachFrameTask {
      *                     hard stop
      * @param restPosition the position to which the arms will go after a reset or
      *                     disable (full in)
+     * 
+     * @param initPos      position upon enable (full out position)
      */
     public ArmsControl(BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor, double offset,
-            double restPosition, PidConfig pidConfig) {
+            double restPosition, PidConfig pidConfig, double initPos) {
         this.motorPause = motorPause;
 
         this.motor = motor;
@@ -48,7 +51,7 @@ public class ArmsControl extends RunEachFrameTask {
         this.pidController.reset();
         this.pidController.enable();
 
-        this.setTarget(restPosition);
+        this.setTarget(initPos);
     }
 
     /**
