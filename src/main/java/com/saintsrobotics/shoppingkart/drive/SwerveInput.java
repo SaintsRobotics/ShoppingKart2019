@@ -24,9 +24,9 @@ public class SwerveInput extends RunEachFrameTask {
 	private SwerveControl control;
 	private DockTask dock;
 
-	private final double SPEED_GAIN = .5;
-	private final double BOOST_GAIN = .75;
-	private final double TURN_GAIN = .5;
+	private final double SPEED_GAIN = .75;
+	private final double BOOST_GAIN = 1;
+	private final double TURN_GAIN = .75;
 
 	private State currentState;
 	private State lastState;
@@ -58,13 +58,15 @@ public class SwerveInput extends RunEachFrameTask {
 			rightStickX = 0;
 		}
 
-		// if (this.xboxInput.LB()) {
-		// leftStickX *= this.BOOST_GAIN;
-		// leftStickY *= this.BOOST_GAIN;
-		// } else {
-		// leftStickX *= this.SPEED_GAIN;
-		// leftStickY *= this.SPEED_GAIN;
-		// }
+		if (this.xboxInput.rightTrigger() > 0.5) {
+			leftStickX *= this.BOOST_GAIN;
+			leftStickY *= this.BOOST_GAIN;
+		} else {
+			leftStickX *= this.SPEED_GAIN;
+			leftStickY *= this.SPEED_GAIN;
+		}
+
+		// Straight forward
 		if (this.xboxInput.leftTrigger() > 0.25) {
 			leftStickX = 0;
 			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN / 2;
