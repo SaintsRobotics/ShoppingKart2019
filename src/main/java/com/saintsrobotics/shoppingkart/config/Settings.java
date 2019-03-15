@@ -19,12 +19,18 @@ public class Settings {
     public double liftHatch1;
     public double liftHatch2;
     public double liftHatch3;
+    public double liftHatch0;
+    public double liftCargoShip;
+
+    public double liftUpperThrottle;
+    public double liftLowerThrottle;
 
     public double liftOffset;
     public double liftWait;
 
     public double kickerUpperbound;
     public double kickerLowerbound;
+    public double kickerBackpass;
 
     public double cargoTranslationTarget;
     public double cargoDistanceTarget;
@@ -56,12 +62,17 @@ public class Settings {
         this.liftHatch1 = robotConfig.getDouble("settings.lift.hatch1");
         this.liftHatch2 = robotConfig.getDouble("settings.lift.hatch2");
         this.liftHatch3 = robotConfig.getDouble("settings.lift.hatch3");
+        this.liftHatch0 = robotConfig.getDouble("settings.lift.hatch0");
+        this.liftCargoShip = robotConfig.getDouble("settings.lift.cargoship");
+        this.liftUpperThrottle = robotConfig.getDouble("settings.lift.upperthrottle");
+        this.liftLowerThrottle = robotConfig.getDouble("settings.lift.lowerthrottle");
 
         this.liftOffset = robotConfig.getDouble("settings.lift.offset");
         this.liftWait = robotConfig.getDouble("settings.lift.waittime");
 
         this.kickerUpperbound = robotConfig.getDouble("settings.kicker.upperbound");
         this.kickerLowerbound = robotConfig.getDouble("settings.kicker.lowerbound");
+        this.kickerBackpass = robotConfig.getDouble("settings.kicker.backpass");
 
         this.cargoTranslationTarget = robotConfig.getDouble("settings.dock.cargoTranslation");
         this.cargoDistanceTarget = robotConfig.getDouble("settings.dock.cargoDistance");

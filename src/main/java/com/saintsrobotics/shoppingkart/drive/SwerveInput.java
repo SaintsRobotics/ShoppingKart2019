@@ -136,8 +136,8 @@ public class SwerveInput extends RunEachFrameTask {
 			System.out.println(currentState);
 			lastState = currentState;
 		}
-		SmartDashboard.putNumber("Translation Vector", this.docking[0]);
-		SmartDashboard.putNumber("Distance Vector", this.docking[1]);
+		SmartDashboard.putNumber("dock pid translation output", this.docking[0]);
+		SmartDashboard.putNumber("dock pid distance output", this.docking[1]);
 		SmartDashboard.putString("swerve input state", this.currentState.toString());
 
 		switch (this.currentState) {

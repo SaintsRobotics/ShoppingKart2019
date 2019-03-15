@@ -8,6 +8,7 @@ import com.saintsrobotics.shoppingkart.Robot;
 import com.saintsrobotics.shoppingkart.config.PidConfig;
 import com.saintsrobotics.shoppingkart.util.AbsoluteEncoder;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,6 +25,8 @@ public class ArmsControl extends RunEachFrameTask {
     private PIDController pidController;
     private double pidOutput;
 
+    private boolean isResetting = false;
+
     /**
      * @param motorPause   trigger that pauses motor speed
      * @param encoder      assumes that as the arms spin in, the encoder decreases
@@ -35,7 +38,7 @@ public class ArmsControl extends RunEachFrameTask {
      * @param initPos      position upon enable (full out position)
      */
     public ArmsControl(BooleanSupplier motorPause, AbsoluteEncoder encoder, Motor motor, double offset,
-            double restPosition, PidConfig pidConfig, double initPos) {
+            double restPosition, PidConfig pidConfig) {
         this.motorPause = motorPause;
 
         this.motor = motor;
@@ -46,12 +49,12 @@ public class ArmsControl extends RunEachFrameTask {
         this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, encoder,
                 (output) -> this.pidOutput = output);
         this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
-        this.pidController.setOutputRange(-0.75, 0.75);
+        this.pidController.setOutputRange(-1, 0.75);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
 
-        this.setTarget(initPos);
+        this.pidController.setSetpoint(encoder.getRotation());
     }
 
     /**
@@ -60,6 +63,7 @@ public class ArmsControl extends RunEachFrameTask {
      *          out)
      */
     public void setOffset(double n) {
+        DriverStation.reportWarning("arms offset " + offset, false);
         offset = n;
     }
 
@@ -85,7 +89,10 @@ public class ArmsControl extends RunEachFrameTask {
         double speed = this.pidOutput;
 
         if (this.resetSpeed != 0) {
+            this.isResetting = true;
             speed = this.resetSpeed;
+        } else if (this.isResetting) { // no resset input, but still isResetting
+            this.isResetting = false;
             this.setTarget(restPosition);
         }
 
@@ -94,6 +101,11 @@ public class ArmsControl extends RunEachFrameTask {
             this.setTarget(restPosition);
         }
         this.motor.set(speed);
+
+        SmartDashboard.putNumber("arms target", this.pidController.getSetpoint());
+        SmartDashboard.putNumber("arms pid output", this.pidOutput);
+        SmartDashboard.putNumber("arms pid error", this.pidController.getError());
+        SmartDashboard.putNumber("arms hard stop location", ArmsControl.offset);
     }
 
 }

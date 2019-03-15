@@ -25,6 +25,7 @@ import com.saintsrobotics.shoppingkart.lift.ToHeight;
 import com.saintsrobotics.shoppingkart.manipulators.DetatchPanel;
 import com.saintsrobotics.shoppingkart.manipulators.IntakeWheel;
 import com.saintsrobotics.shoppingkart.manipulators.Kicker;
+import com.saintsrobotics.shoppingkart.tests.SimpleLiftTask;
 import com.saintsrobotics.shoppingkart.tests.TestDriveSwerveWheel;
 import com.saintsrobotics.shoppingkart.tests.TestTurnSwerveWheel;
 import com.saintsrobotics.shoppingkart.util.UpdateMotors;
@@ -50,6 +51,7 @@ public class Robot extends TaskRobot {
 	private Settings settings;
 	private OI oi;
 	private Flags flags;
+	private PowerDistributionPanel pewdiepie;
 
 	@Override
 	public void robotInit() {
@@ -76,10 +78,14 @@ public class Robot extends TaskRobot {
 		this.flags.pdp = new PowerDistributionPanel();
 
 		CameraServer.getInstance().startAutomaticCapture();
+		NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
+		this.pewdiepie = new PowerDistributionPanel();
+
 	}
 
 	@Override
 	public void autonomousInit() {
+		teleopInit();
 	}
 
 	@Override
@@ -106,14 +112,14 @@ public class Robot extends TaskRobot {
 		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl,
 				new DockTask(this.settings.dockTranslationPidConfig, this.settings.dockDistancePidConfig,
 						this.settings.hatchTranslationTarget, this.settings.hatchDistanceTarget,
-						this.settings.cargoTranslationTarget, this.settings.hatchDistanceTarget));
+						this.settings.cargoTranslationTarget, this.settings.cargoDistanceTarget));
 
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
-				this.sensors.lifterDown, this.settings.liftPidConfig);
+				this.sensors.lifterDown, this.settings.liftUpperThrottle, this.settings.liftLowerThrottle,
+				this.settings.liftPidConfig);
 
 		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(), this.sensors.arms, this.motors.arms,
-				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig,
-				this.settings.armsFullout);
+				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
 				new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro, swerveControl), swerveInput,
@@ -123,32 +129,36 @@ public class Robot extends TaskRobot {
 				new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_DOWN(), 180.0, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.DPAD_LEFT(), 270.0, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.B(), 61.25, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.Y(), 118.75, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.X(), 241.25, swerveControl),
-				new ToHeading(() -> this.oi.xboxInput.A(), 298.75, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.B(), 28.75, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.Y(), 151.25, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.X(), 208.75, swerveControl),
+				new ToHeading(() -> this.oi.xboxInput.A(), 331.25, swerveControl),
 
 				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.lowerLift(), liftControl),
 				new ToHeight(() -> this.oi.oppInput.cargo1(), liftControl, this.settings.liftCargo1),
 				new ToHeight(() -> this.oi.oppInput.cargo2(), liftControl, this.settings.liftCargo2),
+				new ToHeight(() -> this.oi.oppInput.cargoBall(), liftControl, this.settings.liftCargoShip),
 				new ToHeight(() -> this.oi.oppInput.cargo3(), liftControl, this.settings.liftCargo3),
 				new ToHeight(() -> this.oi.oppInput.hatch1(), liftControl, this.settings.liftHatch1),
 				new ToHeight(() -> this.oi.oppInput.hatch2(), liftControl, this.settings.liftHatch2),
 				new ToHeight(() -> this.oi.oppInput.hatch3(), liftControl, this.settings.liftHatch3),
+				new ToHeight(() -> this.oi.oppInput.liftBottom(), liftControl, this.settings.liftHatch0),
 
 				new IntakeWheel(() -> this.oi.oppInput.intakeIn(), this.motors.intake, 1),
 				new IntakeWheel(() -> this.oi.oppInput.intakeOut(), this.motors.intake, -1),
 
 				new Kicker(() -> this.oi.oppInput.kicker(), this.motors.kicker, this.sensors.kicker,
-						this.settings.kickerUpperbound, this.settings.kickerLowerbound),
+						this.settings.kickerUpperbound, this.settings.kickerLowerbound, this.settings.kickerBackpass),
 
 				armsControl, new ResetArms(() -> this.oi.oppInput.armsHardstop(), this.sensors.arms, armsControl),
 				new ArmsTarget(() -> this.oi.oppInput.armsRest(), this.settings.armsFullin, armsControl),
 				new ArmsTarget(() -> this.oi.oppInput.armsPickUp(), this.settings.armsHatch, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.armsOut(), this.settings.armsFullout, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.armsOut(
+
+				), this.settings.armsFullout, armsControl),
 
 				new DetatchPanel(() -> this.oi.oppInput.lowerLiftBack(), armsControl, liftControl,
-						this.sensors.liftEncoder, 1, this.settings.armsFullin),
+						this.sensors.liftEncoder, 1.5, this.settings.armsFullin),
 
 				new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors), new RunEachFrameTask() {
 					@Override
@@ -156,9 +166,22 @@ public class Robot extends TaskRobot {
 						// empty task for telemetries
 						SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
 						SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
+						SmartDashboard.putNumber("kicker motor", motors.kicker.get());
 						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						SmartDashboard.putNumber("arms motor", motors.arms.get());
 						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
+						SmartDashboard.putNumber("lift motor", motors.lifter.get());
 
+						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
+						// SmartDashboard.putNumber("leftFront encoder",
+						// sensors.leftFrontEncoder.getRotation());
+						// SmartDashboard.putNumber("left bakc encoder",
+						// sensors.leftBackEncoder.getRotation());
+						// SmartDashboard.putNumber("right back encoder",
+						// sensors.rightBackEncoder.getRotation());
+						// for (int i = 0; i < 16; i++) {
+						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
+						// }
 					}
 				} };
 
@@ -181,7 +204,6 @@ public class Robot extends TaskRobot {
 	private Config loadConfig() throws IOException {
 		DigitalInput testBotJumper = new DigitalInput(9);
 		// if true is passed into fromFile(), runs test configs
-		SmartDashboard.putBoolean("jumper", testBotJumper.get());
 		Config robotConfig = Config.fromFile(!testBotJumper.get());
 		testBotJumper.close();
 		return robotConfig;

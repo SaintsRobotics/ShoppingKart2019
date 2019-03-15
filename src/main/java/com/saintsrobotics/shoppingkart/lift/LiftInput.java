@@ -13,6 +13,8 @@ import com.github.dozer.coroutine.helpers.RunEachFrameTask;
 import com.github.dozer.input.OI.XboxInput;
 import com.saintsrobotics.shoppingkart.config.OperatorBoard;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class LiftInput extends RunEachFrameTask {
     private OperatorBoard xboxInput;
     private BooleanSupplier resetTrigger;
@@ -54,7 +56,7 @@ public class LiftInput extends RunEachFrameTask {
                 this.isResetting = false;
             }
         }
-
+        SmartDashboard.putNumber("lift input speed", speed);
         this.liftControl.setControlSpeed(speed);
     }
 }

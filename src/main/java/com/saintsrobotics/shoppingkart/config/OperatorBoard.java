@@ -33,9 +33,9 @@ public class OperatorBoard extends Input {
             }
             this.armGroup = new ButtonGroup(
                     new Button[] { this.buttons[1], this.buttons[4], this.buttons[5], this.buttons[6], });
-            this.liftGroup = new ButtonGroup(new Button[] { this.buttons[2], this.buttons[3], this.buttons[12],
-                    this.buttons[13], this.buttons[14], this.buttons[15], this.buttons[16], this.buttons[17],
-                    this.buttons[18], this.buttons[19] });
+            this.liftGroup = new ButtonGroup(new Button[] { this.buttons[2], this.buttons[3], this.buttons[10],
+                    this.buttons[12], this.buttons[13], this.buttons[14], this.buttons[15], this.buttons[16],
+                    this.buttons[17], this.buttons[18], this.buttons[19] });
             this.nonGroupButtons = new Button[] { this.buttons[7], this.buttons[8], this.buttons[9], this.buttons[11] };
         } else {
 

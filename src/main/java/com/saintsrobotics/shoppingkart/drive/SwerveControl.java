@@ -37,7 +37,7 @@ public class SwerveControl extends RunEachFrameTask {
 		this.headingPidController = new PIDController(headingPidConfig.kP, headingPidConfig.kI, headingPidConfig.kD,
 				this.gyro, (output) -> this.headingPidOutput = output);
 		this.headingPidController.setAbsoluteTolerance(headingPidConfig.tolerance);
-		this.headingPidController.setOutputRange(-1, 1);
+		this.headingPidController.setOutputRange(-0.5, 0.5);
 		this.headingPidController.setInputRange(0, 360);
 		this.headingPidController.setContinuous();
 		this.headingPidController.reset();

@@ -33,7 +33,7 @@ public class DetatchPanel extends RunContinuousTask {
     @Override
     protected void runForever() {
         wait.until(this.trigger);
-        this.liftControl.setHeight(this.encoder.getDistance() - 1);
+        this.liftControl.setHeight(this.encoder.getDistance() - 1.5);
         wait.forSeconds(this.time);
         this.armsControl.setTarget(this.rest);
     }
