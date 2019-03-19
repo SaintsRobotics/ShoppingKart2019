@@ -102,10 +102,10 @@ public class ArmsControl extends RunEachFrameTask {
         }
         this.motor.set(speed);
 
-        SmartDashboard.putNumber("arms target", this.pidController.getSetpoint());
-        SmartDashboard.putNumber("arms pid output", this.pidOutput);
-        SmartDashboard.putNumber("arms pid error", this.pidController.getError());
-        SmartDashboard.putNumber("arms hard stop location", ArmsControl.offset);
+        // SmartDashboard.putNumber("arms target", this.pidController.getSetpoint());
+        // SmartDashboard.putNumber("arms pid output", this.pidOutput);
+        // SmartDashboard.putNumber("arms pid error", this.pidController.getError());
+        // SmartDashboard.putNumber("arms hard stop location", ArmsControl.offset);
     }
 
 }

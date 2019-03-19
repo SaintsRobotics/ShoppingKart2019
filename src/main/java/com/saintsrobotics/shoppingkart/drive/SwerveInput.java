@@ -69,7 +69,14 @@ public class SwerveInput extends RunEachFrameTask {
 		// Straight forward
 		if (this.xboxInput.leftTrigger() > 0.25) {
 			leftStickX = 0;
-			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN / 2;
+			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN;
+			rightStickX = 0;
+		}
+
+		// Straight backward
+		if (this.xboxInput.rightTrigger() > 0.25) {
+			leftStickX = 0;
+			leftStickY = (this.xboxInput.rightTrigger() * this.SPEED_GAIN) * -1;
 			rightStickX = 0;
 		}
 
@@ -157,6 +164,7 @@ public class SwerveInput extends RunEachFrameTask {
 		case DOCKING:
 			doDocking();
 			double[] xboxInput = readXboxInput();
+			SmartDashboard.putNumber("docking hold frames", dock.getHoldFrames());
 			if (isXboxNotZero(xboxInput[0]) || isXboxNotZero(xboxInput[1]) || isXboxNotZero(xboxInput[2])
 					|| dock.getHoldFrames() > 100) {
 				this.currentState = State.START_CONTROLLER;

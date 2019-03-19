@@ -173,12 +173,9 @@ public class Robot extends TaskRobot {
 						SmartDashboard.putNumber("lift motor", motors.lifter.get());
 
 						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
-						// SmartDashboard.putNumber("leftFront encoder",
-						// sensors.leftFrontEncoder.getRotation());
-						// SmartDashboard.putNumber("left bakc encoder",
-						// sensors.leftBackEncoder.getRotation());
-						// SmartDashboard.putNumber("right back encoder",
-						// sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("leftFront encoder", sensors.leftFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left bakc encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
 						// for (int i = 0; i < 16; i++) {
 						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
 						// }
