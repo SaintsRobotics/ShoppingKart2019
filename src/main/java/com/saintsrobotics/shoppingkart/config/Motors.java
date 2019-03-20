@@ -61,8 +61,14 @@ public class Motors {
 	}
 
 	private static Motor buildTalonMotor(Config robotConfig, String keyPrefix, boolean isRamping) {
-		int port = robotConfig.getInt(keyPrefix + ".port");
-		boolean inverted = robotConfig.getBoolean(keyPrefix + ".inverted");
+		int port = 0;
+		boolean inverted = false;
+		try {
+			port = robotConfig.getInt(keyPrefix + ".port");
+			inverted = robotConfig.getBoolean(keyPrefix + ".inverted");
+		} catch (NumberFormatException e) {
+			throw new NumberFormatException(keyPrefix);
+		}
 
 		if (isRamping) {
 			return new MotorRamping(new Talon(port), inverted);
