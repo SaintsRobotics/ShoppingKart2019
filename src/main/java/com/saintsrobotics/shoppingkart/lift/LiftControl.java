@@ -25,8 +25,9 @@ public class LiftControl extends RunEachFrameTask {
     private DigitalInput lifterUp;
     private DigitalInput lifterDown;
     private boolean isLifting;
-    private double upperThrottle;
-    private double lowerThrottle;
+
+    private double filteredCurrent = 0;
+    private final double LPF_PROPORTION = 0.025;
 
     private double frameCount = 0; // # frames it's not been able to move
     private PowerDistributionPanel pewdiepie;
@@ -41,13 +42,11 @@ public class LiftControl extends RunEachFrameTask {
      *                      (bottom)
      */
     public LiftControl(Motor lifter, DistanceEncoder encoder, DigitalInput lifterUp, DigitalInput lifterDown,
-            double upperThrottle, double lowerThrottle, PidConfig pidConfig) {
+            PidConfig pidConfig) {
         this.lifter = lifter;
         this.encoder = encoder;
         this.lifterUp = lifterUp;
         this.lifterDown = lifterDown;
-        this.upperThrottle = upperThrottle;
-        this.lowerThrottle = lowerThrottle;
 
         this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, this.encoder,
                 (output) -> this.pidOutput = output);
@@ -94,13 +93,12 @@ public class LiftControl extends RunEachFrameTask {
      * @return whether or not the lift can move
      */
     public boolean isStuck() {
-        if (this.pewdiepie.getCurrent(3) > 20) {
+        if (this.filteredCurrent > 20) {
             this.frameCount++;
         } else {
             this.frameCount = 0;
         }
 
-        SmartDashboard.putBoolean("lift is stuck", this.frameCount > 10);
         return this.frameCount > 10;
     }
 
@@ -124,33 +122,33 @@ public class LiftControl extends RunEachFrameTask {
          * return false set lift encoder max cuz build is too lazy -- efficient -- to
          * move the limit switch
          */
-        if (((!this.lifterUp.get() && liftInput > 0) || (!this.lifterDown.get() && liftInput < 0))) {
+        if (((!this.lifterUp.get() && liftInput > 0) || (liftInput > 0 && this.encoder.getDistance() > 73)
+                || (!this.lifterDown.get() && liftInput < 0))) {
             liftInput = 0;
         }
 
         if (this.isStuck()) {
-            DriverStation.reportWarning("lift ", false);
+            DriverStation.reportError("lift is stuck", false);
             this.lifter.set(0);
-            wait.forSeconds(.2);
+            wait.forSeconds(1);
             this.pidController.setSetpoint(this.encoder.getDistance());
+            liftInput *= .25;
         }
+
+        this.filteredCurrent = this.LPF_PROPORTION * this.pewdiepie.getCurrent(3)
+                + (1 - this.LPF_PROPORTION) * this.filteredCurrent;
 
         if (!this.lifterDown.get()) {
             this.encoder.reset();
         }
 
-        // speed throttle
-        if ((this.encoder.getDistance() <= this.lowerThrottle && liftInput < 0)
-                || (this.encoder.getDistance() >= this.upperThrottle && liftInput > 0)) {
-            liftInput *= .33;
-        }
-
         // SmartDashboard.putNumber("liftInput", liftInput);
-        SmartDashboard.putNumber("frame count", this.frameCount);
+        SmartDashboard.putNumber("lift frame count", this.frameCount);
 
         SmartDashboard.putNumber("lift pid setpoint", this.pidController.getSetpoint());
         SmartDashboard.putNumber("lift pid output", this.pidOutput);
-        SmartDashboard.putNumber("pdp", this.pewdiepie.getCurrent(3));
+        SmartDashboard.putNumber("lift current", this.pewdiepie.getCurrent(3));
+        SmartDashboard.putNumber("filtered lift current", this.filteredCurrent);
 
         this.lifter.set(liftInput);
     }
