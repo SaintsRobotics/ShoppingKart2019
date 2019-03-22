@@ -41,8 +41,10 @@ public class Settings {
     public PidConfig headingPidConfig;
     public PidConfig liftPidConfig;
     public PidConfig armsPidConfig;
-    public PidConfig dockTranslationPidConfig;
-    public PidConfig dockDistancePidConfig;
+    public PidConfig dockCargoTranslation;
+    public PidConfig dockCargoDistance;
+    public PidConfig dockHatchTranslation;
+    public PidConfig dockHatchDistance;
 
     public Settings(Config robotConfig) {
         this.rightFrontLoc = buildLoc(robotConfig, "settings.location.rightFront");
@@ -83,8 +85,10 @@ public class Settings {
         this.headingPidConfig = buildPidConfig(robotConfig, "settings.pids.heading");
         this.liftPidConfig = buildPidConfig(robotConfig, "settings.pids.lift");
         this.armsPidConfig = buildPidConfig(robotConfig, "settings.pids.arms");
-        this.dockTranslationPidConfig = buildPidConfig(robotConfig, "settings.pids.dock.translation");
-        this.dockDistancePidConfig = buildPidConfig(robotConfig, "settings.pids.dock.distance");
+        this.dockCargoTranslation = buildPidConfig(robotConfig, "settings.pids.dock.cargo.translation");
+        this.dockCargoDistance = buildPidConfig(robotConfig, "settings.pids.dock.cargo.distance");
+        this.dockHatchTranslation = buildPidConfig(robotConfig, "settings.pids.dock.hatch.translation");
+        this.dockHatchDistance = buildPidConfig(robotConfig, "settings.pids.dock.hatch.distance");
     }
 
     private static double[] buildLoc(Config robotConfig, String keyPrefix) {

@@ -13,9 +13,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DockTask {
 
 	private PidSender pidTranslationSender;
-	private PIDController pidTranslationController;
 	private PidSender pidDistanceSender;
-	private PIDController pidDistanceController;
+
+	private PIDController pidTranslation;
+	private PIDController pidDistance;
+
+	private PidConfig cargoTranslationConfig;
+	private PidConfig cargoDistanceConfig;
+	private PidConfig hatchTranslationConfig;
+	private PidConfig hatchDistanceConfig;
+
 	private double pidTranslationOutput;
 	private double pidDistanceOutput;
 	private NetworkTable limelight;
@@ -24,48 +31,54 @@ public class DockTask {
 	private Timer timer;
 	private int holdFrames;
 
-	private final double HATCH_TRANSLATION_SETPOINT;
-	private final double HATCH_DISTANCE_SETPOINT;
-	private final double CARGO_TRANSLATION_SETPOINT;
-	private final double CARGO_DISTANCE_SETPOINT;
+	// treate as finals
+	private double CARGO_TRANSLATION_SETPOINT;
+	private double CARGO_DISTANCE_SETPOINT;
+	private double HATCH_TRANSLATION_SETPOINT;
+	private double HATCH_DISTANCE_SETPOINT;
 
 	/**
 	 * 
-	 * @param translationPidConfig
-	 * @param distancePicConfig
-	 * @param hatchTranslation
-	 * @param hatchDistance
-	 * @param cargoTranslation
-	 * @param cargoDistance
+	 * @param cargoTranslationPid
+	 * @param cargoDistancePid
+	 * @param hatchTranslationPid
+	 * @param hatchDistancePid
+	 * @param hatchTranslation    setpoint
+	 * @param hatchDistance       setpoint
+	 * @param cargoTranslation    setpoint
+	 * @param cargoDistance       setpoint
 	 */
-	public DockTask(PidConfig translationPidConfig, PidConfig distancePicConfig, double hatchTranslation,
-			double hatchDistance, double cargoTranslation, double cargoDistance) {
-		this.HATCH_TRANSLATION_SETPOINT = hatchTranslation;
-		this.HATCH_DISTANCE_SETPOINT = hatchDistance;
-		this.CARGO_TRANSLATION_SETPOINT = cargoTranslation;
-		this.CARGO_DISTANCE_SETPOINT = cargoDistance;
+	public DockTask(PidConfig cargoTranslationPid, PidConfig cargoDistancePid, PidConfig hatchTranslationPid,
+			PidConfig hatchDistancePid, double hatchTranslation, double hatchDistance, double cargoTranslation,
+			double cargoDistance) {
 
 		this.pidTranslationSender = new PidSender();
-		this.pidTranslationController = new PIDController(translationPidConfig.kP, translationPidConfig.kI,
-				translationPidConfig.kD, this.pidTranslationSender, (output) -> this.pidTranslationOutput = output);
-		// this.pidTranslationController.setSetpoint(HATCH_TRANSLATION_SETPOINT);
-		this.pidTranslationController.setAbsoluteTolerance(translationPidConfig.tolerance);
-		this.pidTranslationController.setOutputRange(-0.25, 0.25);
-		this.pidTranslationController.setInputRange(-20, 20);
-		this.pidTranslationController.setContinuous(false);
-		this.pidTranslationController.reset();
-		this.pidTranslationController.enable();
-
 		this.pidDistanceSender = new PidSender();
-		this.pidDistanceController = new PIDController(distancePicConfig.kP, distancePicConfig.kI, distancePicConfig.kD,
+
+		this.CARGO_TRANSLATION_SETPOINT = cargoTranslation;
+		this.CARGO_DISTANCE_SETPOINT = cargoDistance;
+		this.HATCH_TRANSLATION_SETPOINT = hatchTranslation;
+		this.HATCH_DISTANCE_SETPOINT = hatchDistance;
+
+		this.cargoTranslationConfig = cargoTranslationPid;
+		this.cargoDistanceConfig = cargoDistancePid;
+		this.hatchTranslationConfig = hatchTranslationPid;
+		this.hatchDistanceConfig = hatchDistancePid;
+
+		// pid configs default to cargo
+		this.pidTranslation = new PIDController(cargoTranslationPid.kP, cargoTranslationPid.kI, cargoTranslationPid.kD,
+				this.pidTranslationSender, (output) -> this.pidTranslationOutput = output);
+		this.pidTranslation.setAbsoluteTolerance(cargoTranslationPid.tolerance);
+		this.pidTranslation.setOutputRange(-0.25, 0.25);
+		this.pidTranslation.setInputRange(-20, 20);
+		this.pidTranslation.setContinuous(false);
+
+		this.pidDistance = new PIDController(cargoDistancePid.kP, cargoDistancePid.kI, cargoDistancePid.kD,
 				this.pidDistanceSender, (output) -> this.pidDistanceOutput = output);
-		// this.pidDistanceController.setSetpoint(HATCH_DISTANCE_SETPOINT);
-		this.pidDistanceController.setAbsoluteTolerance(distancePicConfig.tolerance);
-		this.pidDistanceController.setOutputRange(-0.4, 0.4);
-		this.pidDistanceController.setInputRange(-20, 20);
-		this.pidDistanceController.setContinuous(false);
-		this.pidDistanceController.reset();
-		this.pidDistanceController.enable();
+		this.pidDistance.setAbsoluteTolerance(cargoDistancePid.tolerance);
+		this.pidDistance.setOutputRange(-0.4, 0.4);
+		this.pidDistance.setInputRange(-20, 20);
+		this.pidDistance.setContinuous(false);
 
 		this.holdFrames = 0;
 
@@ -81,44 +94,45 @@ public class DockTask {
 	}
 
 	public void resetPID() {
-		this.pidTranslationController.reset();
-		this.pidTranslationController.enable();
-		this.pidDistanceController.reset();
-		this.pidDistanceController.enable();
+		this.pidTranslation.reset();
+		this.pidTranslation.enable();
+		this.pidDistance.reset();
+		this.pidDistance.enable();
 	}
 
 	public void doWarmupCamera() {
-		// timer.start();
-		resetPID();
-		// while (!timer.hasPeriodPassed(1)) {
-
-		// }
-		// timer.stop();
 		if (limelight.getEntry("tv").getDouble(0) == 1) {
-			if (limelight.getEntry("ty").getDouble(0) > 2) {
-				this.pidDistanceController.setSetpoint(this.CARGO_DISTANCE_SETPOINT);
-				this.pidTranslationController.setSetpoint(this.CARGO_TRANSLATION_SETPOINT);
+			if (limelight.getEntry("ty").getDouble(0) > 10) {
+				this.pidTranslation.setP(this.cargoTranslationConfig.kP);
+				this.pidDistance.setP(this.cargoDistanceConfig.kP);
+				this.pidTranslation.setSetpoint(this.CARGO_TRANSLATION_SETPOINT);
+				this.pidDistance.setSetpoint(this.CARGO_DISTANCE_SETPOINT);
 				SmartDashboard.putString("vision setpoint", "cargo");
-			} else if (limelight.getEntry("ty").getDouble(0) < 2) {
-				this.pidDistanceController.setSetpoint(this.HATCH_DISTANCE_SETPOINT);
-				this.pidTranslationController.setSetpoint(this.HATCH_TRANSLATION_SETPOINT);
+			} else if (limelight.getEntry("ty").getDouble(0) < 10) {
+				this.pidTranslation.setP(this.hatchTranslationConfig.kP);
+				this.pidDistance.setP(this.hatchDistanceConfig.kP);
+				this.pidTranslation.setSetpoint(this.HATCH_TRANSLATION_SETPOINT);
+				this.pidDistance.setSetpoint(this.HATCH_DISTANCE_SETPOINT);
 				SmartDashboard.putString("vision setpoint", "hatch");
 			}
+			resetPID();
 
 			this.currentState = State.HOLD;
-
 		}
-
 	}
 
 	public double[] hold() {
 		if (limelight.getEntry("tv").getDouble(0) == 1) {
 
 			this.pidTranslationSender.setValue(limelight.getEntry("tx").getDouble(0));
-			this.pidDistanceSender.setValue(limelight.getEntry("ty").getDouble(0));
+			this.pidDistanceSender.setValue(limelight.getEntry("ta").getDouble(0));
 
-			SmartDashboard.putNumber("distance dock pid error", this.pidDistanceController.getError());
-			SmartDashboard.putNumber("translation dock pid error", this.pidTranslationController.getError());
+			SmartDashboard.putNumber("translation dock pid error", this.pidTranslation.getError());
+			SmartDashboard.putNumber("distance dock pid error", this.pidDistance.getError());
+			SmartDashboard.putNumber("translation dock pid output", this.pidTranslationOutput);
+			SmartDashboard.putNumber("distance dock pid output", this.pidDistanceOutput);
+			SmartDashboard.putNumber("translation dock pid setpoint", this.pidTranslation.getSetpoint());
+			SmartDashboard.putNumber("distance dock pid setpoint", this.pidDistance.getSetpoint());
 
 			if (Math.abs(this.pidTranslationOutput) < 0.1 && Math.abs(pidDistanceOutput) < 0.1) {
 				this.holdFrames++;

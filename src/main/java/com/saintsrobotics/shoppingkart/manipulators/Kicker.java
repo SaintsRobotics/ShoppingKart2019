@@ -45,14 +45,11 @@ public class Kicker extends RunContinuousTask {
 
         // wait.until(() -> this.encoder.getRotation() <= this.backPass);
         this.kicker.set(1);
-        SmartDashboard.putString("kicker status", "kicking");
 
         wait.until(() -> this.encoder.getRotation() >= this.upperBound);
         this.kicker.set(-0.2);
-        SmartDashboard.putString("kicker status", "reversing");
 
         wait.until(() -> this.encoder.getRotation() <= this.lowerBound);
         this.kicker.set(0);
-        SmartDashboard.putString("kicker status", "standing by");
     }
 }

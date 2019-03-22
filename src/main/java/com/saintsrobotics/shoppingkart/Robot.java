@@ -31,6 +31,7 @@ import com.saintsrobotics.shoppingkart.tests.TestTurnSwerveWheel;
 import com.saintsrobotics.shoppingkart.util.UpdateMotors;
 import com.saintsrobotics.shoppingkart.vision.DockTask;
 
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -110,13 +111,13 @@ public class Robot extends TaskRobot {
 		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.settings.headingPidConfig);
 
 		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl,
-				new DockTask(this.settings.dockTranslationPidConfig, this.settings.dockDistancePidConfig,
+				new DockTask(this.settings.dockCargoTranslation, this.settings.dockCargoDistance,
+						this.settings.dockHatchTranslation, this.settings.dockHatchDistance,
 						this.settings.hatchTranslationTarget, this.settings.hatchDistanceTarget,
 						this.settings.cargoTranslationTarget, this.settings.cargoDistanceTarget));
 
 		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
-				this.sensors.lifterDown, this.settings.liftUpperThrottle, this.settings.liftLowerThrottle,
-				this.settings.liftPidConfig);
+				this.sensors.lifterDown, this.settings.liftPidConfig);
 
 		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(), this.sensors.arms, this.motors.arms,
 				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
@@ -134,7 +135,8 @@ public class Robot extends TaskRobot {
 				new ToHeading(() -> this.oi.xboxInput.X(), 208.75, swerveControl),
 				new ToHeading(() -> this.oi.xboxInput.A(), 331.25, swerveControl),
 
-				new LiftInput(this.oi.oppInput, () -> this.oi.oppInput.lowerLift(), liftControl),
+				new LiftInput(this.oi.oppInput, this.sensors.liftEncoder, this.settings.liftUpperThrottle,
+						this.settings.liftLowerThrottle, () -> this.oi.oppInput.lowerLift(), liftControl),
 				new ToHeight(() -> this.oi.oppInput.cargo1(), liftControl, this.settings.liftCargo1),
 				new ToHeight(() -> this.oi.oppInput.cargo2(), liftControl, this.settings.liftCargo2),
 				new ToHeight(() -> this.oi.oppInput.cargoBall(), liftControl, this.settings.liftCargoShip),
@@ -161,6 +163,8 @@ public class Robot extends TaskRobot {
 						this.sensors.liftEncoder, 1.5, this.settings.armsFullin),
 
 				new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors), new RunEachFrameTask() {
+					private NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
@@ -172,10 +176,18 @@ public class Robot extends TaskRobot {
 						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
 						SmartDashboard.putNumber("lift motor", motors.lifter.get());
 
-						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
-						SmartDashboard.putNumber("leftFront encoder", sensors.leftFrontEncoder.getRotation());
-						SmartDashboard.putNumber("left bakc encoder", sensors.leftBackEncoder.getRotation());
-						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("tx", limelight.getEntry("tx").getDouble(0));
+						SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
+						SmartDashboard.putNumber("ta", limelight.getEntry("ta").getDouble(0));
+
+						// SmartDashboard.putNumber("right front encoder",
+						// sensors.rightFrontEncoder.getRotation());
+						// SmartDashboard.putNumber("leftFront encoder",
+						// sensors.leftFrontEncoder.getRotation());
+						// SmartDashboard.putNumber("left bakc encoder",
+						// sensors.leftBackEncoder.getRotation());
+						// SmartDashboard.putNumber("right back encoder",
+						// sensors.rightBackEncoder.getRotation());
 						// for (int i = 0; i < 16; i++) {
 						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
 						// }

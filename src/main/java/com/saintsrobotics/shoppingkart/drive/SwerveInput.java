@@ -140,11 +140,8 @@ public class SwerveInput extends RunEachFrameTask {
 	// Pass the values into SwerveControl
 	public void runEachFrame() {
 		if (currentState != lastState) {
-			System.out.println(currentState);
 			lastState = currentState;
 		}
-		SmartDashboard.putNumber("dock pid translation output", this.docking[0]);
-		SmartDashboard.putNumber("dock pid distance output", this.docking[1]);
 		SmartDashboard.putString("swerve input state", this.currentState.toString());
 
 		switch (this.currentState) {

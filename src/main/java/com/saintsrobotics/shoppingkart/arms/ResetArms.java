@@ -25,7 +25,7 @@ public class ResetArms extends RunContinuousTask {
     @Override
     protected void runForever() {
         wait.until(this.trigger);
-        this.armsControl.setResetSpeed(0.5);
+        this.armsControl.setResetSpeed(0.75);
         wait.until(() -> !this.trigger.getAsBoolean());
         this.armsControl.setResetSpeed(0);
         armsControl.setOffset(this.encoder.getRotation());
