@@ -48,7 +48,6 @@ public class SwerveInput extends RunEachFrameTask {
 	 * @return an array in the format of {leftStickX, leftSticyY, rightStickX}
 	 */
 	public double[] readXboxInput() {
-		double[] xboxValues = new double[3];
 		double leftStickX = xboxInput.leftStickX();
 		double leftStickY = -xboxInput.leftStickY();
 		double rightStickX = xboxInput.rightStickX();
@@ -98,10 +97,7 @@ public class SwerveInput extends RunEachFrameTask {
 					+ (tempY * Math.cos(Math.toRadians(robotAngle)));
 		}
 
-		xboxValues[0] = leftStickX;
-		xboxValues[1] = leftStickY;
-		xboxValues[2] = rightStickX;
-		return xboxValues;
+		return new {leftStickX, leftStickY, rightStickX};
 	}
 
 	public double[] readDockTaskInput() {
@@ -134,8 +130,9 @@ public class SwerveInput extends RunEachFrameTask {
 		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
 	}
 
-	private boolean isXboxNotZero(double xboxInput) {
-		return !(xboxInput > -0.1 && xboxInput < 0.1);
+	public boolean isXboxNotZero(double[] vals) {
+		return !(vals[0] > -0.1 && vals[0] < 0.1) || !(vals[1] > -0.1 && vals[1] < 0.1)
+				|| !(vals[2] > -0.1 && vals[2] < 0.1);
 	}
 
 	@Override
@@ -164,10 +161,10 @@ public class SwerveInput extends RunEachFrameTask {
 			doDocking();
 			double[] xboxInput = readXboxInput();
 			SmartDashboard.putNumber("docking hold frames", dock.getHoldFrames());
-			if (isXboxNotZero(xboxInput[0]) || isXboxNotZero(xboxInput[1]) || isXboxNotZero(xboxInput[2])
-					|| dock.getHoldFrames() > 100) {
+
+			if (isXboxNotZero(xboxInput))
 				this.currentState = State.START_CONTROLLER;
-			}
+
 			break;
 		case START_CONTROLLER:
 			doStartController();

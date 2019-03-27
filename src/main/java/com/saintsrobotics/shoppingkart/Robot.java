@@ -25,9 +25,13 @@ import com.saintsrobotics.shoppingkart.lift.ToHeight;
 import com.saintsrobotics.shoppingkart.manipulators.DetatchPanel;
 import com.saintsrobotics.shoppingkart.manipulators.IntakeWheel;
 import com.saintsrobotics.shoppingkart.manipulators.Kicker;
+import com.saintsrobotics.shoppingkart.tests.ClimbTest;
 import com.saintsrobotics.shoppingkart.tests.SimpleLiftTask;
 import com.saintsrobotics.shoppingkart.tests.TestDriveSwerveWheel;
 import com.saintsrobotics.shoppingkart.tests.TestTurnSwerveWheel;
+import com.saintsrobotics.shoppingkart.util.AbsoluteEncoder;
+import com.saintsrobotics.shoppingkart.util.MotorRamping;
+import com.saintsrobotics.shoppingkart.util.SparkMax;
 import com.saintsrobotics.shoppingkart.util.UpdateMotors;
 import com.saintsrobotics.shoppingkart.vision.DockTask;
 
@@ -36,6 +40,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -86,7 +91,7 @@ public class Robot extends TaskRobot {
 
 	@Override
 	public void autonomousInit() {
-		teleopInit();
+		// teleopInit();
 	}
 
 	@Override

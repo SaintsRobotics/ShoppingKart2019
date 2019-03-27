@@ -5,13 +5,18 @@ import com.github.dozer.output.Motor;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class MotorRamping implements Motor {
-	public static final double MOTOR_RAMPING = 0.3;
+	public static double MOTOR_RAMPING; // treat this as a final
 
 	private SpeedController speedController;
 
 	public MotorRamping(SpeedController speedController, boolean inverted) {
+		this(speedController, inverted, 0.3);
+	}
+
+	public MotorRamping(SpeedController speedController, boolean inverted, double motorRamping) {
 		this.speedController = speedController;
 		this.speedController.setInverted(inverted);
+		MOTOR_RAMPING = motorRamping;
 	}
 
 	private double setpoint = 0;
