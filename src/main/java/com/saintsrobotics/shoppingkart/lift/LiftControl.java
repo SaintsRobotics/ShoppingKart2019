@@ -122,8 +122,8 @@ public class LiftControl extends RunEachFrameTask {
          * return false set lift encoder max cuz build is too lazy -- efficient -- to
          * move the limit switch
          */
-        if (((!this.lifterUp.get() && liftInput > 0) || (liftInput > 0 && this.encoder.getDistance() > 73)
-                || (!this.lifterDown.get() && liftInput < 0))) {
+        if (((!this.lifterUp.get() || this.encoder.getDistance() > 79) && liftInput > 0)
+                || ((!this.lifterDown.get() || this.encoder.getDistance() < 17) && liftInput < 0)) {
             liftInput = 0;
         }
 
@@ -143,12 +143,12 @@ public class LiftControl extends RunEachFrameTask {
         }
 
         // SmartDashboard.putNumber("liftInput", liftInput);
-        SmartDashboard.putNumber("lift frame count", this.frameCount);
+        // SmartDashboard.putNumber("lift frame count", this.frameCount);
 
         SmartDashboard.putNumber("lift pid setpoint", this.pidController.getSetpoint());
-        SmartDashboard.putNumber("lift pid output", this.pidOutput);
-        SmartDashboard.putNumber("lift current", this.pewdiepie.getCurrent(3));
-        SmartDashboard.putNumber("filtered lift current", this.filteredCurrent);
+        // SmartDashboard.putNumber("lift pid output", this.pidOutput);
+        // SmartDashboard.putNumber("lift current", this.pewdiepie.getCurrent(3));
+        // SmartDashboard.putNumber("filtered lift current", this.filteredCurrent);
 
         this.lifter.set(liftInput);
     }

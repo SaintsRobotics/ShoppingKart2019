@@ -7,6 +7,7 @@ import com.saintsrobotics.shoppingkart.config.PidConfig;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveControl extends RunEachFrameTask {
 	private static final double SPEED_COEF = 1;
@@ -37,7 +38,7 @@ public class SwerveControl extends RunEachFrameTask {
 		this.headingPidController = new PIDController(headingPidConfig.kP, headingPidConfig.kI, headingPidConfig.kD,
 				this.gyro, (output) -> this.headingPidOutput = output);
 		this.headingPidController.setAbsoluteTolerance(headingPidConfig.tolerance);
-		this.headingPidController.setOutputRange(-0.5, 0.5);
+		this.headingPidController.setOutputRange(-0.4, 0.4);
 		this.headingPidController.setInputRange(0, 360);
 		this.headingPidController.setContinuous();
 		this.headingPidController.reset();
@@ -76,6 +77,7 @@ public class SwerveControl extends RunEachFrameTask {
 
 	@Override
 	public void runEachFrame() {
+		SmartDashboard.putNumber("target heading", this.headingPidController.getSetpoint());
 
 		// Gyro coords are continuous so this restricts it to 360
 		double currentHead = ((this.gyro.getAngle() % 360) + 360) % 360;
@@ -89,6 +91,10 @@ public class SwerveControl extends RunEachFrameTask {
 			this.isTurning = false;
 		}
 
+		SmartDashboard.putNumber("rotation input", rotationInput);
+		SmartDashboard.putNumber("translation x", this.translationX);
+		SmartDashboard.putNumber("translation y", this.translationY);
+		SmartDashboard.putNumber("rotation pid", this.headingPidOutput);
 		// Doing math with each of the vectors for the SwerveWheels
 		// Calculating the rotation vector, then adding that to the translation vector
 		// Converting them to polar vectors

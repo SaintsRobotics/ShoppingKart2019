@@ -76,7 +76,7 @@ public class DockTask {
 		this.pidDistance = new PIDController(cargoDistancePid.kP, cargoDistancePid.kI, cargoDistancePid.kD,
 				this.pidDistanceSender, (output) -> this.pidDistanceOutput = output);
 		this.pidDistance.setAbsoluteTolerance(cargoDistancePid.tolerance);
-		this.pidDistance.setOutputRange(-0.4, 0.4);
+		this.pidDistance.setOutputRange(-0.3, 0.3);
 		this.pidDistance.setInputRange(-20, 20);
 		this.pidDistance.setContinuous(false);
 

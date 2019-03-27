@@ -155,9 +155,7 @@ public class Robot extends TaskRobot {
 				armsControl, new ResetArms(() -> this.oi.oppInput.armsHardstop(), this.sensors.arms, armsControl),
 				new ArmsTarget(() -> this.oi.oppInput.armsRest(), this.settings.armsFullin, armsControl),
 				new ArmsTarget(() -> this.oi.oppInput.armsPickUp(), this.settings.armsHatch, armsControl),
-				new ArmsTarget(() -> this.oi.oppInput.armsOut(
-
-				), this.settings.armsFullout, armsControl),
+				new ArmsTarget(() -> this.oi.oppInput.armsOut(), this.settings.armsFullout, armsControl),
 
 				new DetatchPanel(() -> this.oi.oppInput.lowerLiftBack(), armsControl, liftControl,
 						this.sensors.liftEncoder, 1.5, this.settings.armsFullin),
@@ -180,14 +178,11 @@ public class Robot extends TaskRobot {
 						SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
 						SmartDashboard.putNumber("ta", limelight.getEntry("ta").getDouble(0));
 
-						// SmartDashboard.putNumber("right front encoder",
-						// sensors.rightFrontEncoder.getRotation());
-						// SmartDashboard.putNumber("leftFront encoder",
-						// sensors.leftFrontEncoder.getRotation());
-						// SmartDashboard.putNumber("left bakc encoder",
-						// sensors.leftBackEncoder.getRotation());
-						// SmartDashboard.putNumber("right back encoder",
-						// sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
+						SmartDashboard.putNumber("leftFront encoder", sensors.leftFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left bakc encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
+
 						// for (int i = 0; i < 16; i++) {
 						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
 						// }

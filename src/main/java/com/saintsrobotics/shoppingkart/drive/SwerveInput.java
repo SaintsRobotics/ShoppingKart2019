@@ -26,7 +26,7 @@ public class SwerveInput extends RunEachFrameTask {
 
 	private final double SPEED_GAIN = .75;
 	private final double BOOST_GAIN = 1;
-	private final double TURN_GAIN = .75;
+	private final double TURN_GAIN = .7;
 
 	private State currentState;
 	private State lastState;
@@ -51,19 +51,21 @@ public class SwerveInput extends RunEachFrameTask {
 		double[] xboxValues = new double[3];
 		double leftStickX = xboxInput.leftStickX();
 		double leftStickY = -xboxInput.leftStickY();
-		double rightStickX = xboxInput.rightStickX() * this.TURN_GAIN;
+		double rightStickX = xboxInput.rightStickX();
 
 		// dead zone
 		if (Math.abs(rightStickX) <= 0.15) {
 			rightStickX = 0;
 		}
 
-		if (this.xboxInput.rightTrigger() > 0.5) {
+		if (this.xboxInput.LB()) {
 			leftStickX *= this.BOOST_GAIN;
 			leftStickY *= this.BOOST_GAIN;
+			rightStickX *= this.BOOST_GAIN;
 		} else {
 			leftStickX *= this.SPEED_GAIN;
 			leftStickY *= this.SPEED_GAIN;
+			rightStickX *= this.TURN_GAIN;
 		}
 
 		// Straight forward
@@ -147,7 +149,7 @@ public class SwerveInput extends RunEachFrameTask {
 		switch (this.currentState) {
 		case CONTROLLER:
 			doController();
-			if (xboxInput.LB()) {
+			if (xboxInput.SELECT()) {
 				this.currentState = State.START_DOCKING;
 			}
 			// NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);

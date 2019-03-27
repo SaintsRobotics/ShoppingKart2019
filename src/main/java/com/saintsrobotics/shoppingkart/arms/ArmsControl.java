@@ -49,7 +49,7 @@ public class ArmsControl extends RunEachFrameTask {
         this.pidController = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD, encoder,
                 (output) -> this.pidOutput = output);
         this.pidController.setAbsoluteTolerance(pidConfig.tolerance);
-        this.pidController.setOutputRange(-1, 1);
+        this.pidController.setOutputRange(-0.85, 0.85);
         this.pidController.setInputRange(0, 360);
         this.pidController.reset();
         this.pidController.enable();
@@ -74,6 +74,7 @@ public class ArmsControl extends RunEachFrameTask {
      */
     public void setTarget(double d) {
         this.pidController.setSetpoint(offset + d);
+        // SmartDashboard.putNumber("arms target offset from hard stop", d);
     }
 
     /**
@@ -103,8 +104,8 @@ public class ArmsControl extends RunEachFrameTask {
         this.motor.set(speed);
 
         // SmartDashboard.putNumber("arms target", this.pidController.getSetpoint());
-        // SmartDashboard.putNumber("arms pid output", this.pidOutput);
-        // SmartDashboard.putNumber("arms pid error", this.pidController.getError());
+        SmartDashboard.putNumber("arms pid output", this.pidOutput);
+        SmartDashboard.putNumber("arms pid error", this.pidController.getError());
         // SmartDashboard.putNumber("arms hard stop location", ArmsControl.offset);
     }
 
