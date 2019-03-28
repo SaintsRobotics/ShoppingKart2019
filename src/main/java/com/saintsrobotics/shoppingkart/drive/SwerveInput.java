@@ -96,8 +96,9 @@ public class SwerveInput extends RunEachFrameTask {
 			leftStickY = (tempX * Math.sin(Math.toRadians(robotAngle)))
 					+ (tempY * Math.cos(Math.toRadians(robotAngle)));
 		}
+		double[] arr = { leftStickX, leftStickY, rightStickX };
 
-		return new {leftStickX, leftStickY, rightStickX};
+		return arr;
 	}
 
 	public double[] readDockTaskInput() {
