@@ -14,19 +14,19 @@ public class SparkMax implements SpeedController {
     }
 
     /**
-     * maps a -1 to 1 input range to a 0 to 1 output range
+     * maps a -1 to 1 input range to a 1 to 2 output range
      */
     @Override
     public void set(double speed) {
-        this.servo.set((speed / 2) + 0.5);
+        this.servo.set(((speed / 2) + 1.5));
     }
 
     /**
-     * returns a 0 to 1 output range
+     * returns a -1 to 1 output range (from a normal 1 to 2)
      */
     @Override
     public double get() {
-        return this.servo.get();
+        return (this.servo.get() - 1.5) * 2;
     }
 
     @Override
