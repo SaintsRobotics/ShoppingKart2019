@@ -51,9 +51,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends TaskRobot {
-	// private Motors motors;
-	// private RobotSensors sensors;
-	// private Settings settings;
+	private Motors motors;
+	private RobotSensors sensors;
+	private Settings settings;
 	private OI oi;
 	private Flags flags;
 	private PowerDistributionPanel pewdiepie;
@@ -61,30 +61,30 @@ public class Robot extends TaskRobot {
 	@Override
 	public void robotInit() {
 
-		// Config robotConfig;
-		// try {
-		// robotConfig = this.loadConfig();
-		// } catch (IOException ex) {
-		// DriverStation.reportError("Could not load config", false);
-		// return;
-		// }
+		Config robotConfig;
+		try {
+			robotConfig = this.loadConfig();
+		} catch (IOException ex) {
+			DriverStation.reportError("Could not load config", false);
+			return;
+		}
 
 		this.oi = new OI();
-		// this.motors = new Motors(robotConfig);
-		// this.sensors = new RobotSensors(robotConfig);
-		// this.settings = new Settings(robotConfig);
+		this.motors = new Motors(robotConfig);
+		this.sensors = new RobotSensors(robotConfig);
+		this.settings = new Settings(robotConfig);
 
-		// this.sensors.gyro.calibrate();
-		// this.sensors.gyro.reset();
+		this.sensors.gyro.calibrate();
+		this.sensors.gyro.reset();
 
-		// this.sensors.liftEncoder.setOffset(this.settings.liftOffset);
-		// this.flags = new Flags();
+		this.sensors.liftEncoder.setOffset(this.settings.liftOffset);
+		this.flags = new Flags();
 
-		// this.flags.pdp = new PowerDistributionPanel();
+		this.flags.pdp = new PowerDistributionPanel();
 
-		// CameraServer.getInstance().startAutomaticCapture();
-		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
-		// this.pewdiepie = new PowerDistributionPanel();
+		CameraServer.getInstance().startAutomaticCapture();
+		NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
+		this.pewdiepie = new PowerDistributionPanel();
 
 	}
 
@@ -95,57 +95,45 @@ public class Robot extends TaskRobot {
 
 	@Override
 	public void teleopInit() {
-		// SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront,
-		// this.motors.rightFrontTurner,
-		// this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig,
-		// this.settings.rightFrontLoc,
-		// this.settings.pivotLoc);
+		SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront, this.motors.rightFrontTurner,
+				this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc,
+				this.settings.pivotLoc);
 
-		// SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront,
-		// this.motors.leftFrontTurner,
-		// this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig,
-		// this.settings.leftFrontLoc,
-		// this.settings.pivotLoc);
+		SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront, this.motors.leftFrontTurner,
+				this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.leftFrontLoc,
+				this.settings.pivotLoc);
 
-		// SwerveWheel leftBack = new SwerveWheel(this.motors.leftBack,
-		// this.motors.leftBackTurner,
-		// this.sensors.leftBackEncoder, this.settings.wheelAnglePidConfig,
-		// this.settings.leftBackLoc,
-		// this.settings.pivotLoc);
+		SwerveWheel leftBack = new SwerveWheel(this.motors.leftBack, this.motors.leftBackTurner,
+				this.sensors.leftBackEncoder, this.settings.wheelAnglePidConfig, this.settings.leftBackLoc,
+				this.settings.pivotLoc);
 
-		// SwerveWheel rightBack = new SwerveWheel(this.motors.rightBack,
-		// this.motors.rightBackTurner,
-		// this.sensors.rightBackEncoder, this.settings.wheelAnglePidConfig,
-		// this.settings.rightBackLoc,
-		// this.settings.pivotLoc);
+		SwerveWheel rightBack = new SwerveWheel(this.motors.rightBack, this.motors.rightBackTurner,
+				this.sensors.rightBackEncoder, this.settings.wheelAnglePidConfig, this.settings.rightBackLoc,
+				this.settings.pivotLoc);
 
-		// SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
-		// SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro,
-		// this.settings.headingPidConfig);
+		SwerveWheel[] wheels = { rightFront, leftFront, leftBack, rightBack };
+		SwerveControl swerveControl = new SwerveControl(wheels, this.sensors.gyro, this.settings.headingPidConfig);
 
-		// SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput,
-		// this.sensors.gyro, swerveControl,
-		// new DockTask(this.settings.dockTranslationPidConfig,
-		// this.settings.dockDistancePidConfig,
-		// this.settings.hatchTranslationTarget, this.settings.hatchDistanceTarget,
-		// this.settings.cargoTranslationTarget, this.settings.cargoDistanceTarget));
+		SwerveInput swerveInput = new SwerveInput(this.oi.xboxInput, this.sensors.gyro, swerveControl,
+				new DockTask(this.settings.dockTranslationPidConfig, this.settings.dockDistancePidConfig,
+						this.settings.hatchTranslationTarget, this.settings.hatchDistanceTarget,
+						this.settings.cargoTranslationTarget, this.settings.cargoDistanceTarget));
 
-		// LiftControl liftControl = new LiftControl(this.motors.lifter,
-		// this.sensors.liftEncoder, this.sensors.lifterUp,
-		// this.sensors.lifterDown, this.settings.liftUpperThrottle,
-		// this.settings.liftLowerThrottle,
-		// this.settings.liftPidConfig);
+		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
+				this.sensors.lifterDown, this.settings.liftUpperThrottle, this.settings.liftLowerThrottle,
+				this.settings.liftPidConfig);
 
-		// ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(),
-		// this.sensors.arms, this.motors.arms,
-		// this.settings.armsHardstop, this.settings.armsFullin,
-		// this.settings.armsPidConfig);
+		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(), this.sensors.arms, this.motors.arms,
+				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
 
-		this.teleopTasks = new Task[] { new ClimbTest(new MotorRamping(new SparkMax(12), false, 0.001),
-				new AbsoluteEncoder(5, 0, false), this.oi.xboxInput),
+		this.teleopTasks = new Task[] {
+				new ClimbTest(new MotorRamping(new SparkMax(12), false, 0.001), new AbsoluteEncoder(5, 0, false),
+						this.oi.oppInput),
 				// new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro,
-				// swerveControl), swerveInput,
-				// swerveControl, liftControl,
+				// swerveControl),
+				swerveInput, swerveControl,
+
+				// liftControl,
 
 				// new ToHeading(() -> this.oi.xboxInput.DPAD_UP(), 0.0, swerveControl),
 				// new ToHeading(() -> this.oi.xboxInput.DPAD_RIGHT(), 90.0, swerveControl),
