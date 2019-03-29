@@ -96,9 +96,9 @@ public class Robot extends TaskRobot {
 
 	@Override
 	public void teleopInit() {
-		SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront, this.motors.rightFrontTurner,
-				this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc,
-				this.settings.pivotLoc);
+		MotorRamping rf = new MotorRamping(new SparkMax(0), true);
+		SwerveWheel rightFront = new SwerveWheel(rf, this.motors.rightFrontTurner, this.sensors.rightFrontEncoder,
+				this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc, this.settings.pivotLoc);
 
 		SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront, this.motors.leftFrontTurner,
 				this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.leftFrontLoc,
@@ -171,13 +171,14 @@ public class Robot extends TaskRobot {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
-						SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
-						SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
-						SmartDashboard.putNumber("kicker motor", motors.kicker.get());
-						SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
-						SmartDashboard.putNumber("arms motor", motors.arms.get());
-						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
-						SmartDashboard.putNumber("lift motor", motors.lifter.get());
+						SmartDashboard.putNumber("rf motor", rf.get());
+						// SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
+						// SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
+						// SmartDashboard.putNumber("kicker motor", motors.kicker.get());
+						// SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						// SmartDashboard.putNumber("arms motor", motors.arms.get());
+						// SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
+						// SmartDashboard.putNumber("lift motor", motors.lifter.get());
 
 						SmartDashboard.putNumber("tx", limelight.getEntry("tx").getDouble(0));
 						SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
@@ -187,6 +188,9 @@ public class Robot extends TaskRobot {
 						SmartDashboard.putNumber("leftFront encoder", sensors.leftFrontEncoder.getRotation());
 						SmartDashboard.putNumber("left bakc encoder", sensors.leftBackEncoder.getRotation());
 						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
+
+						SmartDashboard.putNumber("Controller x", oi.xboxInput.leftStickX());
+						SmartDashboard.putNumber("Controller y", oi.xboxInput.leftStickY());
 
 						// for (int i = 0; i < 16; i++) {
 						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
