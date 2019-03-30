@@ -119,15 +119,19 @@ public class Robot extends TaskRobot {
 						this.settings.hatchTranslationTarget, this.settings.hatchDistanceTarget,
 						this.settings.cargoTranslationTarget, this.settings.cargoDistanceTarget));
 
-		LiftControl liftControl = new LiftControl(this.motors.lifter, this.sensors.liftEncoder, this.sensors.lifterUp,
-				this.sensors.lifterDown, this.settings.liftUpperThrottle, this.settings.liftLowerThrottle,
-				this.settings.liftPidConfig);
+		// LiftControl liftControl = new LiftControl(this.motors.lifter,
+		// this.sensors.liftEncoder, this.sensors.lifterUp,
+		// this.sensors.lifterDown, this.settings.liftUpperThrottle,
+		// this.settings.liftLowerThrottle,
+		// this.settings.liftPidConfig);
 
-		ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(), this.sensors.arms, this.motors.arms,
-				this.settings.armsHardstop, this.settings.armsFullin, this.settings.armsPidConfig);
+		// ArmsControl armsControl = new ArmsControl(() -> this.oi.oppInput.pidOff(),
+		// this.sensors.arms, this.motors.arms,
+		// this.settings.armsHardstop, this.settings.armsFullin,
+		// this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
-				new ClimbTest(new MotorRamping(new SparkMax(12), false, 0.001), new AbsoluteEncoder(5, 0, false),
+				new ClimbTest(new MotorRamping(new SparkMax(9), false, 0.001), new AbsoluteEncoder(5, 0, false),
 						this.oi.oppInput),
 				// new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro,
 				// swerveControl),

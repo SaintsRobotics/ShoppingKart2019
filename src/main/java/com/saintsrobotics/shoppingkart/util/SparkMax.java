@@ -14,11 +14,13 @@ public class SparkMax implements SpeedController {
     }
 
     /**
-     * maps a -1 to 1 input range to a 1 to 2 output range
+     * maps a -1 to 1 input range to a 0 to 1 output range note that the actual
+     * motor controller (piece o' hardware SparkMax(R)) takes a 1 to 2 input range
+     * the servo somehow wraps that
      */
     @Override
     public void set(double speed) {
-        this.servo.set((speed / 2) + 1.5);
+        this.servo.set((speed / 2) + 0.5);
     }
 
     /**
