@@ -12,5 +12,6 @@
   },
   "wpilib.online": true,
   "editor.formatOnSave": true,
-  "java.saveActions.organizeImports": true
+  "java.saveActions.organizeImports": true,
+  "wpilib.autoStartRioLog": false
 }

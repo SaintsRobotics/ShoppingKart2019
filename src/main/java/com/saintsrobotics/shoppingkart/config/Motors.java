@@ -19,11 +19,11 @@ public class Motors {
 	public Motor rightBackTurner;
 	public Motor rightFrontTurner;
 
-	public Motor lifter;
-	public Motor intake;
-	public Motor arms;
+	// public Motor lifter;
+	// public Motor intake;
+	// public Motor arms;
 
-	public Motor kicker;
+	// public Motor kicker;
 
 	protected Motor[] allMotors;
 	protected MotorRamping[] rampedMotors;
@@ -39,13 +39,13 @@ public class Motors {
 		this.rightBackTurner = buildTalonMotor(robotConfig, "motors.drive.rightBackTurner", false);
 		this.rightFrontTurner = buildTalonMotor(robotConfig, "motors.drive.rightFrontTurner", false);
 
-		this.lifter = buildTalonMotor(robotConfig, "motors.lift", false);
-		this.intake = buildTalonMotor(robotConfig, "motors.intake", false);
-		this.arms = buildTalonMotor(robotConfig, "motors.arms", false);
-		this.kicker = buildTalonMotor(robotConfig, "motors.kicker", false);
+		// this.lifter = buildTalonMotor(robotConfig, "motors.lift", false);
+		// this.intake = buildTalonMotor(robotConfig, "motors.intake", false);
+		// this.arms = buildTalonMotor(robotConfig, "motors.arms", false);
+		// this.kicker = buildTalonMotor(robotConfig, "motors.kicker", false);
 
 		this.allMotors = new Motor[] { this.leftBack, this.leftFront, this.rightBack, this.rightFront,
-				this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner, this.rightFrontTurner, this.lifter };
+				this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner, this.rightFrontTurner };
 		this.rampedMotors = new MotorRamping[] { (MotorRamping) this.leftBack, (MotorRamping) this.rightBack,
 				(MotorRamping) this.leftFront, (MotorRamping) this.rightFront };
 	}

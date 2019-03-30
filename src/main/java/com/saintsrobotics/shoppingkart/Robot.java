@@ -131,8 +131,8 @@ public class Robot extends TaskRobot {
 		// this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
-				new ClimbTest(new MotorRamping(new SparkMax(9), false, 0.001), new AbsoluteEncoder(5, 0, false),
-						this.oi.oppInput),
+				new ClimbTest(new MotorRamping(new SparkMax(9), false, 0.001), this.sensors.leftBackEncoder,
+						this.oi.xboxInput),
 				// new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro,
 				// swerveControl),
 				swerveInput, swerveControl,

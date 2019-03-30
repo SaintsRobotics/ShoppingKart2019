@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ClimbTest extends RunEachFrameTask {
     private MotorRamping motor;
     private AbsoluteEncoder encoder;
-    private OperatorBoard xboxInput;
+    private XboxInput xboxInput;
 
-    public ClimbTest(MotorRamping motor, AbsoluteEncoder encoder, OperatorBoard xboxInput) {
+    public ClimbTest(MotorRamping motor, AbsoluteEncoder encoder, XboxInput xboxInput) {
         this.motor = motor;
         this.encoder = encoder;
         this.xboxInput = xboxInput;
@@ -22,7 +22,7 @@ public class ClimbTest extends RunEachFrameTask {
 
     @Override
     protected void runEachFrame() {
-        double x = -this.xboxInput.liftY();
+        double x = -this.xboxInput.leftStickX();
         this.motor.set(x);
         SmartDashboard.putNumber("control input", x);
         SmartDashboard.putNumber("test climb motor", this.motor.get());
