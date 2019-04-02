@@ -34,6 +34,7 @@ import com.saintsrobotics.shoppingkart.util.MotorRamping;
 import com.saintsrobotics.shoppingkart.util.SparkMax;
 import com.saintsrobotics.shoppingkart.util.UpdateMotors;
 import com.saintsrobotics.shoppingkart.vision.DockTask;
+import com.saintsrobotics.shoppingkart.config.OperatorBoard;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -90,7 +91,7 @@ public class Robot extends TaskRobot {
 
 	@Override
 	public void autonomousInit() {
-		// teleopInit();
+		teleopInit();
 	}
 
 	@Override
@@ -131,8 +132,8 @@ public class Robot extends TaskRobot {
 		// this.settings.armsPidConfig);
 
 		this.teleopTasks = new Task[] {
-				new ClimbTest(new MotorRamping(new SparkMax(9), false, 0.001), this.sensors.leftBackEncoder,
-						this.oi.xboxInput),
+				new ClimbTest(new MotorRamping(new SparkMax(11), false, 0.01), this.sensors.climberEncoder,
+						this.oi.oppInput),
 				// new ResetGyro(() -> this.oi.xboxInput.START(), this.sensors.gyro,
 				// swerveControl),
 				swerveInput, swerveControl,
@@ -189,32 +190,29 @@ public class Robot extends TaskRobot {
 				// liftControl,
 				// this.sensors.liftEncoder, 1.5, this.settings.armsFullin),
 
-				// new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors),
-				// new RunEachFrameTask() {
-				// @Override
-				// protected void runEachFrame() {
-				// empty task for telemetries
-				// SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
-				// SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
-				// SmartDashboard.putNumber("kicker motor", motors.kicker.get());
-				// SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
-				// SmartDashboard.putNumber("arms motor", motors.arms.get());
-				// SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
-				// SmartDashboard.putNumber("lift motor", motors.lifter.get());
+				new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors), new RunEachFrameTask() {
+					@Override
+					protected void runEachFrame() {
+						// empty task for telemetries
+						// SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
+						// SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
+						// SmartDashboard.putNumber("kicker motor", motors.kicker.get());
+						// SmartDashboard.putNumber("arms encoder", sensors.arms.getRotation());
+						// SmartDashboard.putNumber("arms motor", motors.arms.get());
+						// SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
+						// SmartDashboard.putNumber("lift motor", motors.lifter.get());
 
-				// SmartDashboard.putNumber("right front encoder",
-				// sensors.rightFrontEncoder.getRotation());
-				// SmartDashboard.putNumber("leftFront encoder",
-				// sensors.leftFrontEncoder.getRotation());
-				// SmartDashboard.putNumber("left bakc encoder",
-				// sensors.leftBackEncoder.getRotation());
-				// SmartDashboard.putNumber("right back encoder",
-				// sensors.rightBackEncoder.getRotation());
-				// for (int i = 0; i < 16; i++) {
-				// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
+						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left front encoder", sensors.leftFrontEncoder.getRotation());
+						SmartDashboard.putNumber("left back encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
+						SmartDashboard.putNumber("climber encoder", sensors.climberEncoder.getRotation());
+						// for (int i = 0; i < 16; i++) {
+						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
 
-				// }
-		};
+						// }
+					}
+				} };
 
 		super.teleopInit();
 

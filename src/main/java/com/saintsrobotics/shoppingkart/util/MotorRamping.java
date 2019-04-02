@@ -5,7 +5,7 @@ import com.github.dozer.output.Motor;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class MotorRamping implements Motor {
-	public static double MOTOR_RAMPING; // treat this as a final
+	public double motorRamping; // treat this as a final
 
 	private SpeedController speedController;
 
@@ -16,7 +16,7 @@ public class MotorRamping implements Motor {
 	public MotorRamping(SpeedController speedController, boolean inverted, double motorRamping) {
 		this.speedController = speedController;
 		this.speedController.setInverted(inverted);
-		MOTOR_RAMPING = motorRamping;
+		this.motorRamping = motorRamping;
 	}
 
 	private double setpoint = 0;
@@ -37,12 +37,12 @@ public class MotorRamping implements Motor {
 	}
 
 	public void update() {
-		if (Math.abs(setpoint - current) < MOTOR_RAMPING) {
+		if (Math.abs(setpoint - current) < motorRamping) {
 			current = setpoint;
 		} else if (setpoint > current) {
-			current += MOTOR_RAMPING;
+			current += motorRamping;
 		} else if (setpoint < current) {
-			current -= MOTOR_RAMPING;
+			current -= motorRamping;
 		}
 		speedController.set(current);
 	}

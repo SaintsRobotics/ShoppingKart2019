@@ -22,6 +22,8 @@ public class RobotSensors {
 
 	public AbsoluteEncoder kicker;
 
+	public AbsoluteEncoder climberEncoder;
+
 	public RobotSensors(Config robotConfig) {
 		this.leftFrontEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.leftFront");
 		this.rightFrontEncoder = buildAbsoluteEncoder(robotConfig, "encoders.drive.rightFront");
@@ -37,6 +39,8 @@ public class RobotSensors {
 		this.kicker = buildAbsoluteEncoder(robotConfig, "encoders.kicker");
 
 		this.arms = buildAbsoluteEncoder(robotConfig, "encoders.arms");
+
+		this.climberEncoder = buildAbsoluteEncoder(robotConfig, "encoders.climber");
 	}
 
 	private static AbsoluteEncoder buildAbsoluteEncoder(Config robotConfig, String keyPrefix) {
