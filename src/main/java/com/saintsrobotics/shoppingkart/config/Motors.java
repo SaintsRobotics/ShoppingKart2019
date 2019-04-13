@@ -2,6 +2,8 @@ package com.saintsrobotics.shoppingkart.config;
 
 import com.github.dozer.output.Motor;
 import com.github.dozer.output.MotorSimple;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.saintsrobotics.shoppingkart.util.MotorRamping;
 
 import edu.wpi.first.wpilibj.Talon;
@@ -29,10 +31,18 @@ public class Motors {
 	protected MotorRamping[] rampedMotors;
 
 	public Motors(Config robotConfig) {
-		this.leftBack = buildTalonMotor(robotConfig, "motors.drive.leftBack", true);
-		this.leftFront = buildTalonMotor(robotConfig, "motors.drive.leftFront", true);
-		this.rightBack = buildTalonMotor(robotConfig, "motors.drive.rightBack", true);
-		this.rightFront = buildTalonMotor(robotConfig, "motors.drive.rightFront", true);
+		// this.leftBack = buildTalonMotor(robotConfig, "motors.drive.leftBack", true);
+		// this.leftFront = buildTalonMotor(robotConfig, "motors.drive.leftFront",
+		// true);
+		// this.rightBack = buildTalonMotor(robotConfig, "motors.drive.rightBack",
+		// true);
+		// this.rightFront = buildTalonMotor(robotConfig, "motors.drive.rightFront",
+		// true);
+
+		this.rightFront = new MotorRamping(new CANSparkMax(1, MotorType.kBrushless), false);
+		this.leftFront = new MotorRamping(new CANSparkMax(2, MotorType.kBrushless), true);
+		this.leftBack = new MotorRamping(new CANSparkMax(3, MotorType.kBrushless), true);
+		this.rightBack = new MotorRamping(new CANSparkMax(4, MotorType.kBrushless), false);
 
 		this.leftBackTurner = buildTalonMotor(robotConfig, "motors.drive.leftBackTurner", false);
 		this.leftFrontTurner = buildTalonMotor(robotConfig, "motors.drive.leftFrontTurner", false);

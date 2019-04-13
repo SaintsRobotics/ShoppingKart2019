@@ -93,7 +93,7 @@ public class LiftControl extends RunEachFrameTask {
      * @return whether or not the lift can move
      */
     public boolean isStuck() {
-        if (this.filteredCurrent > 20) {
+        if (this.filteredCurrent > 30) {
             this.frameCount++;
         } else {
             this.frameCount = 0;
