@@ -86,6 +86,7 @@ public class Robot extends TaskRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
 		this.pewdiepie = new PowerDistributionPanel();
+		SmartDashboard.putBoolean("", true);
 
 	}
 
@@ -96,9 +97,10 @@ public class Robot extends TaskRobot {
 
 	@Override
 	public void teleopInit() {
-		MotorRamping rf = new MotorRamping(new SparkMax(0), true);
-		SwerveWheel rightFront = new SwerveWheel(rf, this.motors.rightFrontTurner, this.sensors.rightFrontEncoder,
-				this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc, this.settings.pivotLoc);
+		// MotorRamping rf = new MotorRamping(new SparkMax(0), true);
+		SwerveWheel rightFront = new SwerveWheel(this.motors.rightFront, this.motors.rightFrontTurner,
+				this.sensors.rightFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.rightFrontLoc,
+				this.settings.pivotLoc);
 
 		SwerveWheel leftFront = new SwerveWheel(this.motors.leftFront, this.motors.leftFrontTurner,
 				this.sensors.leftFrontEncoder, this.settings.wheelAnglePidConfig, this.settings.leftFrontLoc,
@@ -171,7 +173,7 @@ public class Robot extends TaskRobot {
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
-						SmartDashboard.putNumber("rf motor", rf.get());
+						// SmartDashboard.putNumber("rf motor", rf.get());
 						// SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
 						// SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
 						// SmartDashboard.putNumber("kicker motor", motors.kicker.get());
@@ -195,6 +197,30 @@ public class Robot extends TaskRobot {
 						// for (int i = 0; i < 16; i++) {
 						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
 						// }
+
+						double LFTemp = motors.LF.getMotorTemperature();
+						double RFTemp = motors.RF.getMotorTemperature();
+						double LBTemp = motors.LB.getMotorTemperature();
+						double RBTemp = motors.RB.getMotorTemperature();
+
+						double motorAverage = ((LFTemp + RFTemp + LBTemp + RBTemp) / 4);
+
+						SmartDashboard.putNumber("Right Front Temp", motors.RF.getMotorTemperature());
+						SmartDashboard.putNumber("Left Front Temp", motors.LF.getMotorTemperature());
+						SmartDashboard.putNumber("Right Back Temp", motors.RB.getMotorTemperature());
+						SmartDashboard.putNumber("Left Back Temp", motors.LB.getMotorTemperature());
+
+						SmartDashboard.putNumber("Average Motor Temp", motorAverage);
+
+						SmartDashboard.putNumber("Encoder Values", motors.RF.getEncoder().getPosition());
+
+						SmartDashboard.putNumber("Kicker Encoder", sensors.kicker.getRotation());
+						if (LFTemp > 70 | RFTemp > 70 | LBTemp > 70 | RBTemp > 70) {
+							DriverStation.reportError("Motors are hot", false);
+							SmartDashboard.putBoolean("", false);
+						} else {
+							SmartDashboard.putBoolean("", true);
+						}
 					}
 				} };
 
