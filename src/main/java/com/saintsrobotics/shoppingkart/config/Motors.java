@@ -25,6 +25,11 @@ public class Motors {
 	public Motor intake;
 	public Motor arms;
 
+	public CANSparkMax RF;
+	public CANSparkMax LF;
+	public CANSparkMax RB;
+	public CANSparkMax LB;
+
 	public Motor kicker;
 
 	protected Motor[] allMotors;
@@ -39,10 +44,15 @@ public class Motors {
 		// this.rightFront = buildTalonMotor(robotConfig, "motors.drive.rightFront",
 		// true);
 
-		this.rightFront = new MotorRamping(new CANSparkMax(1, MotorType.kBrushless), false);
-		this.leftFront = new MotorRamping(new CANSparkMax(2, MotorType.kBrushless), true);
-		this.leftBack = new MotorRamping(new CANSparkMax(3, MotorType.kBrushless), true);
-		this.rightBack = new MotorRamping(new CANSparkMax(4, MotorType.kBrushless), false);
+		this.LF = new CANSparkMax(2, MotorType.kBrushless);
+		this.RF = new CANSparkMax(1, MotorType.kBrushless);
+		this.LB = new CANSparkMax(3, MotorType.kBrushless);
+		this.RB = new CANSparkMax(4, MotorType.kBrushless);
+
+		this.rightFront = new MotorRamping(this.RF, false);
+		this.leftFront = new MotorRamping(this.LF, true);
+		this.leftBack = new MotorRamping(this.LB, true);
+		this.rightBack = new MotorRamping(this.RB, false);
 
 		this.leftBackTurner = buildTalonMotor(robotConfig, "motors.drive.leftBackTurner", false);
 		this.leftFrontTurner = buildTalonMotor(robotConfig, "motors.drive.leftFrontTurner", false);
