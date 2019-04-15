@@ -24,7 +24,7 @@ public class SwerveInput extends RunEachFrameTask {
 	private SwerveControl control;
 	private DockTask dock;
 
-	private final double SPEED_GAIN = .75;
+	private final double SPEED_GAIN = .9;
 	private final double BOOST_GAIN = 1;
 	private final double TURN_GAIN = .7;
 
