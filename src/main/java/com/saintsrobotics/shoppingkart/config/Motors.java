@@ -25,10 +25,10 @@ public class Motors {
 	public Motor intake;
 	public Motor arms;
 
-	public CANSparkMax RF;
-	public CANSparkMax LF;
-	public CANSparkMax RB;
-	public CANSparkMax LB;
+	public CANSparkMax RightFrontSparkMax;
+	public CANSparkMax LeftFrontSparkMax;
+	public CANSparkMax RightBackSparkMax;
+	public CANSparkMax LeftBackSparkMax;
 
 	public Motor kicker;
 
@@ -44,15 +44,15 @@ public class Motors {
 		// this.rightFront = buildTalonMotor(robotConfig, "motors.drive.rightFront",
 		// true);
 
-		this.LF = new CANSparkMax(2, MotorType.kBrushless);
-		this.RF = new CANSparkMax(1, MotorType.kBrushless);
-		this.LB = new CANSparkMax(3, MotorType.kBrushless);
-		this.RB = new CANSparkMax(4, MotorType.kBrushless);
+		this.LeftFrontSparkMax = new CANSparkMax(2, MotorType.kBrushless);
+		this.RightFrontSparkMax = new CANSparkMax(1, MotorType.kBrushless);
+		this.LeftBackSparkMax = new CANSparkMax(3, MotorType.kBrushless);
+		this.RightBackSparkMax = new CANSparkMax(4, MotorType.kBrushless);
 
-		this.rightFront = new MotorRamping(this.RF, false);
-		this.leftFront = new MotorRamping(this.LF, true);
-		this.leftBack = new MotorRamping(this.LB, true);
-		this.rightBack = new MotorRamping(this.RB, false);
+		this.rightFront = new MotorRamping(this.RightFrontSparkMax, false);
+		this.leftFront = new MotorRamping(this.LeftFrontSparkMax, true);
+		this.leftBack = new MotorRamping(this.LeftBackSparkMax, true);
+		this.rightBack = new MotorRamping(this.RightBackSparkMax, false);
 
 		this.leftBackTurner = buildTalonMotor(robotConfig, "motors.drive.leftBackTurner", false);
 		this.leftFrontTurner = buildTalonMotor(robotConfig, "motors.drive.leftFrontTurner", false);

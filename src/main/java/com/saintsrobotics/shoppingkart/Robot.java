@@ -198,21 +198,22 @@ public class Robot extends TaskRobot {
 						// SmartDashboard.putNumber("pdp" + i, pewdiepie.getCurrent(i));
 						// }
 
-						double LFTemp = motors.LF.getMotorTemperature();
-						double RFTemp = motors.RF.getMotorTemperature();
-						double LBTemp = motors.LB.getMotorTemperature();
-						double RBTemp = motors.RB.getMotorTemperature();
+						double LFTemp = motors.LeftFrontSparkMax.getMotorTemperature();
+						double RFTemp = motors.RightFrontSparkMax.getMotorTemperature();
+						double LBTemp = motors.LeftBackSparkMax.getMotorTemperature();
+						double RBTemp = motors.RightBackSparkMax.getMotorTemperature();
 
 						double motorAverage = ((LFTemp + RFTemp + LBTemp + RBTemp) / 4);
 
-						SmartDashboard.putNumber("Right Front Temp", motors.RF.getMotorTemperature());
-						SmartDashboard.putNumber("Left Front Temp", motors.LF.getMotorTemperature());
-						SmartDashboard.putNumber("Right Back Temp", motors.RB.getMotorTemperature());
-						SmartDashboard.putNumber("Left Back Temp", motors.LB.getMotorTemperature());
+						SmartDashboard.putNumber("Right Front Temp", motors.RightFrontSparkMax.getMotorTemperature());
+						SmartDashboard.putNumber("Left Front Temp", motors.LeftFrontSparkMax.getMotorTemperature());
+						SmartDashboard.putNumber("Right Back Temp", motors.RightBackSparkMax.getMotorTemperature());
+						SmartDashboard.putNumber("Left Back Temp", motors.LeftBackSparkMax.getMotorTemperature());
 
 						SmartDashboard.putNumber("Average Motor Temp", motorAverage);
 
-						SmartDashboard.putNumber("Encoder Values", motors.RF.getEncoder().getPosition());
+						SmartDashboard.putNumber("Encoder Values",
+								motors.RightFrontSparkMax.getEncoder().getPosition());
 
 						SmartDashboard.putNumber("Kicker Encoder", sensors.kicker.getRotation());
 						if (LFTemp > 70 | RFTemp > 70 | LBTemp > 70 | RBTemp > 70) {
