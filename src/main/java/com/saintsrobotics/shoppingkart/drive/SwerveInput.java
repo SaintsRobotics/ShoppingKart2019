@@ -52,11 +52,12 @@ public class SwerveInput extends RunEachFrameTask {
 		double leftStickY = -xboxInput.leftStickY();
 		double rightStickX = xboxInput.rightStickX();
 
-		// dead zone
+		// Dead zone
 		if (Math.abs(rightStickX) <= 0.15) {
 			rightStickX = 0;
 		}
 
+		// Speed boost
 		if (this.xboxInput.LB()) {
 			leftStickX *= this.BOOST_GAIN;
 			leftStickY *= this.BOOST_GAIN;
@@ -68,16 +69,16 @@ public class SwerveInput extends RunEachFrameTask {
 		}
 
 		// Straight forward
-		if (this.xboxInput.leftTrigger() > 0.25) {
+		if (this.xboxInput.rightTrigger() > 0.25) {
 			leftStickX = 0;
-			leftStickY = this.xboxInput.leftTrigger() * this.SPEED_GAIN;
+			leftStickY = this.xboxInput.rightTrigger() * this.SPEED_GAIN;
 			rightStickX = 0;
 		}
 
 		// Straight backward
-		if (this.xboxInput.rightTrigger() > 0.25) {
+		if (this.xboxInput.leftTrigger() > 0.25) {
 			leftStickX = 0;
-			leftStickY = (this.xboxInput.rightTrigger() * this.SPEED_GAIN) * -1;
+			leftStickY = (this.xboxInput.leftTrigger() * this.SPEED_GAIN) * -1;
 			rightStickX = 0;
 		}
 

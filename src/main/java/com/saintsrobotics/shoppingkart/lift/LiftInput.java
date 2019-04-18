@@ -71,6 +71,10 @@ public class LiftInput extends RunEachFrameTask {
                 this.isResetting = false;
             }
         }
+
+        if (xboxInput.lowerLiftBack() | xboxInput.lowerLift()) {
+            speed = 0;
+        }
         SmartDashboard.putNumber("lift input speed", speed);
         this.liftControl.setControlSpeed(speed);
     }

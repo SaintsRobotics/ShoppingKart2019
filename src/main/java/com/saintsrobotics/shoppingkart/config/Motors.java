@@ -31,6 +31,12 @@ public class Motors {
 
 	public Motor kicker;
 
+	public CANSparkMax FrontClimbSparkMax;
+	public CANSparkMax BackClimbSparkMax;
+
+	public MotorRamping FrontClimb;
+	public MotorRamping BackClimb;
+
 	protected Motor[] allMotors;
 	protected MotorRamping[] rampedMotors;
 
@@ -62,10 +68,16 @@ public class Motors {
 		this.intake = buildTalonMotor(robotConfig, "motors.intake", false);
 		this.kicker = buildTalonMotor(robotConfig, "motors.kicker", false);
 
+		// this.FrontClimb = new CANSparkMax(6, MotorType.kBrushless);
+		this.BackClimbSparkMax = new CANSparkMax(5, MotorType.kBrushless);
+
+		this.BackClimb = new MotorRamping(this.BackClimbSparkMax, false);
+
 		this.allMotors = new Motor[] { this.leftBack, this.leftFront, this.rightBack, this.rightFront,
-				this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner, this.rightFrontTurner, this.lifter };
+				this.leftBackTurner, this.leftFrontTurner, this.rightBackTurner, this.rightFrontTurner, this.lifter,
+				this.BackClimb };
 		this.rampedMotors = new MotorRamping[] { (MotorRamping) this.leftBack, (MotorRamping) this.rightBack,
-				(MotorRamping) this.leftFront, (MotorRamping) this.rightFront };
+				(MotorRamping) this.leftFront, (MotorRamping) this.rightFront, this.BackClimb };
 	}
 
 	public void stopAll() {
@@ -75,7 +87,8 @@ public class Motors {
 
 	public void update() {
 		for (MotorRamping motor : this.rampedMotors)
-			motor.update();
+			if (motor != null)
+				motor.update();
 	}
 
 	private static Motor buildTalonMotor(Config robotConfig, String keyPrefix, boolean isRamping) {

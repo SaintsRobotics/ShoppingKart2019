@@ -36,7 +36,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -53,7 +52,7 @@ public class Robot extends TaskRobot {
 	private Settings settings;
 	private OI oi;
 	private Flags flags;
-	private PowerDistributionPanel pewdiepie;
+	// private PowerDistributionPanel pewdiepie;
 
 	@Override
 	public void robotInit() {
@@ -80,15 +79,15 @@ public class Robot extends TaskRobot {
 		this.flags.pdp = new PowerDistributionPanel();
 
 		CameraServer.getInstance().startAutomaticCapture();
-		NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
-		this.pewdiepie = new PowerDistributionPanel();
+		// NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
+		// this.pewdiepie = new PowerDistributionPanel();
 		SmartDashboard.putBoolean("", true);
 
 	}
 
 	@Override
 	public void autonomousInit() {
-		// teleopInit();
+		teleopInit();
 	}
 
 	@Override
@@ -136,7 +135,7 @@ public class Robot extends TaskRobot {
 				new ToHeading(() -> this.oi.xboxInput.A(), 331.25, swerveControl),
 
 				new LiftInput(this.oi.oppInput, this.sensors.liftEncoder, this.settings.liftUpperThrottle,
-						this.settings.liftLowerThrottle, () -> this.oi.oppInput.lowerLift(), liftControl),
+						this.settings.liftLowerThrottle, () -> this.oi.oppInput.liftBottom(), liftControl),
 				new ToHeight(() -> this.oi.oppInput.cargo1(), liftControl, this.settings.liftCargo1),
 				new ToHeight(() -> this.oi.oppInput.cargo2(), liftControl, this.settings.liftCargo2),
 				new ToHeight(() -> this.oi.oppInput.cargoBall(), liftControl, this.settings.liftCargoShip),
@@ -144,34 +143,39 @@ public class Robot extends TaskRobot {
 				new ToHeight(() -> this.oi.oppInput.hatch1(), liftControl, this.settings.liftHatch1),
 				new ToHeight(() -> this.oi.oppInput.hatch2(), liftControl, this.settings.liftHatch2),
 				new ToHeight(() -> this.oi.oppInput.hatch3(), liftControl, this.settings.liftHatch3),
-				new ToHeight(() -> this.oi.oppInput.liftBottom(), liftControl, this.settings.liftHatch0),
 
 				new IntakeWheel(() -> this.oi.oppInput.intakeIn(), this.motors.intake, 1),
 				new IntakeWheel(() -> this.oi.oppInput.intakeOut(), this.motors.intake, -1),
+
+				// new ClimbTest(this.motors.BackClimb, this.oi.oppInput, () ->
+				// this.oi.oppInput.lowerLiftBack()),
+				// new ClimbTest(this.motors.FrontClimb, this.oi.oppInput, () ->
+				// this.oi.oppInput.lowerLift()),
 
 				new Kicker(() -> this.oi.oppInput.kicker(), this.motors.kicker, this.sensors.kicker,
 						this.settings.kickerUpperbound, this.settings.kickerLowerbound, this.settings.kickerBackpass),
 
 				new UpdateOperatorBoard(this.oi.oppInput), new UpdateMotors(this.motors), new RunEachFrameTask() {
-					private NetworkTable limelight = NetworkTableInstance.getDefault().getTable("limelight");
+					// private NetworkTable limelight =
+					// NetworkTableInstance.getDefault().getTable("limelight");
 
 					@Override
 					protected void runEachFrame() {
 						// empty task for telemetries
 						// SmartDashboard.putNumber("rf motor", rf.get());
-						// SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
-						// SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
-						// SmartDashboard.putNumber("kicker motor", motors.kicker.get());
-						// SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
-						// SmartDashboard.putNumber("lift motor", motors.lifter.get());
+						SmartDashboard.putNumber("gyro", sensors.gyro.getAngle());
+						SmartDashboard.putNumber("kicker encoder", sensors.kicker.getRotation());
+						SmartDashboard.putNumber("kicker motor", motors.kicker.get());
+						SmartDashboard.putNumber("lift encoder", sensors.liftEncoder.getDistance());
+						SmartDashboard.putNumber("lift motor", motors.lifter.get());
 
-						SmartDashboard.putNumber("tx", limelight.getEntry("tx").getDouble(0));
-						SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
-						SmartDashboard.putNumber("ta", limelight.getEntry("ta").getDouble(0));
+						// SmartDashboard.putNumber("tx", limelight.getEntry("tx").getDouble(0));
+						// SmartDashboard.putNumber("ty", limelight.getEntry("ty").getDouble(0));
+						// SmartDashboard.putNumber("ta", limelight.getEntry("ta").getDouble(0));
 
 						SmartDashboard.putNumber("right front encoder", sensors.rightFrontEncoder.getRotation());
 						SmartDashboard.putNumber("leftFront encoder", sensors.leftFrontEncoder.getRotation());
-						SmartDashboard.putNumber("left bakc encoder", sensors.leftBackEncoder.getRotation());
+						SmartDashboard.putNumber("left back encoder", sensors.leftBackEncoder.getRotation());
 						SmartDashboard.putNumber("right back encoder", sensors.rightBackEncoder.getRotation());
 
 						SmartDashboard.putNumber("Controller x", oi.xboxInput.leftStickX());
