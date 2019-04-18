@@ -41,18 +41,15 @@ public class Motors {
 	protected MotorRamping[] rampedMotors;
 
 	public Motors(Config robotConfig) {
-		// this.leftBack = buildTalonMotor(robotConfig, "motors.drive.leftBack", true);
-		// this.leftFront = buildTalonMotor(robotConfig, "motors.drive.leftFront",
-		// true);
-		// this.rightBack = buildTalonMotor(robotConfig, "motors.drive.rightBack",
-		// true);
-		// this.rightFront = buildTalonMotor(robotConfig, "motors.drive.rightFront",
-		// true);
-
 		this.LeftFrontSparkMax = new CANSparkMax(2, MotorType.kBrushless);
 		this.RightFrontSparkMax = new CANSparkMax(1, MotorType.kBrushless);
 		this.LeftBackSparkMax = new CANSparkMax(3, MotorType.kBrushless);
 		this.RightBackSparkMax = new CANSparkMax(4, MotorType.kBrushless);
+
+		this.LeftFrontSparkMax.setSmartCurrentLimit(35, 60, 150);
+		this.RightFrontSparkMax.setSmartCurrentLimit(35, 60, 150);
+		this.LeftBackSparkMax.setSmartCurrentLimit(35, 60, 150);
+		this.RightBackSparkMax.setSmartCurrentLimit(35, 60, 150);
 
 		this.rightFront = new MotorRamping(this.RightFrontSparkMax, false);
 		this.leftFront = new MotorRamping(this.LeftFrontSparkMax, true);
