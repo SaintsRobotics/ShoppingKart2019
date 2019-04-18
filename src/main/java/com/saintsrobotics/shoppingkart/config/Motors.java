@@ -23,7 +23,6 @@ public class Motors {
 
 	public Motor lifter;
 	public Motor intake;
-	public Motor arms;
 
 	public CANSparkMax RightFrontSparkMax;
 	public CANSparkMax LeftFrontSparkMax;
@@ -61,7 +60,6 @@ public class Motors {
 
 		this.lifter = buildTalonMotor(robotConfig, "motors.lift", false);
 		this.intake = buildTalonMotor(robotConfig, "motors.intake", false);
-		this.arms = buildTalonMotor(robotConfig, "motors.arms", false);
 		this.kicker = buildTalonMotor(robotConfig, "motors.kicker", false);
 
 		this.allMotors = new Motor[] { this.leftBack, this.leftFront, this.rightBack, this.rightFront,

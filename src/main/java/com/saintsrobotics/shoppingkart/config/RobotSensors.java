@@ -18,7 +18,7 @@ public class RobotSensors {
 	public DigitalInput lifterUp;
 	public DigitalInput lifterDown;
 
-	public AbsoluteEncoder arms;
+
 
 	public AbsoluteEncoder kicker;
 
@@ -36,7 +36,6 @@ public class RobotSensors {
 
 		this.kicker = buildAbsoluteEncoder(robotConfig, "encoders.kicker");
 
-		this.arms = buildAbsoluteEncoder(robotConfig, "encoders.arms");
 	}
 
 	private static AbsoluteEncoder buildAbsoluteEncoder(Config robotConfig, String keyPrefix) {

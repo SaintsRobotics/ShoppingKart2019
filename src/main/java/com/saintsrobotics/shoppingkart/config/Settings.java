@@ -8,10 +8,7 @@ public class Settings {
     public double[] rightBackLoc;
     public double[] pivotLoc;
 
-    public double armsHardstop;
-    public double armsFullout;
-    public double armsHatch;
-    public double armsFullin;
+
 
     public double liftCargo1;
     public double liftCargo2;
@@ -40,7 +37,6 @@ public class Settings {
     public PidConfig wheelAnglePidConfig;
     public PidConfig headingPidConfig;
     public PidConfig liftPidConfig;
-    public PidConfig armsPidConfig;
     public PidConfig dockCargoTranslation;
     public PidConfig dockCargoDistance;
     public PidConfig dockHatchTranslation;
@@ -52,11 +48,6 @@ public class Settings {
         this.leftBackLoc = buildLoc(robotConfig, "settings.location.leftBack");
         this.rightBackLoc = buildLoc(robotConfig, "settings.location.rightBack");
         this.pivotLoc = buildLoc(robotConfig, "settings.location.pivot");
-
-        this.armsHardstop = robotConfig.getDouble("settings.arms.hardstop");
-        this.armsFullout = robotConfig.getDouble("settings.arms.fullout");
-        this.armsHatch = robotConfig.getDouble("settings.arms.hatch");
-        this.armsFullin = robotConfig.getDouble("settings.arms.fullin");
 
         this.liftCargo1 = robotConfig.getDouble("settings.lift.cargo1");
         this.liftCargo2 = robotConfig.getDouble("settings.lift.cargo2");
@@ -84,7 +75,6 @@ public class Settings {
         this.wheelAnglePidConfig = buildPidConfig(robotConfig, "settings.pids.wheelAngle");
         this.headingPidConfig = buildPidConfig(robotConfig, "settings.pids.heading");
         this.liftPidConfig = buildPidConfig(robotConfig, "settings.pids.lift");
-        this.armsPidConfig = buildPidConfig(robotConfig, "settings.pids.arms");
         this.dockCargoTranslation = buildPidConfig(robotConfig, "settings.pids.dock.cargo.translation");
         this.dockCargoDistance = buildPidConfig(robotConfig, "settings.pids.dock.cargo.distance");
         this.dockHatchTranslation = buildPidConfig(robotConfig, "settings.pids.dock.hatch.translation");
